@@ -1,0 +1,25 @@
+mass JMSUp JMSDown
+
+Wprime_WZ_lvjj_M800 1.149 -2.680
+Wprime_WZ_lvjj_M1000 2.585 -4.330
+Wprime_WZ_lvjj_M1200 4.756 -6.337
+Wprime_WZ_lvjj_M1400 5.901 -7.265
+Wprime_WZ_lvjj_M1600 5.971 -8.823
+Wprime_WZ_lvjj_M1800 6.667 -8.488
+Wprime_WZ_lvjj_M2000 7.861 -9.134
+Wprime_WZ_lvjj_M2500 7.714 -9.807
+Wprime_WZ_lvjj_M3000 7.421 -9.065
+Wprime_WZ_lvjj_M3500 6.345 -8.247
+Wprime_WZ_lvjj_M4000 6.542 -7.885
+Wprime_WZ_lvjj_M4500 6.180 -8.072
+BulkG_WW_lvjj_M800 15.279 -15.637
+BulkG_WW_lvjj_M1200 23.645 -22.917
+BulkG_WW_lvjj_M1400 26.977 -21.903
+BulkG_WW_lvjj_M1600 29.048 -23.143
+BulkG_WW_lvjj_M1800 29.752 -24.379
+BulkG_WW_lvjj_M2000 27.500 -23.529
+BulkG_WW_lvjj_M2500 26.093 -23.194
+BulkG_WW_lvjj_M3000 24.778 -23.046
+BulkG_WW_lvjj_M3500 25.390 -19.054
+BulkG_WW_lvjj_M4000 20.078 -18.599
+BulkG_WW_lvjj_M4500 20.472 -18.033

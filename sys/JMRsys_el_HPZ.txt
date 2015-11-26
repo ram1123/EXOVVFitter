@@ -1,0 +1,25 @@
+mass JMRUp JMRDown
+
+Wprime_WZ_lvjj_M800 -4.790 2.701
+Wprime_WZ_lvjj_M1000 -4.637 2.003
+Wprime_WZ_lvjj_M1200 -3.161 4.203
+Wprime_WZ_lvjj_M1400 -1.984 4.281
+Wprime_WZ_lvjj_M1600 -2.214 2.445
+Wprime_WZ_lvjj_M1800 -2.811 1.795
+Wprime_WZ_lvjj_M2000 -2.499 1.671
+Wprime_WZ_lvjj_M2500 -1.778 2.240
+Wprime_WZ_lvjj_M3000 -2.833 1.969
+Wprime_WZ_lvjj_M3500 -0.892 2.173
+Wprime_WZ_lvjj_M4000 -2.923 2.415
+Wprime_WZ_lvjj_M4500 -1.384 1.973
+BulkG_WW_lvjj_M800 0.331 -2.812
+BulkG_WW_lvjj_M1200 2.138 -6.333
+BulkG_WW_lvjj_M1400 10.185 -5.047
+BulkG_WW_lvjj_M1600 8.208 -7.075
+BulkG_WW_lvjj_M1800 8.089 -8.241
+BulkG_WW_lvjj_M2000 11.713 -8.022
+BulkG_WW_lvjj_M2500 4.928 -8.756
+BulkG_WW_lvjj_M3000 9.705 -6.077
+BulkG_WW_lvjj_M3500 5.573 -7.723
+BulkG_WW_lvjj_M4000 5.523 -4.645
+BulkG_WW_lvjj_M4500 4.674 -5.074
