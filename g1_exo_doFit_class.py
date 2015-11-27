@@ -30,6 +30,7 @@ parser.add_option('-b', action='store_true', dest='noX', default=False, help='no
 parser.add_option('--inPath', action="store",type="string",dest="inPath",default="./")
 parser.add_option('--category', action="store",type="string",dest="category",default="")
 parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="Mjsoftdrop")
+parser.add_option('--interpolate', action="store_true",dest="interpolate",default=False)
 
 (options, args) = parser.parse_args()
 
@@ -41,7 +42,7 @@ from ROOT import draw_error_band, draw_error_band_extendPdf, draw_error_band_Dec
 
 class doFit_wj_and_wlvj:
 
-    def __init__(self, in_channel,in_signal_sample, jetalgo, in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700, in_mj_min=30, in_mj_max=140, in_mlvj_min=400., in_mlvj_max=1400., fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1", input_workspace=None):
+    def __init__(self, in_channel,in_signal_sample, jetalgo, in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700, in_mj_min=30, in_mj_max=140, in_mlvj_min=400., in_mlvj_max=1400., fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1", interpolate=False, input_workspace=None):
 
         tdrstyle.setTDRStyle()
         TGaxis.SetMaxDigits(3)
@@ -55,6 +56,7 @@ class doFit_wj_and_wlvj:
         self.MODEL_4_mlvj=fit_model;
         self.MODEL_4_mlvj_alter=fit_model_alter;
 	self.jetalgo = jetalgo
+        self.interpolate = interpolate
                 
         print "########################################################################################"
         print "######## define class: binning, variables, cuts, files and nuissance parameters ########"
@@ -274,6 +276,8 @@ class doFit_wj_and_wlvj:
 
         self.uncertainties(self.signal_sample)
 	self.xs_rescale = 0.01 
+        if (self.interpolate):
+            self.xs_rescale = 1.
 	                            
         #### sigma and mean signal systematic inflation
         self.mean_signal_uncertainty_jet_scale  = 0.013 ;
@@ -1018,8 +1022,8 @@ objName ==objName_before ):
         print "########### Fixing an Extended Pdf for mlvj  ############"        
         rdataset = self.workspace4fit_.data("rdataset%s%s_%s%s"%(label,mlvj_region,self.channel,mass_spectrum))
         model = self.get_mlvj_Model(label,mlvj_region);
-        rdataset.Print();
         model.Print();
+        rdataset.Print();
         parameters = model.getParameters(rdataset);
         par=parameters.createIterator(); par.Reset();
         param=par.Next()
@@ -1037,6 +1041,105 @@ objName ==objName_before ):
             param.setConstant(kTRUE);
             param.Print();
             param=par.Next()
+
+
+#############
+
+    #### Method to make a RooAbsPdf setting parameters from external interpolation (available only for DoubleCB)    
+    def make_Pdf_from_interpolation(self, label, in_model_name, mass_spectrum="_mj", ConstraintsList=[],ismc = 0):
+        if TString(mass_spectrum).Contains("_mj"): rrv_x = self.workspace4fit_.var("rrv_mass_j");
+        if TString(mass_spectrum).Contains("_mlvj"): rrv_x = self.workspace4fit_.var("rrv_mass_lvj");
+
+        ## Crystal  ball shape for Bulk GR samples and higgs 
+        if in_model_name == "DoubleCB_v1":
+            label_tstring=TString(label);
+
+            fileIn_name = TString("interpolationFiles/"+options.sample+"_"+self.channel+"_"+options.category+".root")#str(int(options.mass)));
+            print "open file for interpolation of DoubleCB shape: ",fileIn_name
+
+            fileIn = TFile(fileIn_name.Data());
+            g_mean = fileIn.Get("mean");
+            g_sigma = fileIn.Get("sigma");
+            g_n1 = fileIn.Get("n1");
+            g_n2 = fileIn.Get("n2");
+            g_alpha1 = fileIn.Get("alpha1");
+            g_alpha2 = fileIn.Get("alpha2");
+
+            print "########### Double CB for Bulk graviton mlvj ############"
+#            if label_tstring.Contains("RS1G_WW" or label_tstring.Contains("BulkG_WW") or label_tstring.Contains("Wprime_WZ")):
+            rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label, g_mean.Eval(int(options.mass)));
+            rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label, g_sigma.Eval(int(options.mass)));
+            rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, g_n1.Eval(int(options.mass)));
+            rrv_alpha2_CB = RooRealVar("rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,g_alpha2.Eval(int(options.mass)));
+            rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,g_n2.Eval(int(options.mass)));
+            rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,g_alpha1.Eval(int(options.mass)));
+
+            #set parameters of the CB to the interpolated value
+#            rrv_mean_CB.setVal(g_mean.Eval(int(options.mass))); 
+#            rrv_sigma_CB.setVal(g_sigma.Eval(int(options.mass))); 
+#            rrv_n1_CB.setVal(g_n1.Eval(int(options.mass))); 
+#            rrv_n2_CB.setVal(g_n2.Eval(int(options.mass))); 
+#            rrv_alpha1_CB.setVal(g_alpha1.Eval(int(options.mass))); 
+#            rrv_alpha2_CB.setVal(g_alpha2.Eval(int(options.mass))); 
+
+            rrv_mean_CB.Print()
+            rrv_sigma_CB.Print()
+            rrv_n1_CB.Print()
+            rrv_n2_CB.Print()
+            rrv_alpha1_CB.Print()
+            rrv_alpha2_CB.Print()
+                         
+            rrv_mean_scale_p1 = RooRealVar("CMS_sig_p1_jes_13TeV","CMS_sig_p1_jes_13TeV",0);
+            rrv_mean_scale_p1.setConstant(kTRUE);
+            if self.channel == "mu" :             
+             rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_m_13TeV","CMS_sig_p1_scale_m_13TeV",0);
+             rrv_mean_scale_p2.setConstant(kTRUE);
+            elif self.channel == "el" :
+             rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_e_13TeV","CMS_sig_p1_scale_e_13TeV",0);
+             rrv_mean_scale_p2.setConstant(kTRUE);
+            elif self.channel == "em":
+             rrv_mean_scale_p2 = RooRealVar("CMS_sig_p1_scale_em_13TeV","CMS_sig_p1_scale_em_13TeV",0);
+             rrv_mean_scale_p2.setConstant(kTRUE);
+                
+            rrv_mean_scale_X1 = RooRealVar("rrv_mean_shift_scale_lep"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_shift_scale_lep"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.mean_signal_uncertainty_lep_scale));
+            rrv_mean_scale_X1.setConstant(kTRUE);
+            rrv_mean_scale_X2 = RooRealVar("rrv_mean_shift_scale_jes"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_shift_scale_jes"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.mean_signal_uncertainty_jet_scale));
+            rrv_mean_scale_X2.setConstant(kTRUE);
+
+            rrv_total_mean_CB = RooFormulaVar("rrv_total_mean_CB"+label+"_"+self.channel,"@0*(1+@1*@2)*(1+@3*@4)", RooArgList(rrv_mean_CB,rrv_mean_scale_p1,rrv_mean_scale_X1,rrv_mean_scale_p2,rrv_mean_scale_X2));
+            
+            if self.channel == "mu":
+             rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_m_13TeV","CMS_sig_p2_scale_m_13TeV",0);
+             rrv_sigma_scale_p1.setConstant(kTRUE);
+            elif self.channel == "el":
+             rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_e_13TeV","CMS_sig_p2_scale_e_13TeV",0);
+             rrv_sigma_scale_p1.setConstant(kTRUE);
+            elif self.channel == "em":
+             rrv_sigma_scale_p1 = RooRealVar("CMS_sig_p2_scale_em_13TeV","CMS_sig_p2_scale_em_13TeV",0);
+             rrv_sigma_scale_p1.setConstant(kTRUE);
+                         
+            rrv_sigma_scale_p2 = RooRealVar("CMS_sig_p2_jer_13TeV","CMS_sig_p2_jer_13TeV",0);
+            rrv_sigma_scale_p3 = RooRealVar("CMS_sig_p2_jes_13TeV","CMS_sig_p2_jes_13TeV",0);
+            rrv_sigma_scale_p2.setConstant(kTRUE);
+            rrv_sigma_scale_p3.setConstant(kTRUE);
+
+            rrv_mean_sigma_X1 = RooRealVar("rrv_sigma_shift_lep_scale"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_lep_scale));
+            rrv_mean_sigma_X2 = RooRealVar("rrv_sigma_shift_jes"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_scale"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_jet_scale));
+            rrv_mean_sigma_X3 = RooRealVar("rrv_sigma_shift_res"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_shift_res"+label+"_"+self.channel+"_"+self.wtagger_label,float(self.sigma_signal_uncertainty_jet_res));
+            rrv_mean_sigma_X1.setConstant(kTRUE);
+            rrv_mean_sigma_X2.setConstant(kTRUE);
+            rrv_mean_sigma_X3.setConstant(kTRUE);
+
+            rrv_total_sigma_CB = RooFormulaVar("rrv_total_sigma_CB"+label+"_"+self.channel,"@0*(1+@1*@2)*(1+@3*@4)*(1+@5*@6)", RooArgList(rrv_sigma_CB,rrv_sigma_scale_p1,rrv_mean_sigma_X1,rrv_sigma_scale_p2,rrv_mean_sigma_X2,rrv_sigma_scale_p3,rrv_mean_sigma_X3));        
+
+            model_pdf = ROOT.RooDoubleCrystalBall("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum, rrv_x,rrv_total_mean_CB,rrv_total_sigma_CB,rrv_alpha1_CB,rrv_n1_CB,rrv_alpha2_CB,rrv_n2_CB);
+
+            
+        ## return the pdf
+        getattr(self.workspace4fit_,"import")(model_pdf)
+        return self.workspace4fit_.pdf("model_pdf"+label+"_"+self.channel+mass_spectrum)
+
+###########
 
     #### Method to make a RooAbsPdf giving label, model name, spectrum, if it is mc or not and a constraint list for the parameters          
     def make_Pdf(self, label, in_model_name, mass_spectrum="_mj", ConstraintsList=[],ismc = 0):
@@ -1485,8 +1588,9 @@ objName ==objName_before ):
         getattr(self.workspace4fit_,"import")(model_pdf)
         return self.workspace4fit_.pdf("model_pdf"+label+"_"+self.channel+mass_spectrum)
 
+
     ### Define the Extended Pdf for and mJ fit giving: label, fit model name, list constraint and ismc
-    def make_Model(self, label, in_model_name, mass_spectrum="_mj", ConstraintsList=[], ismc_wjet=0, area_init_value=500):
+    def make_Model(self, label, in_model_name, mass_spectrum="_mj", ConstraintsList=[], ismc_wjet=0, area_init_value=500, interpolate=0):
 
       ##### define an extended pdf from a standard Roofit One
       print " "
@@ -1495,11 +1599,25 @@ objName ==objName_before ):
       print "###############################################"
       print " "
 
-      rrv_number = RooRealVar("rrv_number"+label+"_"+self.channel+mass_spectrum,"rrv_number"+label+"_"+self.channel+mass_spectrum,area_init_value,0.,1e7);
       ## call the make RooAbsPdf method
-      model_pdf = self.make_Pdf(label,in_model_name,mass_spectrum,ConstraintsList,ismc_wjet)
+      if (interpolate==1):
+          fileIn_name = TString("interpolationFiles/"+options.sample+"_"+self.channel+"_"+options.category+".root")#str(int(options.mass)));
+          print "open file for interpolation of datacard rate: ",fileIn_name
+
+          fileIn = TFile(fileIn_name.Data());
+          g_Ndatacard = fileIn.Get("Ndatacard");
+          print "extrapolated value: ",g_Ndatacard.Eval(int(options.mass))
+
+          rrv_number = RooRealVar("rrv_number"+label+"_"+self.channel+mass_spectrum,"rrv_number"+label+"_"+self.channel+mass_spectrum,g_Ndatacard.Eval(int(options.mass)));
+          print "extrapolated rate from datacards:"
+          rrv_number.Print()
+          model_pdf = self.make_Pdf_from_interpolation(label,in_model_name,mass_spectrum,ConstraintsList,ismc_wjet)
+      else:
+          rrv_number = RooRealVar("rrv_number"+label+"_"+self.channel+mass_spectrum,"rrv_number"+label+"_"+self.channel+mass_spectrum,area_init_value,0.,1e7);
+          model_pdf = self.make_Pdf(label,in_model_name,mass_spectrum,ConstraintsList,ismc_wjet)
       print "######## Model Pdf ########"        
       model_pdf.Print();
+      rrv_number.Print();
       
       ## create the extended pdf
       model = RooExtendPdf("model"+label+"_"+self.channel+mass_spectrum,"model"+label+"_"+self.channel+mass_spectrum, model_pdf, rrv_number );
@@ -1639,20 +1757,24 @@ objName ==objName_before ):
         self.get_WJets_mlvj_correction_sb_lo_to_signal_region(label,mlvj_model);
 
         ### Fix the pdf of signal, TTbar, STop and VV in the signal region 
-        self.fix_Model("_%s_xww"%(self.signal_sample),"_signal_region","_mlvj")
+        if (options.interpolate == False):
+            self.fix_Model("_%s_xww"%(self.signal_sample),"_signal_region","_mlvj")
         self.fix_Model("_TTbar_xww","_signal_region","_mlvj")
         self.fix_Model("_STop_xww","_signal_region","_mlvj")
         self.fix_Model("_VV_xww","_signal_region","_mlvj")
 
         ### Call the evaluation of the normalization in the signal region for signal, TTbar, VV, STop, and WJets after the extrapolation via alpha
-        self.get_mlvj_normalization_insignalregion("_%s_xww"%(self.signal_sample));
+        if (options.interpolate == True):
+            self.get_mlvj_normalization_insignalregion("_%s_xww"%(self.signal_sample),"",1);
+        else:
+            self.get_mlvj_normalization_insignalregion("_%s_xww"%(self.signal_sample));
         self.get_mlvj_normalization_insignalregion("_TTbar_xww");
         self.get_mlvj_normalization_insignalregion("_STop_xww");
         self.get_mlvj_normalization_insignalregion("_VV_xww");
         self.get_mlvj_normalization_insignalregion(label,"model_pdf%s_signal_region_%s_after_correct_mlvj"%(label,self.channel));    
 
     ##### Function that calculate the normalization inside the mlvj signal region (mass window around the resonance in order to fill datacards)
-    def get_mlvj_normalization_insignalregion(self, label, model_name=""):
+    def get_mlvj_normalization_insignalregion(self, label, model_name="", interpolate=0):
         
         print "############### get mlvj normalization inside SR ",label," ",model_name," ##################"
         if model_name == "":
@@ -1673,30 +1795,43 @@ objName ==objName_before ):
         ## integal in the signal region
         print "######### integral in SR: ",label+"signalInt=%s"%(signalInt_val)
 
-        print "####### Events Number in MC Dataset:"
-        self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").Print();
-        self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").Print();
-
-        print "########## Events Number get from fit:"
-        rrv_tmp=self.workspace4fit_.var("rrv_number"+label+"_signal_region"+"_"+self.channel+"_mlvj");
-        print "Events Number in Signal Region from fitting: %s"%(rrv_tmp.getVal()*signalInt_val)
+        if (interpolate==0):
+            print "####### Events Number in MC Dataset:"
+            self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").Print();
+            self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").Print();
+            print "########## Events Number get from fit:"
+            rrv_tmp=self.workspace4fit_.var("rrv_number"+label+"_signal_region"+"_"+self.channel+"_mlvj");
+            print "Events Number in Signal Region from fitting: %s"%(rrv_tmp.getVal()*signalInt_val)
+        else:
+            rrv_tmp=self.workspace4fit_.var("rrv_number"+label+"_signal_region"+"_"+self.channel+"_mlvj");
+            print "Events Number in Signal Region from fitting: %s"%(rrv_tmp.getVal())
 
         #### store the info in the output file
         self.file_out.write( "\n%s++++++++++++++++++++++++++++++++++++"%(label) )
-        self.file_out.write( "\nEvents Number in All Region from dataset : %s"%(self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").getVal()) )
-        self.file_out.write( "\nEvents Number in Signal Region from dataset: %s"%(self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").getVal()) )
-        self.file_out.write( "\nRatio signal_region/all_range from dataset :%s"%(self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").getVal()/self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").getVal() ) )
-        self.file_out.write( "\nEvents Number in All Region from fitting : %s\n"%(rrv_tmp.getVal()) )
-        self.file_out.write( "\nEvents Number in Signal Region from fitting: %s\n"%(rrv_tmp.getVal()*signalInt_val) )
-        self.file_out.write( "\nEvents Number in High Mass Region from fitting: %s\n"%(rrv_tmp.getVal()*highMassInt_val) )
-        self.file_out.write( "\nRatio signal_region/all_range from fitting :%s"%(signalInt_val ) )
+        if (interpolate==0):
+            self.file_out.write( "\nEvents Number in All Region from dataset : %s"%(self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").getVal()) )
+            self.file_out.write( "\nEvents Number in Signal Region from dataset: %s"%(self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").getVal()) )
+            self.file_out.write( "\nRatio signal_region/all_range from dataset :%s"%(self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").getVal()/self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").getVal() ) )
+            self.file_out.write( "\nEvents Number in All Region from fitting : %s\n"%(rrv_tmp.getVal()) )
+            self.file_out.write( "\nEvents Number in Signal Region from fitting: %s\n"%(rrv_tmp.getVal()*signalInt_val) )
+            self.file_out.write( "\nEvents Number in High Mass Region from fitting: %s\n"%(rrv_tmp.getVal()*highMassInt_val) )
+            self.file_out.write( "\nRatio signal_region/all_range from fitting :%s"%(signalInt_val ) )
+        else:
+            self.file_out.write( "\nEvents Number in Signal Region from fitting: %s\n"%(rrv_tmp.getVal()) )
 
-        if not self.workspace4fit_.var("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj"):
-            rrv_number_fitting_signal_region_mlvj = RooRealVar("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj","rrv_number_fitting_signal_region"+label+"_"+
+#LUCA
+        if (interpolate==0):            
+            if not self.workspace4fit_.var("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj"):
+                rrv_number_fitting_signal_region_mlvj = RooRealVar("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj","rrv_number_fitting_signal_region"+label+"_"+
                                                                 self.channel+"_mlvj", rrv_tmp.getVal()*signalInt_val );
-            getattr(self.workspace4fit_,"import")(rrv_number_fitting_signal_region_mlvj);
-        else :
-            self.workspace4fit_.var("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj").setVal(rrv_tmp.getVal()*signalInt_val);
+                getattr(self.workspace4fit_,"import")(rrv_number_fitting_signal_region_mlvj);
+            else :
+                self.workspace4fit_.var("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj").setVal(rrv_tmp.getVal()*signalInt_val);
+
+        else:
+                rrv_number_fitting_signal_region_mlvj = RooRealVar("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj","rrv_number_fitting_signal_region"+label+"_"+
+                                                                self.channel+"_mlvj", rrv_tmp.getVal() );
+                getattr(self.workspace4fit_,"import")(rrv_number_fitting_signal_region_mlvj);
 
         self.workspace4fit_.var("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj").Print();
 
@@ -2308,6 +2443,18 @@ objName ==objName_before ):
         rrv_number_WJets_in_mj_signal_region_from_fitting.Print();
 
     ### Define the Extended Pdf for and mlvj fit giving: label, fit model name, list constraint, range to be fitted and do the decorrelation
+    def interpolate_signal_MC(self,in_file_name, label, in_range, mlvj_model, deco=0, show_constant_parameter=0, logy=0, ismc=0):
+
+        print "############### Interpolate mlvj single MC sample ",in_file_name," ",label,"  ",mlvj_model,"  ",in_range," ##################"
+        ## import variable and dataset
+        rrv_mass_lvj = self.workspace4fit_.var("rrv_mass_lvj")
+        constrainslist =[];
+
+        ## make the extended pdf model
+        model = self.make_Model(label+in_range,mlvj_model,"_mlvj",constrainslist,ismc,500,1); #call with option "interpolate"
+#        getattr(self.workspace4fit_,"import")(model) #needed??
+
+    ### Define the Extended Pdf for and mlvj fit giving: label, fit model name, list constraint, range to be fitted and do the decorrelation
     def fit_mlvj_model_single_MC(self,in_file_name, label, in_range, mlvj_model, deco=0, show_constant_parameter=0, logy=0, ismc=0):
 
         print "############### Fit mlvj single MC sample ",in_file_name," ",label,"  ",mlvj_model,"  ",in_range," ##################"
@@ -2809,11 +2956,21 @@ objName ==objName_before ):
         self.fit_mlvj_model_single_MC(self.file_signal,"_%s_xww"%(self.signal_sample),"_signal_region",model_narrow, 0, 0, 0, 0);
         print "________________________________________________________________________"
 
+    #### Interpolate rate and shape for the signal from external files
+    def interpolate_Signal(self,model_narrow="DoubleCB_v1",model_width="BWDoubleCB"):
+        print "############# interpolate_Signal #################"
+        ### Build the dataset
+        self.interpolate_signal_MC(self,"_%s_xww"%(self.signal_sample),"_signal_region",model_narrow, 0, 0, 0, 0);
+        print "________________________________________________________________________"
+
     ##### Fit of all the MC in both mj and mlvj : Signal, TTbar, STop, VV and Wjets
     def fit_AllSamples_Mj_and_Mlvj(self):
         print "################### fit_AllSamples_Mj_and_Mlvj #####################"
-        self.fit_Signal()
-	sys.exit()
+        if (self.interpolate):
+            self.interpolate_Signal()
+        else:    
+            self.fit_Signal()
+#	sys.exit()
         self.fit_WJets()
         self.fit_TTbar()
         self.fit_VV()
@@ -3463,19 +3620,19 @@ objName ==objName_before ):
 
 ### funtion to run the complete alpha analysis
 def pre_limit_sb_correction(method, channel, signal_sample="BulkG_c0p2_M1000", jetalgo="Mjsoftdrop",in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700,
-                            in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1"): 
+                            in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1",interpolate=False): 
 
     print "#################### pre_limit_sb_correction: channel %s, signal %s, max and min signal region %f-%f, max and min mJ %f-%f, max and min mlvj %f-%f, fit model %s and alternate %s ######################"%(channel,signal_sample,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter);
     
-    boostedW_fitter=doFit_wj_and_wlvj(channel, signal_sample, jetalgo,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter);
+    boostedW_fitter=doFit_wj_and_wlvj(channel, signal_sample, jetalgo,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter,interpolate);
     getattr(boostedW_fitter,"analysis_sideband_correction_%s"%(method) )();
                                                 
 ### funtion to run the analysis without systematics
 def pre_limit_sb_correction_without_systematic( channel, signal_sample, in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700,
-                                                 in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1"):
+                                                 in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1",interpolate=False):
 
     print "#################### pre_limit_sb_correction_without_systermatic: channel %s, signal %s, max and min signal region %f-%f, max and min mJ %f-%f, max and min mlvj %f-%f, fit model %s and alternate %s ######################"%(channel,signal_sample,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter);
-    boostedW_fitter=doFit_wj_and_wlvj(channel,signal_sample,in_mlvj_signal_region_min, in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter);
+    boostedW_fitter=doFit_wj_and_wlvj(channel,signal_sample,in_mlvj_signal_region_min, in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter,interpolate);
     boostedW_fitter.analysis_sideband_correction_method1_without_shape_and_psmodel_systematic()
 
 
@@ -3500,7 +3657,7 @@ if __name__ == '__main__':
         pre_limit_simple(channel,sample,lomass,himass);
     else:
         if options.category.find('HP2') != -1 or options.category.find('ALLP2') != -1:	
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,700,5000,"Exp","ExpN") 
+           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,700,5000,"Exp","ExpN",options.interpolate) 
 	else:
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,700,5000,"ExpN","ExpTail") 
+           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,700,5000,"ExpN","ExpTail",options.interpolate) 
 	
