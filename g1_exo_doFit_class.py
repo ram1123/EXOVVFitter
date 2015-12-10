@@ -244,7 +244,7 @@ class doFit_wj_and_wlvj:
         self.datadriven_alpha_WJets_counting=-1;
 
         ### uncertainty for datacard
-        self.lumi_uncertainty      = 0.048;
+        self.lumi_uncertainty      = 0.046;
         #self.XS_STop_uncertainty = 0.30 ;
         #self.XS_VV_uncertainty   = 0.25 ;
         #self.XS_TTbar_NLO_uncertainty = 0.063 ;# from AN-12-368 table8
@@ -2752,11 +2752,11 @@ objName ==objName_before ):
         hnum_2region=TH1D("hnum_2region"+label+"_"+self.channel,"hnum_2region"+label+"_"+self.channel,2,-0.5,1.5);# m_lvj 0: signal_region; 1: total
 
         if self.channel=="el":
-            tmp_lumi=2093.66;
+            tmp_lumi=2197.96;
         elif self.channel == "mu":
-            tmp_lumi=2093.66;
+            tmp_lumi=2197.96;
         else:
-            tmp_lumi=2093.66;
+            tmp_lumi=2197.96;
             
         for i in range(treeIn.GetEntries()):
             if i % 100000 == 0: print "iEntry: ",i
