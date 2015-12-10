@@ -178,31 +178,31 @@ class doFit_wj_and_wlvj:
            elif self.wtagger_label.find("2") != -1: self.categoryID=17;
 
         if self.channel=="mu" and self.wtagger_label.find("HP") != -1:
-            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.891);
-            self.rrv_wtagger_eff_reweight_forT.setError(0.046);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.026);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.047);
+            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.872);
+            self.rrv_wtagger_eff_reweight_forT.setError(0.040);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.031);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.126);
         if self.channel=="el" and self.wtagger_label.find("HP") != -1:
-            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.837);
-            self.rrv_wtagger_eff_reweight_forT.setError(0.081);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.026);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.047);
+            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.833);
+            self.rrv_wtagger_eff_reweight_forT.setError(0.070);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.031);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.126);
         if self.channel=="mu" and self.wtagger_label.find("LP") != -1:
-            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.767);
-            self.rrv_wtagger_eff_reweight_forT.setError(0.128);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.850);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.112);
+            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.787);
+            self.rrv_wtagger_eff_reweight_forT.setError(0.110);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.881);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.490);
         if self.channel=="el" and self.wtagger_label.find("LP") != -1:
-            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.603);
-            self.rrv_wtagger_eff_reweight_forT.setError(0.248);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.850);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.112);
+            self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.661);
+            self.rrv_wtagger_eff_reweight_forT.setError(0.200);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.881);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.490);
 
         print "wtagger efficiency correction for Top sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forT.getVal(), self.rrv_wtagger_eff_reweight_forT.getError());
         print "wtagger efficiency correction for V sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forV.getVal(), self.rrv_wtagger_eff_reweight_forV.getError());
         
-        self.mean_shift = 0.
-        self.sigma_scale=1.0
+        self.mean_shift = -0.8
+        self.sigma_scale=1.086
         
 	self.plotsDir = 'plots_%s_%s' %(self.channel,self.wtagger_label)
         #result files: The event number, parameters and error write into a txt file. The dataset and pdfs write into a root file
@@ -244,7 +244,7 @@ class doFit_wj_and_wlvj:
         self.datadriven_alpha_WJets_counting=-1;
 
         ### uncertainty for datacard
-        self.lumi_uncertainty      = 0.048;
+        self.lumi_uncertainty      = 0.046;
         #self.XS_STop_uncertainty = 0.30 ;
         #self.XS_VV_uncertainty   = 0.25 ;
         #self.XS_TTbar_NLO_uncertainty = 0.063 ;# from AN-12-368 table8
@@ -2752,11 +2752,11 @@ objName ==objName_before ):
         hnum_2region=TH1D("hnum_2region"+label+"_"+self.channel,"hnum_2region"+label+"_"+self.channel,2,-0.5,1.5);# m_lvj 0: signal_region; 1: total
 
         if self.channel=="el":
-            tmp_lumi=2093.66;
+            tmp_lumi=2197.96;
         elif self.channel == "mu":
-            tmp_lumi=2093.66;
+            tmp_lumi=2197.96;
         else:
-            tmp_lumi=2093.66;
+            tmp_lumi=2197.96;
             
         for i in range(treeIn.GetEntries()):
             if i % 100000 == 0: print "iEntry: ",i
