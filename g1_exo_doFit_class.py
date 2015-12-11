@@ -530,7 +530,7 @@ objName ==objName_before ):
     def get_canvas(self,cname,isalpha=False):
 
        #tdrstyle.setTDRStyle()
-       CMS_lumi.lumi_13TeV = "2.1 fb^{-1}"
+       CMS_lumi.lumi_13TeV = "2.2 fb^{-1}"
        CMS_lumi.writeExtraText = 1
        CMS_lumi.extraText = "Preliminary"
 
