@@ -250,6 +250,7 @@ class doFit_wj_and_wlvj:
         #self.XS_TTbar_NLO_uncertainty = 0.063 ;# from AN-12-368 table8
         self.XS_STop_NLO_uncertainty  = 0.05 ;# from AN-12-368 table8
         self.XS_VV_NLO_uncertainty    = 0.03 ;# from AN-12-368 table8
+#        self.XS_sig_NNLO_uncertainty  = 0.00 ;
 
         #el and mu trigger and eff uncertainty, AN2012_368_v5 12.3
         self.lep_trigger_uncertainty = 0.01;
@@ -292,6 +293,8 @@ class doFit_wj_and_wlvj:
         self.shape_para_error_TTbar = 2.0;
         self.shape_para_error_VV    = 1.;
         self.shape_para_error_STop  = 1.;
+
+    
                                                                 
         # shape parameter uncertainty
         self.FloatingParams=RooArgList("floatpara_list");
@@ -326,6 +329,14 @@ class doFit_wj_and_wlvj:
         if l.split(' ')[0].find(label_tstring) != -1:
          self.signal_jet_mass_res_uncertainty_up = float(l.split(' ')[1])/100. 
 	 self.signal_jet_mass_res_uncertainty_down = float(l.split(' ')[2])/100.
+       infile.close()
+
+       self.signal_xsec_NNLO_uncertainty = 0.000
+       infile = open('sys/signal_xsec_uncertainty.txt','r')
+       for l in infile:
+        if l.find('mass') != -1: continue
+        if l.split(' ')[0].find(label_tstring) != -1:
+         self.signal_xsec_NNLO_uncertainty = float(l.split(' ')[1])
        infile.close()
        
     ### in order to make the legend
@@ -3356,6 +3367,16 @@ objName ==objName_before ):
         ### luminosity nouisance
         datacard_out.write( "\nlumi_13TeV lnN %0.3f - %0.3f %0.3f %0.3f"%(1.+self.lumi_uncertainty, 1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty) )
 
+        ### signal PDF XS uncertainties
+        if TString(self.signal_sample).Contains("RS1G_WW"):                    
+            datacard_out.write( "\nCMS_xww_XS_RS1G_WW_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
+        elif TString(self.signal_sample).Contains("BulkG_WW"):                    
+            datacard_out.write( "\nCMS_xww_XS_BulkG_WW_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
+        elif TString(self.signal_sample).Contains("Wprime_WZ"):                    
+            datacard_out.write( "\nCMS_xww_XS_Wprime_WZ_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
+        else : 
+            datacard_out.write( "\nCMS_xww_XS_sig_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
+
         ### STop XS  nouisance in boosted regime
         datacard_out.write( "\nCMS_xww_XS_STop_13TeV lnN - - - %0.3f -"%(1+self.XS_STop_NLO_uncertainty) )
 
@@ -3425,6 +3446,7 @@ objName ==objName_before ):
 
         ### CA8 jet energy resolution
         datacard_out.write( "\nCMS_res_j_13TeV lnN %0.3f - - - -"%(1+self.signal_jet_energy_res_uncertainty));
+
 
         ### btag on the signal
         datacard_out.write( "\nCMS_xww_btag_eff_13TeV lnN %0.3f - - - -"%(1+self.signal_btag_uncertainty));
