@@ -42,12 +42,12 @@ for m in masses:
       os.system("bsub -q cmscaf1nd -cwd "+currentDir+" "+currentDir+"/"+fn+".sh");
 
    elif (options.interpolate==True and not options.batchMode==True):
-      cmd = "python g1_exo_doFit_class.py -b -c %s --mass %i --category %s --sample %s_lvjj --jetalgo %s --interpolate True > log/%s_M%i_%s_%s.log" %(options.channel,m,options.category,options.sample,options.jetalgo,options.sample,m,options.channel,options.category)
+      cmd = "python g1_exo_doFit_class_new.py -b -c %s --mass %i --category %s --sample %s --jetalgo %s --interpolate True > log/%s_M%i_%s_%s.log" %(options.channel,m,options.category,options.sample,options.jetalgo,options.sample,m,options.channel,options.category)
       print cmd
       os.system(cmd)
 
    else:   
-      cmd = "python g1_exo_doFit_class.py -b -c %s --mass %i --category %s --sample %s_lvjj --jetalgo %s > log/%s_M%i_%s_%s.log" %(options.channel,m,options.category,options.sample,options.jetalgo,options.sample,m,options.channel,options.category)
+      cmd = "python g1_exo_doFit_class_new.py -b -c %s --mass %i --category %s --sample %s --jetalgo %s > log/%s_M%i_%s_%s.log" %(options.channel,m,options.category,options.sample,options.jetalgo,options.sample,m,options.channel,options.category)
       print cmd
       os.system(cmd)
 
