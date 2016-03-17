@@ -82,13 +82,13 @@ class doFit_wj_and_wlvj:
         in_mlvj_max=in_mlvj_min+nbins_mlvj*self.BinWidth_mlvj;
 
         ## define jet mass variable
-	varname = "Softdrop jet mass"
-	if self.jetalgo == "jet_mass_pr": varname = "Pruned jet mass"
+	varname = "Softdrop jet mass (GeV)"
+	if self.jetalgo == "jet_mass_pr": varname = "Pruned jet mass (GeV)"
         rrv_mass_j = RooRealVar("rrv_mass_j",varname,(in_mj_min+in_mj_max)/2.,in_mj_min,in_mj_max,"GeV");
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WW}",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WW} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -380,8 +380,8 @@ class doFit_wj_and_wlvj:
         #if   self.categoryID == 0 or self.categoryID == 2: legHeader="e#nu";
         #elif self.categoryID == 1 or self.categoryID == 3: legHeader="#mu#nu";
 
-        if   self.channel == 'el': legHeader="e#nu";
-        elif self.channel == 'mu': legHeader="#mu#nu";
+        if   self.channel == 'el': legHeader="W#rightarrowe#nu";
+        elif self.channel == 'mu': legHeader="W#rightarrow#mu#nu";
         
         for obj in range(int(plot.numItems()) ):
           objName = plot.nameOf(obj);
@@ -396,7 +396,7 @@ objName ==objName_before ):
             if drawoption=="P":drawoption="PE"
             if TString(objName).Contains("Uncertainty") or TString(objName).Contains("sigma"):  objName_before=objName; continue ;
             elif TString(objName).Contains("Graph") :  objName_before=objName; continue ;
-            elif TString(objName).Data()=="data" : theLeg.AddEntry(theObj, "Data ","PE");  objName_before=objName;                 
+            elif TString(objName).Data()=="data" : theLeg.AddEntry(theObj, "Data "+legHeader,"PE");  objName_before=objName;                 
             else: objName_before=objName; continue ;
 
         entryCnt = 0;
@@ -2576,7 +2576,8 @@ objName ==objName_before ):
             mplot.addObject(upperLine);
 
 #	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.5728643,0.1008991,"NDC")
-	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.52,0.1008991,"NDC")
+#	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.52,0.1008991,"NDC")
+	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.50,0.1008991,"NDC")
 	    pt.SetTextFont(42)
 	    pt.SetTextSize(0.04995005)
 	    #pt.SetTextAlign(12)
@@ -3009,7 +3010,7 @@ objName ==objName_before ):
             if (self.channel=="mu" and treeIn.l_pt<40) : self.isGoodEvent = 0;
             if (self.channel=="el" and treeIn.pfMET<80) : self.isGoodEvent = 0;
             if (self.channel=="el" and treeIn.l_pt<45) : self.isGoodEvent = 0;
-            if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
+#            if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
 
 	    
             if self.isGoodEvent == 1:

@@ -92,14 +92,15 @@ int main(int argc, char** argv)
 
   string line;
   string line2;
-  ifstream logFile[11];
-  ifstream datacard[11];
-  int mass[11] = {800,1200,1400,1600,1800,2000,2500,3000,3500,4000,4500};
+  ifstream logFile[6];
+  ifstream datacard[6];
+  //  int mass[6] = {800,1200,1400,1600,1800,2000,2500,3000,3500,4000,4500};
+  int mass[6] = {600,700,750,800,900,1000};
   bool goOut=false;
-  int nPar = 8, nMass=11;
+  int nPar = 8, nMass=6;
   string namePar[8];
-  float val[8][11];
-  float err[8][11];
+  float val[8][6];
+  float err[8][6];
   string parName[8]={"alpha1","alpha2","mean","n1","n2","number","sigma","Ndatacard"}; 
   //  string folderDatacard = "/afs/cern.ch/user/l/lbrianza/work/PHD/WW_ANALYSIS_RUN2/WWSEMILEP/ANALISI_NOVEMBER/TEST/CMSSW_7_1_5/src/13TeV_datacards_Spring15/";
   //  string folderLogFile = "log/";
@@ -111,7 +112,7 @@ int main(int argc, char** argv)
 
   for(int iMass=0; iMass<nMass; iMass++)
     {
-      TString NameFile = Form("%s%s_%s_M%d_%s.log",folderLogFile.c_str(),signal.c_str(),type.c_str(),mass[iMass],category.c_str());
+      TString NameFile = Form("%s%s_M%d_%s.log",folderLogFile.c_str(),signal.c_str(),mass[iMass],category.c_str());
       logFile[iMass].open(NameFile.Data());
       if (logFile[iMass]) 
 	{
@@ -137,7 +138,7 @@ int main(int argc, char** argv)
 	}
       logFile[iMass].close();
 
-      TString NameCard = Form("%scards_%s_unblind/cards_%s/wwlvj_%s_%s_lvjj_M%d_%s_unbin.txt",folderDatacard.c_str(),signal.c_str(),category.c_str(),signal.c_str(),type.c_str(),mass[iMass],category.c_str());
+   TString NameCard = Form("%scards_%s/wwlvj_%s%d_%s_unbin.txt",folderDatacard.c_str(),category.c_str(),signal.c_str(),mass[iMass],category.c_str());
       std::cout<<"open datacard: "<<NameCard.Data()<<std::endl;
 
       datacard[iMass].open(NameCard.Data());
@@ -161,6 +162,8 @@ int main(int argc, char** argv)
 	}
       
     }
+
+  std::cout<<"debug"<<std::endl;
 
   TString NameOutput = Form("interpolationFiles/%s_%s_lvjj_%s.root",signal.c_str(),type.c_str(),category.c_str());
   TFile *outputFile = new TFile(NameOutput.Data(),"RECREATE");
@@ -238,6 +241,7 @@ int main(int argc, char** argv)
       gPar[iPar]->GetYaxis()->SetTitle(parName[iPar].c_str());
       gPar[iPar]->Write(NameFile.Data());
     }
+  std::cout<<"debug"<<std::endl;
 
   outputFile->Close();
   
