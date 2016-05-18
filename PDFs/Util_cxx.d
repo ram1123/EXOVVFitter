@@ -1,6 +1,8 @@
 
 # DO NOT DELETE
 
+./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/Math/Math.h
+./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/Math/QuantFuncMathCore.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/roofit/5.32.03/include/RooPlot.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/roofit/5.32.03/include/RooList.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TList.h
@@ -25,11 +27,14 @@
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMathBase.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/roofit/5.32.03/include/RooPrintable.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TNamed.h
-./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TFile.h
-./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TDirectoryFile.h
+./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMath.h
+./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TError.h
+./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TROOT.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TDirectory.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TDatime.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TUUID.h
+./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TFile.h
+./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TDirectoryFile.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TUrl.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMap.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/THashTable.h
@@ -109,7 +114,6 @@
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMatrixTBase.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMatrixFBasefwd.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMatrixDBasefwd.h
-./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TError.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMatrixTUtils.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMatrixDSymfwd.h
 ./Util_cxx.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc472/lcg/root/5.32.00/include/TMatrixDUtils.h

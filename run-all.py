@@ -5,7 +5,7 @@ from optparse import OptionParser
 parser = OptionParser()
 
 parser.add_option('-c', '--channel',action="store",type="string",dest="channel",default="mu")
-parser.add_option('-s', action="store",type="string",dest="sample",default="BulkGraviton_newxsec")
+parser.add_option('-s', action="store",type="string",dest="sample",default="BulkGraviton")
 parser.add_option('--category', action="store",type="string",dest="category",default="HP")
 parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="jet_mass_pr")
 parser.add_option('--interpolate', action="store_true",dest="interpolate",default=False)
@@ -14,7 +14,7 @@ parser.add_option('--batchMode', action="store_true",dest="batchMode",default=Fa
 
 currentDir = os.getcwd();
 
-masses = [600,700,750,800,900,1000]
+masses = [1000]
 #masses = [800,1200,1400,1600,1800,2000,2500,3000,3500,4000,4500]
 #masses = [800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,2600,2700,2800,2900,3000,
 #          3100,3200,3300,3400,3500,3600,3700,3800,3900,4000,4100,4200,4300,4400,4500] #use this one only for the interpolation mode!

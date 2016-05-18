@@ -38,7 +38,7 @@ ROOT.gSystem.Load(options.inPath+"/PDFs/PdfDiagonalizer_cc.so")
 ROOT.gSystem.Load(options.inPath+"/PDFs/Util_cxx.so")
 ROOT.gSystem.Load(options.inPath+"/PDFs/HWWLVJRooPdfs_cxx.so")
 
-from ROOT import draw_error_band, draw_error_band_extendPdf, draw_error_band_Decor, draw_error_band_shape_Decor, Calc_error_extendPdf, Calc_error, RooErfExpPdf, RooAlpha, RooAlpha4ErfPowPdf, RooAlpha4ErfPow2Pdf, RooAlpha4ErfPowExpPdf, PdfDiagonalizer, RooPowPdf, RooPow2Pdf, RooErfPowExpPdf, RooErfPowPdf, RooErfPow2Pdf, RooQCDPdf, RooUser1Pdf, RooBWRunPdf, RooAnaExpNPdf, RooExpNPdf, RooAlpha4ExpNPdf, RooExpTailPdf, RooAlpha4ExpTailPdf, Roo2ExpPdf, RooAlpha42ExpPdf
+from ROOT import draw_error_band, draw_error_band2, draw_error_band_extendPdf, draw_error_band_Decor, draw_error_band_shape_Decor, Calc_error_extendPdf, Calc_error, RooErfExpPdf, RooAlpha, RooAlpha4ErfPowPdf, RooAlpha4ErfPow2Pdf, RooAlpha4ErfPowExpPdf, PdfDiagonalizer, RooPowPdf, RooPow2Pdf, RooErfPowExpPdf, RooErfPowPdf, RooErfPow2Pdf, RooQCDPdf, RooUser1Pdf, RooBWRunPdf, RooAnaExpNPdf, RooExpNPdf, RooAlpha4ExpNPdf, RooExpTailPdf, RooAlpha4ExpTailPdf, Roo2ExpPdf, RooAlpha42ExpPdf
 
 class doFit_wj_and_wlvj:
 
@@ -115,7 +115,7 @@ class doFit_wj_and_wlvj:
 #        self.mj_signal_min = 57
 #        self.mj_signal_max = 65
         self.mj_signal_min = 65
-        self.mj_signal_max = 95
+        self.mj_signal_max = 105
         if (options.category).find('W') != -1:
          self.mj_signal_min = 65
          self.mj_signal_max = 85	        
@@ -140,7 +140,7 @@ class doFit_wj_and_wlvj:
         #self.file_Directory="WWTree_24jan_jecV6/WWTree_"+self.channel+"/";
         #self.file_Directory="WWTree_25jan_jecV6_lowmass/WWTree_"+self.channel+"/";
         #self.file_Directory="/afs/cern.ch/user/l/lbrianza/work/public/WWTree_28jan_jecV6_lowmass/WWTree_"+self.channel+"/";
-        self.file_Directory="/afs/cern.ch/user/l/lbrianza/work/public/WWTree_17feb_jecV7_lowmass/WWTree_"+self.channel+"/";
+        self.file_Directory="/afs/cern.ch/user/l/lbrianza/work/public/WWTree_3mag_76x/WWTree_"+self.channel+"/";
 #        self.file_Directory="WWTree_28jan_jecV6_lowmass/WWTree_"+self.channel+"/";
                  
         #prepare background data and signal samples            
@@ -455,13 +455,23 @@ objName ==objName_before ):
                        prefix = ""
                        if TString(objName).Contains("RS1"): prefix = "RS"
                        elif TString(objName).Contains("Bulk"): prefix = "Bulk"
+                       elif TString(objName).Contains("Higgs"): prefix = "Higgs"
+                       if TString(objName).Contains("_Higgs650"):
+                           objName_signal_graviton = theObj ;
+                           objNameLeg_signal_graviton = prefix+" M_{H}=0.65 TeV (#times100)";
+                       if TString(objName).Contains("_Higgs750"):
+                           objName_signal_graviton = theObj ;
+                           objNameLeg_signal_graviton = prefix+" M_{H}=0.75 TeV (#times100)";
+                       if TString(objName).Contains("_Higgs1000"):
+                           objName_signal_graviton = theObj ;
+                           objNameLeg_signal_graviton = prefix+" M_{H}=1.0 TeV (#times100)";
                        if TString(objName).Contains("_BulkGraviton600"):
                            objName_signal_graviton = theObj ;
                            objNameLeg_signal_graviton = "G_{"+prefix+"}"+" M_{G}=0.6 TeV (#times100)";
                        if TString(objName).Contains("_BulkGraviton700"):
                            objName_signal_graviton = theObj ;
                            objNameLeg_signal_graviton = "G_{"+prefix+"}"+" M_{G}=0.7 TeV (#times100)";
-                       if TString(objName).Contains("BulkGraviton_newxsec750"):
+                       if TString(objName).Contains("BulkGraviton750"):
                            objName_signal_graviton = theObj ;
                            objNameLeg_signal_graviton = "G_{"+prefix+"}"+" M_{G}=750 GeV (#times20)";
                        if TString(objName).Contains("_BulkGraviton800"):
@@ -1340,15 +1350,23 @@ objName ==objName_before ):
             print " %s %s " % (label,self.channel)
             print "########### Double CB for Bulk graviton mlvj ############"
 
-            if label_tstring.Contains("600") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            if label_tstring.Contains("600") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 600, 550, 650);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 30,10 ,80);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
                     rrv_alpha2_CB = RooRealVar("rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3.,0.5,6.);
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3,0.5,6.);
+
+            elif label_tstring.Contains("650") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
+                    rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 650, 550, 700);
+                    rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 30,10 ,80);
+                    rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
+                    rrv_alpha2_CB = RooRealVar("rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3.,0.5,6.);
+                    rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
+                    rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3,0.5,6.);
                          
-            elif label_tstring.Contains("700") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("700") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 700, 600, 800);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 30,10 ,80);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1356,7 +1374,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3,0.5,6.);
                                           
-            elif label_tstring.Contains("750") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("750") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 760, 660, 860);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 30,10 ,80);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1364,7 +1382,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3,0.5,6.);
                                           
-            elif label_tstring.Contains("800") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("800") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,820,790,880);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,50,40,70);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 15.,5.,25.);
@@ -1373,7 +1391,7 @@ objName ==objName_before ):
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,1.,1.9);
 
                                           
-            elif label_tstring.Contains("900") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("900") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,920,850,950);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,59,45,70);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 25.,2,45);
@@ -1381,7 +1399,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,25.,0.1,45);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.25,0.5,3.);
                       
-            elif label_tstring.Contains("1000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1020,970,1070);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,55,40,65);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,45);
@@ -1389,7 +1407,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.,0.5,3.5);
                         
-            elif label_tstring.Contains("1100") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1100") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1120,1080,1150);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,65,55,75);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,25);
@@ -1397,7 +1415,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,25);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
 
-            elif label_tstring.Contains("1200") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1200") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1220,1200,1250);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,65,55,75);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,30);
@@ -1405,7 +1423,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,30);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,5.);
          
-            elif label_tstring.Contains("1300") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1300") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1320,1300,1350);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,70,60,75);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1414,7 +1432,7 @@ objName ==objName_before ):
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.3,0.5,3.);
                     
                          
-            elif label_tstring.Contains("1400") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1400") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1420,1400,1440);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,77,65,85);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1422,7 +1440,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.5);
 
-            elif label_tstring.Contains("1500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1515,1500,1530);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,81,71,91);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 15.,0.01,25);
@@ -1430,7 +1448,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,15.,0.01,25);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.5);
 
-            elif label_tstring.Contains("1600") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1600") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1620,1600,1640);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,81,70,90);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1438,7 +1456,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                          
-            elif label_tstring.Contains("1700") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1700") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1720,1700,1740);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,90,75,96);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1446,7 +1464,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                                             
-            elif label_tstring.Contains("1800") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1800") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1820,1800,1840);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,90,75,100);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1454,7 +1472,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                       
-            elif label_tstring.Contains("1900") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("1900") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1920,1900,1940);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,95,80,115);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1462,7 +1480,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                        
-            elif label_tstring.Contains("2000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("2000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2020,2000,2040);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,100,80,115);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1470,7 +1488,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                        
-            elif label_tstring.Contains("2100") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("2100") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2120,2100,2140);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,105,85,115);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1478,7 +1496,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                       
-            elif label_tstring.Contains("2200") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("2200") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2220,2200,2250);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,115,75,140);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1486,7 +1504,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                       
-            elif label_tstring.Contains("2300") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("2300") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2320,2300,2340);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,115,95,120);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 15.,0.2,30);
@@ -1495,7 +1513,7 @@ objName ==objName_before ):
                         
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                         
-            elif label_tstring.Contains("2400") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("2400") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2420,2400,2440);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,115,100,125);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1504,7 +1522,7 @@ objName ==objName_before ):
                         
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                        
-            elif label_tstring.Contains("2500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("2500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,2520,2500,2540);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,125,90,145);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1512,7 +1530,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
 
-            elif label_tstring.Contains("3000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("3000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3020,3000,3040);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,150,110,175);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1520,7 +1538,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
 
-            elif label_tstring.Contains("3500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("3500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,3520,3500,3540);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,175,125,205);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1528,7 +1546,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
                     
-            elif label_tstring.Contains("4000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("4000") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,4020,4000,4040);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,200,145,230);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -1536,7 +1554,7 @@ objName ==objName_before ):
                     rrv_n2_CB     = RooRealVar("rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n2_CB"+label+"_"+self.channel+"_"+self.wtagger_label,20.,0.01,35);
                     rrv_alpha1_CB = RooRealVar("rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_alpha1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,1.5,0.5,3.);
 
-            elif label_tstring.Contains("4500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Wprime_WZ")):
+            elif label_tstring.Contains("4500") and (label_tstring.Contains("RS1G_WW") or label_tstring.Contains("BulkGraviton") or label_tstring.Contains("Higgs") or label_tstring.Contains("Wprime_WZ")):
                     rrv_mean_CB  = RooRealVar("rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_mean_CB"+label+"_"+self.channel+"_"+self.wtagger_label,4520,4500,4540);
                     rrv_sigma_CB = RooRealVar("rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_sigma_CB"+label+"_"+self.channel+"_"+self.wtagger_label,225,160,260);
                     rrv_n1_CB     = RooRealVar("rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label,"rrv_n1_CB"+label+"_"+self.channel+"_"+self.wtagger_label, 10.,0.01,35);
@@ -2973,12 +2991,12 @@ objName ==objName_before ):
         hnum_4region=TH1D("hnum_4region"+label+"_"+self.channel,"hnum_4region"+label+"_"+self.channel,4,-1.5,2.5);# m_j -1: sb_lo; 0:signal_region; 1: sb_hi; 2:total
         hnum_2region=TH1D("hnum_2region"+label+"_"+self.channel,"hnum_2region"+label+"_"+self.channel,2,-0.5,1.5);# m_lvj 0: signal_region; 1: total
 
-        if self.channel=="el":
-            tmp_lumi=2197.96*1.023; # updated feb 22 for moriond '16
-        elif self.channel == "mu":
-            tmp_lumi=2197.96*1.023;
-        else:
-            tmp_lumi=2197.96*1.023;
+#        if self.channel=="el":
+#            tmp_lumi=2197.96*1.023; # updated feb 22 for moriond '16
+#        elif self.channel == "mu":
+#            tmp_lumi=2197.96*1.023;
+#        else:
+        tmp_lumi=2263.;
             
         for i in range(treeIn.GetEntries()):
             if i % 100000 == 0: print "iEntry: ",i
@@ -2986,6 +3004,7 @@ objName ==objName_before ):
 
             if i==0:
 	# eff_and_pu_Weight_2*genWeight*wSampleWeight
+#               tmp_scale_to_lumi=treeIn.wSampleWeight*tmp_lumi;
                tmp_scale_to_lumi=treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
 
             tmp_jet_mass=getattr(treeIn, jet_mass);
@@ -3010,16 +3029,26 @@ objName ==objName_before ):
             if (self.channel=="mu" and treeIn.l_pt<40) : self.isGoodEvent = 0;
             if (self.channel=="el" and treeIn.pfMET<80) : self.isGoodEvent = 0;
             if (self.channel=="el" and treeIn.l_pt<45) : self.isGoodEvent = 0;
+
+            if ((options.category).find('vbf') != -1 and treeIn.njets<2): self.isGoodEvent=0;
+            if ((options.category).find('vbf') != -1 and abs(treeIn.vbf_maxpt_j1_eta-treeIn.vbf_maxp_j2_eta)<3.0): self.isGoodEvent=0;
+            if ((options.category).find('vbf') != -1 and vbf_maxpt_jj_m<300): self.isGoodEvent=0;
+
+            if ((options.category).find('ggH') != -1 and treeIn.njets>1): self.isGoodEvent=0;
+ 
 #            if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
 
 	    
             if self.isGoodEvent == 1:
                 ### weigh MC events              
                 #tmp_event_weight     = treeIn.eff_and_pu_Weight_2*treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
-                #tmp_event_weight4fit = treeIn.hltweight*treeIn.puweight*treeIn.btagweight;                               
-                tmp_event_weight     =  treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.eff_and_pu_Weight*treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
-                tmp_event_weight4fit = treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.eff_and_pu_Weight*treeIn.genWeight;
+                #tmp_event_weight4fit = treeIn.hltweight*treeIn.puweight*treeIn.btagweight;                 
+                tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
+                tmp_event_weight4fit = treeIn.genWeight;
                 tmp_event_weight4fit = tmp_event_weight4fit*treeIn.wSampleWeight*tmp_lumi/tmp_scale_to_lumi;
+#                tmp_event_weight     =  treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.eff_and_pu_Weight*treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
+#                tmp_event_weight4fit = treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.eff_and_pu_Weight*treeIn.genWeight;
+#                tmp_event_weight4fit = tmp_event_weight4fit*treeIn.wSampleWeight*tmp_lumi/tmp_scale_to_lumi;
              	            		
                 if label =="_data" or label =="_data_xww" :
 #                     print "OK"; 
@@ -3842,7 +3871,7 @@ objName ==objName_before ):
 
         datahist = data_obs.binnedClone( data_obs.GetName()+"_binnedClone",data_obs.GetName()+"_binnedClone" )
         ### Plot the list of floating parameters and the uncertainty band is draw taking into account this floating list defined in the prepare_limit
-        draw_error_band(model_Total_background_MC, rrv_x.GetName(), rrv_number_Total_background_MC,self.FloatingParams,workspace ,mplot,mplotP,datahist,self.color_palet["Uncertainty"],"F");
+        draw_error_band2(model_Total_background_MC, rrv_x.GetName(), rrv_number_Total_background_MC,self.FloatingParams,workspace ,mplot,mplotP,datahist,self.color_palet["Uncertainty"],"F");
 
         mplot.Print();
         self.leg = self.legend4Plot(mplot,0,1,-0.01,-0.05,0.11,0.);
