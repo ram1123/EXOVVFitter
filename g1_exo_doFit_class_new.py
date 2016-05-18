@@ -29,6 +29,7 @@ parser.add_option('-s','--simple', action='store', dest='simple', default=False,
 parser.add_option('-b', action='store_true', dest='noX', default=False, help='no X11 windows')
 parser.add_option('--inPath', action="store",type="string",dest="inPath",default="./")
 parser.add_option('--category', action="store",type="string",dest="category",default="")
+parser.add_option('--type', action="store",type="string",dest="type",default="")
 parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="Mjsoftdrop")
 parser.add_option('--interpolate', action="store_true",dest="interpolate",default=False)
 
@@ -84,6 +85,7 @@ class doFit_wj_and_wlvj:
         ## define jet mass variable
 	varname = "Softdrop jet mass (GeV)"
 	if self.jetalgo == "jet_mass_pr": varname = "Pruned jet mass (GeV)"
+	if self.jetalgo == "PuppiAK8_jet_mass_pr": varname = "Pruned jet mass (GeV)"
         rrv_mass_j = RooRealVar("rrv_mass_j",varname,(in_mj_min+in_mj_max)/2.,in_mj_min,in_mj_max,"GeV");
         rrv_mass_j.setBins(nbins_mj);
 
@@ -159,7 +161,7 @@ class doFit_wj_and_wlvj:
         self.wtagger_label = options.category;
 
         self.categoryID=-1;
-        if self.channel=="el" and self.wtagger_label.find("HP") != -1:
+        if (self.channel=="el" or self.channel=="em") and self.wtagger_label.find("HP") != -1:
            self.categoryID=0;
            if self.wtagger_label.find("0") != -1: self.categoryID=6;
            elif self.wtagger_label.find("1") != -1: self.categoryID=8;
@@ -169,7 +171,7 @@ class doFit_wj_and_wlvj:
            if self.wtagger_label.find("0") != -1: self.categoryID=7;
            elif self.wtagger_label.find("1") != -1: self.categoryID=9;
            elif self.wtagger_label.find("2") != -1: self.categoryID=11;
-	if self.channel=="el" and self.wtagger_label.find("LP") != -1:
+	if (self.channel=="el" or self.channel=="em") and self.wtagger_label.find("LP") != -1:
 	   self.categoryID=2;
            if self.wtagger_label.find("0") != -1: self.categoryID=12;
            elif self.wtagger_label.find("1") != -1: self.categoryID=14;
@@ -185,7 +187,7 @@ class doFit_wj_and_wlvj:
             self.rrv_wtagger_eff_reweight_forT.setError(0.042);
             self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
             self.rrv_wtagger_eff_reweight_forV.setError(0.144);
-        if self.channel=="el" and self.wtagger_label.find("HP") != -1:
+        if (self.channel=="el" or self.channel=="em") and self.wtagger_label.find("HP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.850);
             self.rrv_wtagger_eff_reweight_forT.setError(0.042);
             self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
@@ -195,7 +197,7 @@ class doFit_wj_and_wlvj:
             self.rrv_wtagger_eff_reweight_forT.setError(0.110);
             self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.458);
             self.rrv_wtagger_eff_reweight_forV.setError(0.381);
-        if self.channel=="el" and self.wtagger_label.find("LP") != -1:
+        if (self.channel=="el" or self.channel=="em") and self.wtagger_label.find("LP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.661);
             self.rrv_wtagger_eff_reweight_forT.setError(0.200);
             self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.458);
@@ -382,6 +384,7 @@ class doFit_wj_and_wlvj:
 
         if   self.channel == 'el': legHeader="W#rightarrowe#nu";
         elif self.channel == 'mu': legHeader="W#rightarrow#mu#nu";
+        elif self.channel == 'em': legHeader="W#rightarrow#ell#nu";
         
         for obj in range(int(plot.numItems()) ):
           objName = plot.nameOf(obj);
@@ -2883,12 +2886,18 @@ objName ==objName_before ):
        keepEvent = False
 
        #all HP nbtag categories == HP only
-       if self.wtagger_label.find('HP') != -1 and (self.wtagger_label.find('0') == -1 and self.wtagger_label.find('1') == -1 and self.wtagger_label.find('2') == -1):  
-          if tree.jet_tau2tau1 < 0.45 : keepEvent = True
+       if ((options.jetalgo).find('Puppi'))!= -1:
+           if self.wtagger_label.find('HP') != -1:  
+               if tree.PuppiAK8_jet_tau2tau1 < 0.45 : keepEvent = True
+           if self.wtagger_label.find('LP') != -1:  
+               if tree.PuppiAK8_jet_tau2tau1 > 0.45 and tree.PuppiAK8_jet_tau2tau1 < 0.75: keepEvent = True
 
+       else:
+           if self.wtagger_label.find('HP') != -1:  
+               if tree.jet_tau2tau1 < 0.45 : keepEvent = True
        #all HP nbtag categories == LP only
-       if self.wtagger_label.find('LP') != -1 and (self.wtagger_label.find('0') == -1 and self.wtagger_label.find('1') == -1 and self.wtagger_label.find('2') == -1):  
-          if tree.jet_tau2tau1 > 0.45 and tree.jet_tau2tau1 < 0.75: keepEvent = True
+           if self.wtagger_label.find('LP') != -1:  
+               if tree.jet_tau2tau1 > 0.45 and tree.jet_tau2tau1 < 0.75: keepEvent = True
 
 
        """
@@ -3010,31 +3019,55 @@ objName ==objName_before ):
             tmp_jet_mass=getattr(treeIn, jet_mass);
 
             self.isGoodEvent = 0;   
-            if self.IsGoodEvent(treeIn) and treeIn.issignal and treeIn.mass_lvj_type2> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type2<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
-              self.isGoodEvent = 1;   
-
 
             # Analysis selection here
 
+            if ((options.jetalgo).find('Puppi') != -1): #Puppi
+                if self.IsGoodEvent(treeIn) and treeIn.issignal_PuppiAK8 and treeIn.mass_lvj_type2_PuppiAK8> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type2_PuppiAK8<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
+                    self.isGoodEvent = 1;   
+                if (treeIn.deltaR_lPuppiak8jet <1.57) : self.isGoodEvent = 0;
+                if (abs(treeIn.deltaphi_METPuppiak8jet)<2.0) : self.isGoodEvent = 0;
+                if (abs(treeIn.deltaphi_VPuppiak8jet)<2.) : self.isGoodEvent = 0;
+                if ((options.jetalgo).find('pr') != -1): #Puppi pruned
+                    if (treeIn.PuppiAK8_jet_mass_pr > 150.) : self.isGoodEvent = 0;
+                    if (treeIn.PuppiAK8_jet_mass_pr < 40.) : self.isGoodEvent = 0;
+                else: #Puppi softdrop
+                    if (treeIn.PuppiAK8_jet_mass_so > 150.) : self.isGoodEvent = 0;
+                    if (treeIn.PuppiAK8_jet_mass_so < 40.) : self.isGoodEvent = 0;
+                if (treeIn.nBTagJet_medium>0) : self.isGoodEvent = 0;
+                if (treeIn.v_puppi_pt<200.) : self.isGoodEvent = 0;
+                if (treeIn.ungroomed_PuppiAK8_jet_pt<200.) : self.isGoodEvent = 0;
+                if (self.channel=="mu" and treeIn.pfMETpuppi<40) : self.isGoodEvent = 0;
+                if (self.channel=="mu" and treeIn.l_pt<40) : self.isGoodEvent = 0;
+                if ((self.channel=="el" or self.channel=="em") and treeIn.pfMETpuppi<80) : self.isGoodEvent = 0;
+                if ((self.channel=="el" or self.channel=="em") and treeIn.l_pt<45) : self.isGoodEvent = 0;
+            
+            else: #CHS
+                if self.IsGoodEvent(treeIn) and treeIn.issignal and treeIn.mass_lvj_type2> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type2<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
+                    self.isGoodEvent = 1;   
+                if (treeIn.deltaR_lak8jet <1.57) : self.isGoodEvent = 0;
+                if (abs(treeIn.deltaphi_METak8jet)<2.0) : self.isGoodEvent = 0;
+                if (abs(treeIn.deltaphi_Vak8jet)<2.) : self.isGoodEvent = 0;
+                if ((options.jetalgo).find('pr') != -1): #CHS pruned
+                    if (treeIn.jet_mass_pr > 150.) : self.isGoodEvent = 0;
+                    if (treeIn.jet_mass_pr < 40.) : self.isGoodEvent = 0;
+                else: #CHS softdrop
+                    if (treeIn.jet_mass_so > 150.) : self.isGoodEvent = 0;
+                    if (treeIn.jet_mass_so < 40.) : self.isGoodEvent = 0;
+                if (treeIn.nBTagJet_medium>0) : self.isGoodEvent = 0;
+                if (treeIn.v_pt<200.) : self.isGoodEvent = 0;
+                if (treeIn.ungroomed_jet_pt<200.) : self.isGoodEvent = 0;
+                if (self.channel=="mu" and treeIn.pfMET<40) : self.isGoodEvent = 0;
+                if (self.channel=="mu" and treeIn.l_pt<40) : self.isGoodEvent = 0;
+                if ((self.channel=="el" or self.channel=="em") and treeIn.pfMET<80) : self.isGoodEvent = 0;
+                if ((self.channel=="el" or self.channel=="em") and treeIn.l_pt<45) : self.isGoodEvent = 0;
 
-	    if (treeIn.deltaR_lak8jet <1.57) : self.isGoodEvent = 0;
-	    if (abs(treeIn.deltaphi_METak8jet)<2.0) : self.isGoodEvent = 0;
-	    if (abs(treeIn.deltaphi_Vak8jet)<2.) : self.isGoodEvent = 0;
-	    if (treeIn.jet_mass_pr > 150.) : self.isGoodEvent = 0;
-	    if (treeIn.jet_mass_pr < 40.) : self.isGoodEvent = 0;
-	    if (treeIn.nBTagJet_medium>0) : self.isGoodEvent = 0;
-            if (treeIn.v_pt<200.) : self.isGoodEvent = 0;
-            if (treeIn.ungroomed_jet_pt<200.) : self.isGoodEvent = 0;
-            if (self.channel=="mu" and treeIn.pfMET<40) : self.isGoodEvent = 0;
-            if (self.channel=="mu" and treeIn.l_pt<40) : self.isGoodEvent = 0;
-            if (self.channel=="el" and treeIn.pfMET<80) : self.isGoodEvent = 0;
-            if (self.channel=="el" and treeIn.l_pt<45) : self.isGoodEvent = 0;
+            #VBF SELECTION
+            if ((options.type).find('vbf') != -1 and treeIn.njets<2): self.isGoodEvent=0;
+            if ((options.type).find('vbf') != -1 and abs(treeIn.vbf_maxpt_j1_eta-treeIn.vbf_maxpt_j2_eta)<2.5): self.isGoodEvent=0;
+            if ((options.type).find('vbf') != -1 and treeIn.vbf_maxpt_jj_m<250): self.isGoodEvent=0;
 
-            if ((options.category).find('vbf') != -1 and treeIn.njets<2): self.isGoodEvent=0;
-            if ((options.category).find('vbf') != -1 and abs(treeIn.vbf_maxpt_j1_eta-treeIn.vbf_maxp_j2_eta)<3.0): self.isGoodEvent=0;
-            if ((options.category).find('vbf') != -1 and vbf_maxpt_jj_m<300): self.isGoodEvent=0;
-
-            if ((options.category).find('ggH') != -1 and treeIn.njets>1): self.isGoodEvent=0;
+            if ((options.type).find('ggH') != -1 and treeIn.njets>1): self.isGoodEvent=0;
  
 #            if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
 
