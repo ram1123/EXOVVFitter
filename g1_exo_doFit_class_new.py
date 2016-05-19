@@ -185,31 +185,31 @@ class doFit_wj_and_wlvj:
         if self.channel=="mu" and self.wtagger_label.find("HP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.850);
             self.rrv_wtagger_eff_reweight_forT.setError(0.042);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.144);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.942);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.063);
         if (self.channel=="el" or self.channel=="em") and self.wtagger_label.find("HP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.850);
             self.rrv_wtagger_eff_reweight_forT.setError(0.042);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.144);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.942);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.063);
         if self.channel=="mu" and self.wtagger_label.find("LP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.787);
             self.rrv_wtagger_eff_reweight_forT.setError(0.110);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.458);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.381);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.268);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.332);
         if (self.channel=="el" or self.channel=="em") and self.wtagger_label.find("LP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.661);
             self.rrv_wtagger_eff_reweight_forT.setError(0.200);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.458);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.381);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.268);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.332);
 
         print "wtagger efficiency correction for Top sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forT.getVal(), self.rrv_wtagger_eff_reweight_forT.getError());
         print "wtagger efficiency correction for V sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forV.getVal(), self.rrv_wtagger_eff_reweight_forV.getError());
         
 #        self.mean_shift = -0.8
 #        self.sigma_scale=1.086
-        self.mean_shift = -0.6
-        self.sigma_scale=1.12
+        self.mean_shift = -1.629
+        self.sigma_scale=0.890
         
 	self.plotsDir = 'plots_%s_%s' %(self.channel,self.wtagger_label)
         #result files: The event number, parameters and error write into a txt file. The dataset and pdfs write into a root file
@@ -2891,6 +2891,8 @@ objName ==objName_before ):
                if tree.PuppiAK8_jet_tau2tau1 < 0.45 : keepEvent = True
            if self.wtagger_label.find('LP') != -1:  
                if tree.PuppiAK8_jet_tau2tau1 > 0.45 and tree.PuppiAK8_jet_tau2tau1 < 0.75: keepEvent = True
+           if self.wtagger_label.find('DDT') != -1:  
+               if tree.PuppiAK8_jet_tau2tau1 > 0.: keepEvent = True
 
        else:
            if self.wtagger_label.find('HP') != -1:  
@@ -2898,6 +2900,8 @@ objName ==objName_before ):
        #all HP nbtag categories == LP only
            if self.wtagger_label.find('LP') != -1:  
                if tree.jet_tau2tau1 > 0.45 and tree.jet_tau2tau1 < 0.75: keepEvent = True
+           if self.wtagger_label.find('DDT') != -1:  
+               if tree.jet_tau2tau1 > 0.: keepEvent = True
 
 
        """
