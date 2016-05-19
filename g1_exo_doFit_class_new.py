@@ -2887,12 +2887,14 @@ objName ==objName_before ):
 
        #all HP nbtag categories == HP only
        if ((options.jetalgo).find('Puppi'))!= -1:
-           if self.wtagger_label.find('HP') != -1:  
-               if tree.PuppiAK8_jet_tau2tau1 < 0.45 : keepEvent = True
-           if self.wtagger_label.find('LP') != -1:  
-               if tree.PuppiAK8_jet_tau2tau1 > 0.45 and tree.PuppiAK8_jet_tau2tau1 < 0.75: keepEvent = True
-           if self.wtagger_label.find('DDT') != -1:  
-               if tree.PuppiAK8_jet_tau2tau1 > 0.: keepEvent = True
+           if ((options.type).find('DDT')) !=-1:
+               rho = math.log(tree.PuppiAK8_jet_mass_so*tree.PuppiAK8_jet_mass_so/tree.PuppiAK8_jet_pt_so)
+               if tree.PuppiAK8_jet_tau2tau1 > 0.65-0.063*rho: keepEvent = True
+           else:
+               if self.wtagger_label.find('HP') != -1:  
+                   if tree.PuppiAK8_jet_tau2tau1 < 0.45 : keepEvent = True
+               if self.wtagger_label.find('LP') != -1:  
+                   if tree.PuppiAK8_jet_tau2tau1 > 0.45 and tree.PuppiAK8_jet_tau2tau1 < 0.75: keepEvent = True
 
        else:
            if self.wtagger_label.find('HP') != -1:  
@@ -2900,8 +2902,6 @@ objName ==objName_before ):
        #all HP nbtag categories == LP only
            if self.wtagger_label.find('LP') != -1:  
                if tree.jet_tau2tau1 > 0.45 and tree.jet_tau2tau1 < 0.75: keepEvent = True
-           if self.wtagger_label.find('DDT') != -1:  
-               if tree.jet_tau2tau1 > 0.: keepEvent = True
 
 
        """
@@ -3027,8 +3027,9 @@ objName ==objName_before ):
             # Analysis selection here
 
             if ((options.jetalgo).find('Puppi') != -1): #Puppi
-                if self.IsGoodEvent(treeIn) and treeIn.issignal_PuppiAK8 and treeIn.mass_lvj_type2_PuppiAK8> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type2_PuppiAK8<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
-                    self.isGoodEvent = 1;   
+                if treeIn.issignal_PuppiAK8 and treeIn.mass_lvj_type2_PuppiAK8> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type2_PuppiAK8<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
+                    if self.IsGoodEvent(treeIn):
+                        self.isGoodEvent = 1;   
                 if (treeIn.deltaR_lPuppiak8jet <1.57) : self.isGoodEvent = 0;
                 if (abs(treeIn.deltaphi_METPuppiak8jet)<2.0) : self.isGoodEvent = 0;
                 if (abs(treeIn.deltaphi_VPuppiak8jet)<2.) : self.isGoodEvent = 0;
