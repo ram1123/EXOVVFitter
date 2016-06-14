@@ -5,7 +5,7 @@ from optparse import OptionParser
 parser = OptionParser()
 
 parser.add_option('-c', '--channel',action="store",type="string",dest="channel",default="mu")
-parser.add_option('-s', action="store",type="string",dest="sample",default="Higgs")
+parser.add_option('-s', action="store",type="string",dest="sample",default="BulkGraviton")
 parser.add_option('--category', action="store",type="string",dest="category",default="HP")
 parser.add_option('--type', action="store",type="string",dest="type",default="")
 parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="jet_mass_pr")

@@ -142,13 +142,13 @@ class doFit_wj_and_wlvj:
         #self.file_Directory="WWTree_24jan_jecV6/WWTree_"+self.channel+"/";
         #self.file_Directory="WWTree_25jan_jecV6_lowmass/WWTree_"+self.channel+"/";
         #self.file_Directory="/afs/cern.ch/user/l/lbrianza/work/public/WWTree_28jan_jecV6_lowmass/WWTree_"+self.channel+"/";
-        self.file_Directory="/afs/cern.ch/user/l/lbrianza/work/public/WWTree_3mag_76x/WWTree_"+self.channel+"/";
+        self.file_Directory="/afs/cern.ch/user/l/lbrianza/work/public/WWTree_9jun_80x/WWTree_"+self.channel+"/";
 #        self.file_Directory="WWTree_28jan_jecV6_lowmass/WWTree_"+self.channel+"/";
                  
         #prepare background data and signal samples            
         self.signal_sample=in_signal_sample;
 
-        self.file_data = ("WWTree_data_golden_2p1.root");#keep blind!!!!
+        self.file_data = ("WWTree_data_golden.root");#keep blind!!!!
 #        self.file_data = ("WWTree_pseudodataS.root");#fake data
 #        self.file_data = ("WWTree_pseudodata.root");#fake data
         self.file_signal     = ("WWTree_%s.root"%(self.signal_sample));
@@ -185,13 +185,13 @@ class doFit_wj_and_wlvj:
         if self.channel=="mu" and self.wtagger_label.find("HP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.850);
             self.rrv_wtagger_eff_reweight_forT.setError(0.042);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.942);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.063);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.021);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.151);
         if (self.channel=="el" or self.channel=="em") and self.wtagger_label.find("HP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.850);
             self.rrv_wtagger_eff_reweight_forT.setError(0.042);
-            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.942);
-            self.rrv_wtagger_eff_reweight_forV.setError(0.063);
+            self.rrv_wtagger_eff_reweight_forV=RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.021);
+            self.rrv_wtagger_eff_reweight_forV.setError(0.151);
         if self.channel=="mu" and self.wtagger_label.find("LP") != -1:
             self.rrv_wtagger_eff_reweight_forT=RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT", 0.787);
             self.rrv_wtagger_eff_reweight_forT.setError(0.110);
@@ -208,8 +208,10 @@ class doFit_wj_and_wlvj:
         
 #        self.mean_shift = -0.8
 #        self.sigma_scale=1.086
-        self.mean_shift = -1.629
-        self.sigma_scale=0.890
+#        self.mean_shift = -1.629 #NEW
+#        self.sigma_scale=0.890 #NEW
+        self.mean_shift = -1.080
+        self.sigma_scale=1.066
         
 	self.plotsDir = 'plots_%s_%s' %(self.channel,self.wtagger_label)
         #result files: The event number, parameters and error write into a txt file. The dataset and pdfs write into a root file
@@ -2038,7 +2040,7 @@ objName ==objName_before ):
         if (interpolate==0):
             self.file_out.write( "\nEvents Number in All Region from dataset : %s"%(self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").getVal()) )
             self.file_out.write( "\nEvents Number in Signal Region from dataset: %s"%(self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").getVal()) )
-            self.file_out.write( "\nRatio signal_region/all_range from dataset :%s"%(self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").getVal()/self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").getVal() ) )
+#            self.file_out.write( "\nRatio signal_region/all_range from dataset :%s"%(self.workspace4fit_.var("rrv_number_dataset_signal_region"+label+"_"+self.channel+"_mlvj").getVal()/self.workspace4fit_.var("rrv_number_dataset_AllRange"+label+"_"+self.channel+"_mlvj").getVal() ) )
             self.file_out.write( "\nEvents Number in All Region from fitting : %s\n"%(rrv_tmp.getVal()) )
             self.file_out.write( "\nEvents Number in Signal Region from fitting: %s\n"%(rrv_tmp.getVal()*signalInt_val) )
             self.file_out.write( "\nEvents Number in High Mass Region from fitting: %s\n"%(rrv_tmp.getVal()*highMassInt_val) )
@@ -2887,14 +2889,16 @@ objName ==objName_before ):
 
        #all HP nbtag categories == HP only
        if ((options.jetalgo).find('Puppi'))!= -1:
-           if ((options.type).find('DDT')) !=-1:
-               rho = math.log(tree.PuppiAK8_jet_mass_so*tree.PuppiAK8_jet_mass_so/tree.PuppiAK8_jet_pt_so)
-               if tree.PuppiAK8_jet_tau2tau1 > 0.65-0.063*rho: keepEvent = True
-           else:
-               if self.wtagger_label.find('HP') != -1:  
-                   if tree.PuppiAK8_jet_tau2tau1 < 0.45 : keepEvent = True
-               if self.wtagger_label.find('LP') != -1:  
-                   if tree.PuppiAK8_jet_tau2tau1 > 0.45 and tree.PuppiAK8_jet_tau2tau1 < 0.75: keepEvent = True
+#           if ((options.type).find('DDT')) !=-1:
+           rho = math.log(tree.PuppiAK8_jet_mass_so*tree.PuppiAK8_jet_mass_so/tree.PuppiAK8_jet_pt_so)
+#           if tree.PuppiAK8_jet_tau2tau1 > 0.52-0.063*rho: keepEvent = True
+           if ((tree.PuppiAK8_jet_tau2tau1+0.063) < 0.65) : keepEvent = True
+           print "activate DDT w-tagger cut"
+#           else:
+#               if self.wtagger_label.find('HP') != -1:  
+#                   if tree.PuppiAK8_jet_tau2tau1 < 0.45 : keepEvent = True
+#               if self.wtagger_label.find('LP') != -1:  
+#                   if tree.PuppiAK8_jet_tau2tau1 > 0.45 and tree.PuppiAK8_jet_tau2tau1 < 0.75: keepEvent = True
 
        else:
            if self.wtagger_label.find('HP') != -1:  
@@ -3009,16 +3013,18 @@ objName ==objName_before ):
 #        elif self.channel == "mu":
 #            tmp_lumi=2197.96*1.023;
 #        else:
-        tmp_lumi=2263.;
+        tmp_lumi=814.;
+        tmp_scale_to_lumi=1.;
             
         for i in range(treeIn.GetEntries()):
             if i % 100000 == 0: print "iEntry: ",i
             treeIn.GetEntry(i);
 
-            if i==0:
+            tmp_scale_to_lumi=treeIn.wSampleWeight*tmp_lumi;
+#            print "tmp scale to lumi: ",tmp_scale_to_lumi
+         #   if i==0:
 	# eff_and_pu_Weight_2*genWeight*wSampleWeight
 #               tmp_scale_to_lumi=treeIn.wSampleWeight*tmp_lumi;
-               tmp_scale_to_lumi=treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
 
             tmp_jet_mass=getattr(treeIn, jet_mass);
 
@@ -3079,11 +3085,11 @@ objName ==objName_before ):
 	    
             if self.isGoodEvent == 1:
                 ### weigh MC events              
-                #tmp_event_weight     = treeIn.eff_and_pu_Weight_2*treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
+                #tmp_event_weight     =treeIn.eff_and_pu_Weight_2*treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
                 #tmp_event_weight4fit = treeIn.hltweight*treeIn.puweight*treeIn.btagweight;                 
-                tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
+                tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.eff_and_pu_Weight;
                 tmp_event_weight4fit = treeIn.genWeight;
-                tmp_event_weight4fit = tmp_event_weight4fit*treeIn.wSampleWeight*tmp_lumi/tmp_scale_to_lumi;
+                tmp_event_weight4fit = tmp_event_weight4fit*treeIn.eff_and_pu_Weight*treeIn.wSampleWeight*tmp_lumi/tmp_scale_to_lumi;
 #                tmp_event_weight     =  treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.eff_and_pu_Weight*treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
 #                tmp_event_weight4fit = treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.eff_and_pu_Weight*treeIn.genWeight;
 #                tmp_event_weight4fit = tmp_event_weight4fit*treeIn.wSampleWeight*tmp_lumi/tmp_scale_to_lumi;
@@ -3092,6 +3098,9 @@ objName ==objName_before ):
 #                     print "OK"; 
                     tmp_event_weight=1.;
                     tmp_event_weight4fit=1.;                    
+#                    tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi;
+#                    tmp_event_weight4fit = treeIn.genWeight;
+#                    tmp_event_weight4fit = tmp_event_weight4fit*treeIn.wSampleWeight*tmp_lumi/tmp_scale_to_lumi;
                 else:
                     if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
                         tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forT.getVal();
