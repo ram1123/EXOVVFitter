@@ -148,7 +148,7 @@ class doFit_wj_and_wlvj:
         #prepare background data and signal samples            
         self.signal_sample=in_signal_sample;
 
-        self.file_data = ("WWTree_data_golden.root");#keep blind!!!!
+        self.file_data = ("WWTree_data_golden_2p0fb.root");#keep blind!!!!
 #        self.file_data = ("WWTree_pseudodataS.root");#fake data
 #        self.file_data = ("WWTree_pseudodata.root");#fake data
         self.file_signal     = ("WWTree_%s.root"%(self.signal_sample));
@@ -3052,6 +3052,8 @@ objName ==objName_before ):
                 if (self.channel=="mu" and treeIn.l_pt<40) : self.isGoodEvent = 0;
                 if ((self.channel=="el" or self.channel=="em") and treeIn.pfMETpuppi<80) : self.isGoodEvent = 0;
                 if ((self.channel=="el" or self.channel=="em") and treeIn.l_pt<45) : self.isGoodEvent = 0;
+
+                if (treeIn.PuppiAK8_jet_mass_so > 65.) and (treeIn.PuppiAK8_jet_mass_so > 135.) : self.isGoodEvent = 0; #BLINDING
             
             else: #CHS
                 if self.IsGoodEvent(treeIn) and treeIn.issignal and treeIn.mass_lvj_type2> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type2<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
@@ -3072,6 +3074,8 @@ objName ==objName_before ):
                 if (self.channel=="mu" and treeIn.l_pt<40) : self.isGoodEvent = 0;
                 if ((self.channel=="el" or self.channel=="em") and treeIn.pfMET<80) : self.isGoodEvent = 0;
                 if ((self.channel=="el" or self.channel=="em") and treeIn.l_pt<45) : self.isGoodEvent = 0;
+
+                if (treeIn.jet_mass_pr > 65.) and (treeIn.jet_mass_pr > 135.) : self.isGoodEvent = 0; #BLINDING
 
             #VBF SELECTION
             if ((options.type).find('vbf') != -1 and treeIn.njets<2): self.isGoodEvent=0;
