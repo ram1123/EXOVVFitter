@@ -148,7 +148,7 @@ class doFit_wj_and_wlvj:
         #prepare background data and signal samples            
         self.signal_sample=in_signal_sample;
 
-        self.file_data = ("WWTree_data_golden_2p0fb.root");#keep blind!!!!
+        self.file_data = ("WWTree_data_golden.root");#keep blind!!!!
 #        self.file_data = ("WWTree_pseudodataS.root");#fake data
 #        self.file_data = ("WWTree_pseudodata.root");#fake data
         self.file_signal     = ("WWTree_%s.root"%(self.signal_sample));
@@ -555,7 +555,7 @@ objName ==objName_before ):
     def get_canvas(self,cname,isalpha=False):
 
        #tdrstyle.setTDRStyle()
-       CMS_lumi.lumi_13TeV = "2.3 fb^{-1}"
+       CMS_lumi.lumi_13TeV = "4.0 fb^{-1}"
        CMS_lumi.writeExtraText = 1
        CMS_lumi.extraText = "Preliminary"
 
@@ -3013,7 +3013,8 @@ objName ==objName_before ):
 #        elif self.channel == "mu":
 #            tmp_lumi=2197.96*1.023;
 #        else:
-        tmp_lumi=814.;
+#        tmp_lumi=814.;
+        tmp_lumi=3990.;
         tmp_scale_to_lumi=1.;
             
         for i in range(treeIn.GetEntries()):
@@ -3053,7 +3054,7 @@ objName ==objName_before ):
                 if ((self.channel=="el" or self.channel=="em") and treeIn.pfMETpuppi<80) : self.isGoodEvent = 0;
                 if ((self.channel=="el" or self.channel=="em") and treeIn.l_pt<45) : self.isGoodEvent = 0;
 
-                if (treeIn.PuppiAK8_jet_mass_so > 65.) and (treeIn.PuppiAK8_jet_mass_so > 135.) : self.isGoodEvent = 0; #BLINDING
+#                if (label=="_data_xww") and (treeIn.PuppiAK8_jet_mass_so > 65.) and (treeIn.PuppiAK8_jet_mass_so < 135.) : self.isGoodEvent = 0; #BLINDING
             
             else: #CHS
                 if self.IsGoodEvent(treeIn) and treeIn.issignal and treeIn.mass_lvj_type2> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type2<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax() :
@@ -3075,7 +3076,7 @@ objName ==objName_before ):
                 if ((self.channel=="el" or self.channel=="em") and treeIn.pfMET<80) : self.isGoodEvent = 0;
                 if ((self.channel=="el" or self.channel=="em") and treeIn.l_pt<45) : self.isGoodEvent = 0;
 
-                if (treeIn.jet_mass_pr > 65.) and (treeIn.jet_mass_pr > 135.) : self.isGoodEvent = 0; #BLINDING
+#                if (label=="_data_xww") and (treeIn.jet_mass_pr > 65.) and (treeIn.jet_mass_pr < 135.) : self.isGoodEvent = 0; #BLINDING
 
             #VBF SELECTION
             if ((options.type).find('vbf') != -1 and treeIn.njets<2): self.isGoodEvent=0;
@@ -3997,9 +3998,9 @@ if __name__ == '__main__':
         pre_limit_simple(channel,sample,lomass,himass);
     else:
         if options.category.find('HP2') != -1 or options.category.find('ALLP2') != -1:	
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,1500,"Exp","ExpN",options.interpolate) 
+           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,4000,"ExpN","ExpN",options.interpolate) 
 	else:
 #           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,1500,"ExpN","ExpN",options.interpolate) 
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,1500,"ExpN","ExpTail",options.interpolate) 
+           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,4000,"ExpN","ExpTail",options.interpolate) 
 #           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,1500,"Exp","ExpTail",options.interpolate) 
 	
