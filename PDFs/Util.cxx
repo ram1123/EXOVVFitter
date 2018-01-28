@@ -413,6 +413,8 @@ void draw_error_band_extendPdf(RooAbsData &rdata, RooExtendPdf &rpdf, RooFitResu
 	}
 	ap->SetLineWidth(2);
 	ap->SetLineColor(kcolor);
+	ap->SetMarkerSize(0);
+	am->SetMarkerSize(0);
 	am->SetLineWidth(2);
 	am->SetLineColor(kcolor);
 	errorband->SetFillColor(kBlack);
@@ -487,6 +489,8 @@ void draw_error_band_extendPdf(RooAbsData &rdata, RooAbsPdf &rpdf, RooFitResult 
 	}
 	ap->SetLineWidth(2);
 	ap->SetLineColor(kcolor);
+	ap->SetMarkerSize(0);
+	am->SetMarkerSize(0);
 	am->SetLineWidth(2);
 	am->SetLineColor(kcolor);
 	errorband->SetFillColor(kBlack);
