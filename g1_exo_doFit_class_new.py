@@ -3910,7 +3910,7 @@ def pre_limit_sb_correction_without_systematic( channel, signal_sample, in_mlvj_
                                                  in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1",interpolate=False):
 
     print "#################### pre_limit_sb_correction_without_systermatic: channel %s, signal %s, max and min signal region %f-%f, max and min mJ %f-%f, max and min mlvj %f-%f, fit model %s and alternate %s ######################"%(channel,signal_sample,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter);
-    boostedW_fitter=doFit_wj_and_wlvj(channel,signal_sample,in_mlvj_signal_region_min, in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter,interpolate);
+    boostedW_fitter=doFit_wj_and_wlvj(channel,signal_sample,options.jetalgo,in_mlvj_signal_region_min, in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter,interpolate);
     boostedW_fitter.analysis_sideband_correction_method1_without_shape_and_psmodel_systematic()
 
 
@@ -3940,5 +3940,5 @@ if __name__ == '__main__':
         if options.category.find('HP2') != -1 or options.category.find('ALLP2') != -1:	
            pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,4000,"ExpN","ExpN",options.interpolate) 
 	else:
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,0,4000,"ExpN","ExpTail",options.interpolate) 
+           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,400,4000,"ExpN","ExpTail",options.interpolate) 
 	
