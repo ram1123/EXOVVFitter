@@ -13,7 +13,7 @@ from optparse import OptionParser
 import CMS_lumi, tdrstyle
 from array import array
 
-from ROOT import gROOT, TPaveLabel, gStyle, gSystem, TGaxis, TStyle, TLatex, TString, TF1,TFile,TLine, TLegend, TH1D,TH2D,THStack,TChain, TCanvas, TMatrixDSym, TMath, TText, TPad, RooFit, RooArgSet, RooArgList, RooArgSet, RooAbsData, RooAbsPdf, RooAddPdf, RooWorkspace, RooExtendPdf,RooCBShape, RooLandau, RooFFTConvPdf, RooGaussian, RooBifurGauss, RooArgusBG,RooDataSet, RooExponential,RooBreitWigner, RooVoigtian, RooNovosibirsk, RooRealVar,RooFormulaVar, RooDataHist, RooHist,RooCategory, RooChebychev, RooSimultaneous, RooGenericPdf,RooConstVar, RooKeysPdf, RooHistPdf, RooEffProd, RooProdPdf, TIter, kTRUE, kFALSE, kGray, kRed, kDashed, kGreen,kAzure, kOrange, kBlack,kBlue,kYellow,kCyan, kMagenta, kWhite
+from ROOT import gROOT, TPaveLabel, gStyle, gSystem, TGaxis, TStyle, TLatex, TString, TF1,TFile,TLine, TLegend, TH1D,TH2D,THStack,TChain, TCanvas, TMatrixDSym, TMath, TText, TPad, RooFit, RooArgSet, RooArgList, RooArgSet, RooAbsData, RooAbsPdf, RooAddPdf, RooWorkspace, RooExtendPdf,RooCBShape, RooLandau, RooFFTConvPdf, RooGaussian, RooBifurGauss, RooArgusBG,RooDataSet, RooExponential,RooBreitWigner, RooVoigtian, RooNovosibirsk, RooRealVar,RooFormulaVar, RooDataHist, RooHist,RooCategory, RooChebychev, RooSimultaneous, RooGenericPdf,RooConstVar, RooKeysPdf, RooHistPdf, RooEffProd, RooProdPdf, TIter, kTRUE, kFALSE, kGray, kRed, kDashed, kGreen,kAzure, kOrange, kBlack,kBlue,kYellow,kCyan, kMagenta, kWhite, TStopwatch
 
 msgservice = ROOT.RooMsgService.instance()
 msgservice.setGlobalKillBelow(RooFit.FATAL)
@@ -3014,7 +3014,8 @@ objName ==objName_before ):
             # Analysis selection here
 
             if ((options.jetalgo).find('Puppi') != -1): #Puppi
-                if treeIn.mass_lvj_type0> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type0<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
+                #if treeIn.mass_lvj_type0> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type0<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
+                if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	self.isGoodEvent = 1;   
                 #if (treeIn.type != 1 or treeIn.type!= 0) : self.isGoodEvent = 0;       # Some issue with this cut... 
                 if (treeIn.PuppiAK8_jet_tau2tau1>0.55) : self.isGoodEvent = 0;
@@ -3168,7 +3169,7 @@ objName ==objName_before ):
 #        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ExpGaus");
         self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","2Gaus_ErfExp");
         self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_sb_lo","ExpN", 0, 0, 1);
-        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","ExpN", 1, 0, 1);
+        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","Exp", 1, 0, 1);
         print "________________________________________________________________________"
 
     ##### Define the steps to fit VV MC in the mj and mlvj spectra
@@ -3190,7 +3191,7 @@ objName ==objName_before ):
         if self.wtagger_label.find("LP") != -1: self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","ExpGaus");
         else:                          self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","2Gaus_ErfExp");
 	self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_sb_lo","ExpN");
-        self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","ExpN",1, 0, 1);
+        self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","Exp",1, 0, 1);
         print "________________________________________________________________________"
 
     ##### Define the steps to fit WJets MC in the mj and mlvj spectra
@@ -3257,21 +3258,6 @@ objName ==objName_before ):
         ### finale plot and check of the workspace
         self.read_workspace(1)
         
-    ##### Analysis with no shape uncertainty on alpha
-    def analysis_sideband_correction_method1_without_shape_and_psmodel_systematic(self):
-        #### fit all the MC samples 
-        self.fit_AllSamples_Mj_and_Mlvj()
-        #### take the real data
-        self.get_data()
-        #### fit WJets just with one shape parametrization
-        self.fit_WJetsNormalization_in_Mj_signal_region("_WJets0_xww");
-        #### fit sb lo with just one parametrization
-        self.fit_mlvj_in_Mj_sideband("_WJets0_xww","_sb_lo", self.MODEL_4_mlvj,1)
-        #### prepare limit 
-        self.prepare_limit("sideband_correction_method1",1,0,0)
-        #### read the workspace
-        self.read_workspace(1)
-
     ##### Prepare the workspace for the limit and to store info to be printed in the datacard
     def prepare_limit(self,mode, isTTbarFloating=0, isVVFloating=0, isSTopFloating=0):
         print "####################### prepare_limit for %s method ####################"%(mode);
@@ -3279,30 +3265,12 @@ objName ==objName_before ):
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_mass_lvj"));
 
         ### whole number of events from the considered signal sample, WJets, VV, TTbar, STop -> couting
-        #if TString(self.signal_sample).Contains("RS1G_WW"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_%s_xww_%s_mlvj"%(self.signal_sample,self.channel)).clone("rate_RSWW_xww_for_counting"))
-        #elif TString(self.signal_sample).Contains("BulkGraviton"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_%s_xww_%s_mlvj"%(self.signal_sample,self.channel)).clone("rate_BulkWW_xww_for_counting"))
-        #elif TString(self.signal_sample).Contains("Wprime_WZ"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_%s_xww_%s_mlvj"%(self.signal_sample,self.channel)).clone("rate_WprimeWZ_xww_for_counting"))
-        #else:
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_%s_xww_%s_mlvj"%(self.signal_sample,self.channel)).clone("rate_%s_xww_for_counting"%(self.signal_sample)))
-            
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_WJets0_xww_%s_mlvj"%(self.channel)).clone("rate_WJets_xww_for_counting"))
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_VV_xww_%s_mlvj"%(self.channel)).clone("rate_VV_xww_for_counting"))
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_TTbar_xww_%s_mlvj"%(self.channel)).clone("rate_TTbar_xww_for_counting"))
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_fitting_signal_region_STop_xww_%s_mlvj"%(self.channel)).clone("rate_STop_xww_for_counting"))
 
         ### number of signal, Wjets, VV, TTbar and STop --> unbin
-        #if TString(self.signal_sample).Contains("RS1G_WW"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_%s_xww_signal_region_%s_mlvj"%(self.signal_sample, self.channel)).clone("rate_RSWW_xww_for_unbin"));
-        #elif TString(self.signal_sample).Contains("BulkGraviton"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_%s_xww_signal_region_%s_mlvj"%(self.signal_sample, self.channel)).clone("rate_BulkWW_xww_for_unbin"));
-        #elif TString(self.signal_sample).Contains("Wprime_WZ"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_%s_xww_signal_region_%s_mlvj"%(self.signal_sample, self.channel)).clone("rate_WprimeWZ_xww_for_unbin"));
-        #else:
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_%s_xww_signal_region_%s_mlvj"%(self.signal_sample, self.channel)).clone("rate_%s_xww_for_unbin"%(self.signal_sample)));
-            
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_WJets0_xww_signal_region_%s_mlvj"%(self.channel)).clone("rate_WJets_xww_for_unbin"));
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_VV_xww_signal_region_%s_mlvj"%(self.channel)).clone("rate_VV_xww_for_unbin"));
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_TTbar_xww_signal_region_%s_mlvj"%(self.channel)).clone("rate_TTbar_xww_for_unbin"));
@@ -3334,14 +3302,6 @@ objName ==objName_before ):
         else:
          getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_VV_xww_signal_region_%s_mlvj"%(self.channel)).clone("VV_xww_%s_%s"%(self.channel,self.wtagger_label)))
 
-        #if TString(self.signal_sample).Contains("RS1G_WW"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_xww_signal_region_%s_mlvj"%(self.signal_sample,self.channel)).clone("RSWW_xww_%s_%s"%(self.channel, self.wtagger_label)))
-        #elif TString(self.signal_sample).Contains("BulkGraviton"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_xww_signal_region_%s_mlvj"%(self.signal_sample,self.channel)).clone("BulkWW_xww_%s_%s"%(self.channel, self.wtagger_label)))
-        #elif TString(self.signal_sample).Contains("Wprime_WZ"):
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_xww_signal_region_%s_mlvj"%(self.signal_sample,self.channel)).clone("WprimeWZ_xww_%s_%s"%(self.channel, self.wtagger_label)))
-        #else:    
-        # getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_xww_signal_region_%s_mlvj"%(self.signal_sample,self.channel)).clone(self.signal_sample+"_xww_%s_%s"%(self.channel, self.wtagger_label)))
 
         ### Fix all the Pdf parameters 
         rrv_x = self.workspace4limit_.var("rrv_mass_lvj");
@@ -3351,15 +3311,6 @@ objName ==objName_before ):
         self.fix_Pdf(self.workspace4limit_.pdf("VV_xww_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x));
         self.fix_Pdf(self.workspace4limit_.pdf("WJets_xww_%s_%s"%(self.channel,self.wtagger_label)), RooArgSet(rrv_x));
         
-        #if TString(self.signal_sample).Contains("RS1G_WW"):            
-        # self.fix_Pdf(self.workspace4limit_.pdf("RSWW_xww_%s_%s"%(self.channel, self.wtagger_label)), RooArgSet(rrv_x));
-        #elif TString(self.signal_sample).Contains("BulkGraviton"):            
-        # self.fix_Pdf(self.workspace4limit_.pdf("BulkWW_xww_%s_%s"%(self.channel, self.wtagger_label)), RooArgSet(rrv_x));
-        #elif TString(self.signal_sample).Contains("Wprime_WZ"):            
-        # self.fix_Pdf(self.workspace4limit_.pdf("WprimeWZ_xww_%s_%s"%(self.channel, self.wtagger_label)), RooArgSet(rrv_x));
-        #else:    
-        # self.fix_Pdf(self.workspace4limit_.pdf(self.signal_sample+"_xww_%s_%s"%(self.channel, self.wtagger_label)), RooArgSet(rrv_x));
-
         print " ############## Workspace for limit ";
         parameters_workspace = self.workspace4limit_.allVars();
         par = parameters_workspace.createIterator();
@@ -3594,40 +3545,10 @@ objName ==objName_before ):
         datacard_out.write( "\nprocess -1 1 2 3 4" );
 
         ### rates for the different process
-        #if mode == "unbin":
-        #    if TString(self.signal_sample).Contains("RS1G_WW"):                    
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_RSWW_xww_for_unbin").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
-        #    elif TString(self.signal_sample).Contains("BulkGraviton"):                    
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_BulkWW_xww_for_unbin").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
-        #    elif TString(self.signal_sample).Contains("Wprime_WZ"):                    
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_WprimeWZ_xww_for_unbin").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
-        #    else:
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f "%(self.workspace4limit_.var("rate_%s_xww_for_unbin"%(self.signal_sample)).getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_STop_xww_for_unbin").getVal(), self.workspace4limit_.var("rate_VV_xww_for_unbin").getVal() ) )
-        #        
-        #if mode == "counting":
-        #    if TString(self.signal_sample).Contains("RS1G_WW"):                    
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_RSWW_xww_for_counting").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
-        #    elif TString(self.signal_sample).Contains("BulkGraviton"):                    
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_BulkWW_xww_for_counting").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
-        #    elif TString(self.signal_sample).Contains("Wprime_WZ"):                    
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_WprimeWZ_xww_for_counting").getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
-        #    else : 
-        #     datacard_out.write( "\nrate %0.5f %0.3f %0.3f %0.3f %0.3f"%(self.workspace4limit_.var("rate_%s_xww_for_counting"%(self.signal_sample)).getVal()*self.xs_rescale, self.workspace4limit_.var("rate_WJets_xww_for_counting").getVal(), self.workspace4limit_.var("rate_TTbar_xww_for_counting").getVal(), self.workspace4limit_.var("rate_STop_xww_for_counting").getVal(), self.workspace4limit_.var("rate_VV_xww_for_counting").getVal() ) )
-
         datacard_out.write( "\n-------------------------------- " )
 
         ### luminosity nouisance
         datacard_out.write( "\nlumi_13TeV lnN %0.3f - %0.3f %0.3f %0.3f"%(1.+self.lumi_uncertainty, 1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty) )
-
-        ### signal PDF XS uncertainties
-        #if TString(self.signal_sample).Contains("RS1G_WW"):                    
-        #    datacard_out.write( "\nCMS_xww_XS_RS1G_WW_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
-        #elif TString(self.signal_sample).Contains("BulkGraviton"):                    
-        #    datacard_out.write( "\nCMS_xww_XS_BulkGraviton_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
-        #elif TString(self.signal_sample).Contains("Wprime_WZ"):                    
-        #    datacard_out.write( "\nCMS_xww_XS_Wprime_WZ_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
-        #else : 
-        #    datacard_out.write( "\nCMS_xww_XS_sig_13TeV lnN %0.3f - - - -"%(1+self.signal_xsec_NNLO_uncertainty));
 
         ### STop XS  nouisance in boosted regime
         datacard_out.write( "\nCMS_xww_XS_STop_13TeV lnN - - - %0.3f -"%(1+self.XS_STop_NLO_uncertainty) )
@@ -3647,8 +3568,6 @@ objName ==objName_before ):
         ### V-Tagger SF nouisance
         datacard_out.write( "\nCMS_eff_vtag_tau21_sf_13TeV lnN %0.3f/%0.3f - - - %0.3f/%0.3f"%(1+self.rrv_wtagger_eff_reweight_forV.getError(),1-self.rrv_wtagger_eff_reweight_forV.getError(), 1+self.rrv_wtagger_eff_reweight_forV.getError(),1-self.rrv_wtagger_eff_reweight_forV.getError()));
             
-        ### btag scale factor on the MC background
-#        datacard_out.write( "\nCMS_xww_btagger lnN - - %0.3f %0.3f %0.3f"%(self.channel, 1+self.btag_scale_uncertainty, 1+self.btag_scale_uncertainty, 1+self.btag_scale_uncertainty ) );
 
         ### btag scale factor on the MC background
         datacard_out.write( "\n#CMS_eff_vtag_model_13TeV lnN %0.3f - - - %0.3f"%(1+self.eff_vtag_model,1+self.eff_vtag_model) );
@@ -3754,35 +3673,17 @@ objName ==objName_before ):
 
         rrv_x = workspace.var("rrv_mass_lvj")
         data_obs = workspace.data("data_obs_xww_%s_%s"%(self.channel,self.wtagger_label));
-        #if TString(self.signal_sample).Contains("RS1G_WW"):
-        # model_pdf_signal = workspace.pdf("RSWW_xww_%s_%s"%(self.channel,self.wtagger_label));
-        #elif TString(self.signal_sample).Contains("BulkGraviton"):
-        # model_pdf_signal = workspace.pdf("BulkWW_xww_%s_%s"%(self.channel,self.wtagger_label));
-        #elif TString(self.signal_sample).Contains("Wprime_WZ"):
-        # model_pdf_signal = workspace.pdf("WprimeWZ_xww_%s_%s"%(self.channel,self.wtagger_label));
-        #else:
-        # model_pdf_signal = workspace.pdf("%s_xww_%s_%s"%(self.signal_sample,self.channel,self.wtagger_label));
             
         model_pdf_WJets  = workspace.pdf("WJets_xww_%s_%s"%(self.channel,self.wtagger_label));
         model_pdf_VV     = workspace.pdf("VV_xww_%s_%s"%(self.channel,self.wtagger_label));
         model_pdf_TTbar  = workspace.pdf("TTbar_xww_%s_%s"%(self.channel,self.wtagger_label));
         model_pdf_STop   = workspace.pdf("STop_xww_%s_%s"%(self.channel,self.wtagger_label));
 
-        #model_pdf_signal.Print();
         model_pdf_WJets.Print();
         model_pdf_VV.Print();
         model_pdf_TTbar.Print();
         model_pdf_STop.Print();
 
-        #if TString(self.signal_sample).Contains("RS1G_WW"):
-        # rrv_number_signal = workspace.var("rate_RSWW_xww_for_unbin");
-        #elif TString(self.signal_sample).Contains("BulkGraviton"):
-        # rrv_number_signal = workspace.var("rate_BulkWW_xww_for_unbin");
-        #elif TString(self.signal_sample).Contains("Wprime_WZ"):
-        # rrv_number_signal = workspace.var("rate_WprimeWZ_xww_for_unbin");
-        #else:
-        # rrv_number_signal = workspace.var("rate_%s_xww_for_unbin"%(self.signal_sample));
-            
          
         rrv_number_WJets  = workspace.var("rate_WJets_xww_for_unbin");
         rrv_number_VV     = workspace.var("rate_VV_xww_for_unbin");
@@ -3841,19 +3742,6 @@ objName ==objName_before ):
 
         model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("STop_line_invisible"), RooFit.Components("STop_xww_%s_%s"%(self.channel,self.wtagger_label)), RooFit.LineColor(kBlack), RooFit.LineWidth(2), RooFit.VLines());
 
-        ### signal scale to be visible in the plots
-        #label_tstring = TString(self.signal_sample);
-        #if options.sample.find('Wprime') != -1 and label_tstring.Contains("2000"):
-        #    signal_scale=0.058998*0.472301;
-        #elif options.sample.find('BulkG') != -1 and label_tstring.Contains("2000"):
-        #    signal_scale=0.000239518814875*100;
-        #elif options.sample.find('BulkG') != -1 and label_tstring.Contains("750"):
-        #    signal_scale=self.xs_rescale*20.;
-        #else:
-        #    signal_scale=self.xs_rescale;
-
-        #model_pdf_signal.plotOn(mplot,RooFit.Normalization(scale_number_signal*signal_scale),RooFit.Name("%s #times %s"%(self.signal_sample, signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["Signal"]), RooFit.LineStyle(2), RooFit.VLines());
-
         #### plot the observed data using poissonian error bar
         self.getData_PoissonInterval(data_obs,mplot);
         
@@ -3905,39 +3793,21 @@ def pre_limit_sb_correction(method, channel, signal_sample="BulkG_c0p2_M1000", j
     boostedW_fitter=doFit_wj_and_wlvj(channel, signal_sample, jetalgo,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter,interpolate);
     getattr(boostedW_fitter,"analysis_sideband_correction_%s"%(method) )();
                                                 
-### funtion to run the analysis without systematics
-def pre_limit_sb_correction_without_systematic( channel, signal_sample, in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700,
-                                                 in_mj_min=30, in_mj_max=140, in_mlvj_min=400, in_mlvj_max=1400, fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1",interpolate=False):
-
-    print "#################### pre_limit_sb_correction_without_systermatic: channel %s, signal %s, max and min signal region %f-%f, max and min mJ %f-%f, max and min mlvj %f-%f, fit model %s and alternate %s ######################"%(channel,signal_sample,in_mlvj_signal_region_min,in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter);
-    boostedW_fitter=doFit_wj_and_wlvj(channel,signal_sample,options.jetalgo,in_mlvj_signal_region_min, in_mlvj_signal_region_max,in_mj_min,in_mj_max,in_mlvj_min,in_mlvj_max,fit_model,fit_model_alter,interpolate);
-    boostedW_fitter.analysis_sideband_correction_method1_without_shape_and_psmodel_systematic()
-
-
-def pre_limit_simple(channel,sample,lomass,himass):
-    print "######################### pre_limit_simple for %s sampel"%(channel)
-    pre_limit_sb_correction_without_systematic(channel,sample,lomass,himass,40,130,700,5000,"ExpN","ExpTail")
 
 #### Main Code
 if __name__ == '__main__':
 
+    clock = TStopwatch()
+    clock.Start()
+
     channel=options.channel;
-    #sample=options.sample; #BulkGraviton_lvjj_c0p2_M1000   
     mass=options.mass;
-    #sample = "RS1G_WW_lvjj_M%i"%(mass)
-    #sample = options.sample+"_M"+str(int(mass))
     sample = options.sample+str(int(mass))
     
-    lomass = mass - mass*15./100.;
-    himass = mass + mass*15./100.; 
-#    lomass = mass +30 - 50.;
-#    himass = mass +30 + 50.; 
+    lomass = 600;
+    himass = 2500; 
             
-    if options.simple:
-        print '################# simple mode for %s sample'%(channel)
-        pre_limit_simple(channel,sample,lomass,himass);
-    else:
-        if options.category.find('HP2') != -1 or options.category.find('ALLP2') != -1:	
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,4000,"ExpN","ExpN",options.interpolate) 
-	else:
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,170,3000,"ExpN","ExpN",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,170,3000,"ExpN","ExpN",options.interpolate) 
+    print 'Tree loop profiling stats:'
+    print 'Real Time used:', clock.RealTime(),"seconds"
+    print 'CPU Time used:', clock.CpuTime()
