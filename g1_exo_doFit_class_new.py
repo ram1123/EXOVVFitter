@@ -631,7 +631,7 @@ objName ==objName_before ):
 	cMassFit.cd()
 	cMassFit.Update()
 	        
-        Directory=TString(in_directory+self.signal_sample); #+"_%02d_%02d/"%(options.cprime,options.BRnew));
+        Directory=TString(in_directory); #+"_%02d_%02d/"%(options.cprime,options.BRnew));
         if not Directory.EndsWith("/"):Directory=Directory.Append("/");
         if not os.path.isdir(Directory.Data()):
               os.system("mkdir -p "+Directory.Data());
@@ -813,7 +813,7 @@ objName ==objName_before ):
 	cMassFit.Update()
 			
         ## create the directory where store the plots
-        Directory = TString(in_directory+self.signal_sample);
+        Directory = TString(in_directory);
         if not Directory.EndsWith("/"):Directory = Directory.Append("/");
         if not os.path.isdir(Directory.Data()):
               os.system("mkdir -p "+Directory.Data());
@@ -969,7 +969,7 @@ objName ==objName_before ):
 	cMassFit.Update()
 			
         ## create the directory where store the plots
-        Directory = TString(in_directory+self.signal_sample);
+        Directory = TString(in_directory);
         if not Directory.EndsWith("/"):Directory = Directory.Append("/");
         if not os.path.isdir(Directory.Data()):
               os.system("mkdir -p "+Directory.Data());
@@ -2596,13 +2596,13 @@ objName ==objName_before ):
 #	    mplot.addObject(middleLine);
             mplot.addObject(upperLine);
 
-#	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.5728643,0.1008991,"NDC")
+	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.5728643,0.1008991,"NDC")
 #	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.52,0.1008991,"NDC")
-	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.50,0.1008991,"NDC")
+#	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.50,0.1008991,"NDC")
 	    pt.SetTextFont(42)
 	    pt.SetTextSize(0.04995005)
 	    #pt.SetTextAlign(12)
-	    pt.SetFillColor(0)
+	    pt.SetFillColor(self.color_palet["WJets"])
 	    pt.SetBorderSize(0)
 	    text = pt.AddText("#leftarrow signal region #rightarrow")
 	    text.SetTextFont(62)
@@ -3167,8 +3167,8 @@ objName ==objName_before ):
         self.get_mj_and_mlvj_dataset(self.file_STop_mc,"_STop_xww", self.jetalgo)
 #        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ExpGaus");
         self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","2Gaus_ErfExp");
-        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_sb_lo","Exp", 0, 0, 1);
-        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","Exp", 1, 0, 1);
+        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_sb_lo","ExpN", 0, 0, 1);
+        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","ExpN", 1, 0, 1);
         print "________________________________________________________________________"
 
     ##### Define the steps to fit VV MC in the mj and mlvj spectra
@@ -3178,7 +3178,7 @@ objName ==objName_before ):
         self.get_mj_and_mlvj_dataset(self.file_VV_mc,"_VV_xww", self.jetalgo)
         ### fitting shape as a function of the mlvj region -> signal mass
         self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","2Gaus_ErfExp");
-        self.fit_mlvj_model_single_MC(self.file_VV_mc,"_VV_xww","_sb_lo","Exp", 0, 0, 1);
+        self.fit_mlvj_model_single_MC(self.file_VV_mc,"_VV_xww","_sb_lo","ExpN", 0, 0, 1);
         self.fit_mlvj_model_single_MC(self.file_VV_mc,"_VV_xww","_signal_region",self.MODEL_4_mlvj, 1, 0, 1); 
         print "________________________________________________________________________"
 
@@ -3189,8 +3189,8 @@ objName ==objName_before ):
         self.get_mj_and_mlvj_dataset(self.file_TTbar_mc,"_TTbar_xww", self.jetalgo)# to get the shape of m_lvj
         if self.wtagger_label.find("LP") != -1: self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","ExpGaus");
         else:                          self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","2Gaus_ErfExp");
-	self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_sb_lo","Exp");
-        self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","Exp",1, 0, 1);
+	self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_sb_lo","ExpN");
+        self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","ExpN",1, 0, 1);
         print "________________________________________________________________________"
 
     ##### Define the steps to fit WJets MC in the mj and mlvj spectra
@@ -3940,5 +3940,4 @@ if __name__ == '__main__':
         if options.category.find('HP2') != -1 or options.category.find('ALLP2') != -1:	
            pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,600,4000,"ExpN","ExpN",options.interpolate) 
 	else:
-           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,400,4000,"ExpN","ExpTail",options.interpolate) 
-	
+           pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,170,3000,"ExpN","ExpN",options.interpolate) 
