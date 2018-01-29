@@ -203,10 +203,6 @@ class doFit_wj_and_wlvj:
         print "wtagger efficiency correction for Top sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forT.getVal(), self.rrv_wtagger_eff_reweight_forT.getError());
         print "wtagger efficiency correction for V sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forV.getVal(), self.rrv_wtagger_eff_reweight_forV.getError());
         
-#        self.mean_shift = -0.8
-#        self.sigma_scale=1.086
-#        self.mean_shift = -1.629 #NEW
-#        self.sigma_scale=0.890 #NEW
         self.mean_shift = -1.080
         self.sigma_scale=1.066
         
@@ -3169,7 +3165,7 @@ objName ==objName_before ):
 #        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ExpGaus");
         self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","2Gaus_ErfExp");
         self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_sb_lo","ExpN", 0, 0, 1);
-        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","Exp", 1, 0, 1);
+        self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","ExpN", 1, 0, 1);
         print "________________________________________________________________________"
 
     ##### Define the steps to fit VV MC in the mj and mlvj spectra
@@ -3191,7 +3187,7 @@ objName ==objName_before ):
         if self.wtagger_label.find("LP") != -1: self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","ExpGaus");
         else:                          self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","2Gaus_ErfExp");
 	self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_sb_lo","ExpN");
-        self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","Exp",1, 0, 1);
+        self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","ExpN",1, 0, 1);
         print "________________________________________________________________________"
 
     ##### Define the steps to fit WJets MC in the mj and mlvj spectra
@@ -3684,13 +3680,11 @@ objName ==objName_before ):
         model_pdf_TTbar.Print();
         model_pdf_STop.Print();
 
-         
         rrv_number_WJets  = workspace.var("rate_WJets_xww_for_unbin");
         rrv_number_VV     = workspace.var("rate_VV_xww_for_unbin");
         rrv_number_TTbar  = workspace.var("rate_TTbar_xww_for_unbin");
         rrv_number_STop   = workspace.var("rate_STop_xww_for_unbin");
 
-        #rrv_number_signal.Print();
         rrv_number_WJets.Print();
         rrv_number_VV.Print();
         rrv_number_TTbar.Print();
@@ -3714,12 +3708,11 @@ objName ==objName_before ):
         model_Total_background_MC = RooAddPdf("model_Total_background_MC_xww","model_Total_background_MC_xww",RooArgList(model_pdf_WJets,model_pdf_VV,model_pdf_TTbar,model_pdf_STop),RooArgList(rrv_number_WJets,rrv_number_VV,rrv_number_TTbar,rrv_number_STop));
 
         if data_obs.sumEntries() != 0:
-         #scale_number_signal = rrv_number_signal.getVal()/data_obs.sumEntries()
          #### scale factor in order to scale MC to data in the final plot -> in order to avoid the normalization to data which is done by default in rooFit
          scale_number_Total_background_MC = rrv_number_Total_background_MC.getVal()/data_obs.sumEntries()
         else:
 	 scale_number_Total_background_MC = rrv_number_Total_background_MC.getVal()   
-	 #scale_number_signal = rrv_number_signal.getVal()             
+
         #### create the frame
         mplot = rrv_x.frame(RooFit.Title("check_workspace"), RooFit.Bins(int(rrv_x.getBins()/self.narrow_factor)));
         mplotP = rrv_x.frame(RooFit.Title("check_workspaceP"), RooFit.Bins(int(rrv_x.getBins()/self.narrow_factor)));
@@ -3728,7 +3721,8 @@ objName ==objName_before ):
         model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("WJets"), RooFit.Components("WJets_xww_%s_%s,VV_xww_%s_%s,TTbar_xww_%s_%s,STop_xww_%s_%s"%(self.channel,self.wtagger_label,self.channel,self.wtagger_label,self.channel,self.wtagger_label,self.channel,self.wtagger_label)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["WJets"]), RooFit.LineColor(kBlack), RooFit.VLines());
         
         model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("VV"), RooFit.Components("VV_xww_%s_%s,TTbar_xww_%s_%s,STop_xww_%s_%s"%(self.channel,self.wtagger_label,self.channel,self.wtagger_label,self.channel,self.wtagger_label)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["VV"]), RooFit.LineColor(kBlack), RooFit.VLines());
-
+	#model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("TTbar"), RooFit.Components("VV_xww_%s_%s,TTbar_xww_%s_%s,STop_xww_%s_%s"%(self.channel,self.wtagger_label,self.channel,self.wtagger_label,self.channel,self.wtagger_label)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["TTbar"]), RooFit.LineColor(kBlack), RooFit.VLines());
+        #model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("VV"), RooFit.Components("VV_xww_%s_%s,STop_xww_%s_%s"%(self.channel,self.wtagger_label,self.channel,self.wtagger_label)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["VV"]), RooFit.LineColor(kBlack), RooFit.VLines());
         model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("TTbar"), RooFit.Components("TTbar_xww_%s_%s,STop_xww_%s_%s"%(self.channel,self.wtagger_label,self.channel,self.wtagger_label)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["TTbar"]), RooFit.LineColor(kBlack), RooFit.VLines());
 
         model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("STop"), RooFit.Components("STop_xww_%s_%s"%(self.channel,self.wtagger_label)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(kBlack), RooFit.VLines());
@@ -3804,10 +3798,11 @@ if __name__ == '__main__':
     mass=options.mass;
     sample = options.sample+str(int(mass))
     
-    lomass = 600;
-    himass = 2500; 
+    lomass = 170;
+    himass = 4000; 
             
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150,170,3000,"ExpN","ExpN",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150, 170,4000,"ExpN","ExpN",options.interpolate) 
+    clock.Stop()
     print 'Tree loop profiling stats:'
-    print 'Real Time used:', clock.RealTime(),"seconds"
-    print 'CPU Time used:', clock.CpuTime()
+    print 'Real Time used:', clock.RealTime()/60,"minutes"
+    print 'CPU Time used:', clock.CpuTime()/60,"minutes"
