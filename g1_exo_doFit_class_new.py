@@ -203,8 +203,8 @@ class doFit_wj_and_wlvj:
         print "wtagger efficiency correction for Top sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forT.getVal(), self.rrv_wtagger_eff_reweight_forT.getError());
         print "wtagger efficiency correction for V sample: %s +/- %s"%(self.rrv_wtagger_eff_reweight_forV.getVal(), self.rrv_wtagger_eff_reweight_forV.getError());
         
-        self.mean_shift = -1.080
-        self.sigma_scale=1.066
+        self.mean_shift = 0.000
+        self.sigma_scale=1.000
         
 	self.plotsDir = 'plots_%s_%s' %(self.channel,self.wtagger_label)
         #result files: The event number, parameters and error write into a txt file. The dataset and pdfs write into a root file
@@ -1607,6 +1607,23 @@ objName ==objName_before ):
             model_pdf = ROOT.RooDoubleCrystalBall("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum, rrv_x,rrv_total_mean_CB,rrv_total_sigma_CB,rrv_alpha1_CB,rrv_n1_CB,rrv_alpha2_CB,rrv_n2_CB);
 
         ## ExpN pdf for W+jets bkg fit
+        if in_model_name == "Landau":
+
+            print "########### Landau  funtion for W+jets mlvj ############"
+            rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,500,100,2500);
+            rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,150,100,500);
+            #model_pdf = ROOT.RooLandau("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Landau, rrv_n_Landau);
+            model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel+mass_spectrum,"model_pdf_1"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Landau, rrv_n_Landau);
+
+            rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.32e-3,-1e-1,-1e-6);
+            rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -64.3, -1e4, 1e5);
+            model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel+mass_spectrum,"model_pdf_2"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ExpN, rrv_n_ExpN);
+
+	    frac = RooRealVar("frac","frac",0.8,0.,1.);
+
+            model_pdf = ROOT.RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(frac),1);
+                                                                                                             
+        ## ExpN pdf for W+jets bkg fit
         if in_model_name == "ExpN":
 
             print "########### ExpN funtion for W+jets mlvj ############"
@@ -1630,6 +1647,52 @@ objName ==objName_before ):
 
             model_pdf = ROOT.RooExpNPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ExpN, rrv_n_ExpN);
                                                                                                              
+        ## levelled exp for W+jets bkg fit
+        if in_model_name == "LandauExpTail":
+            print "########### ExpTai = levelled exp funtion for W+jets mlvj ############"
+            label_tstring=TString(label);
+            if self.wtagger_label.find("LP") != -1:
+             rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 250,-1.e6,1e6);
+             rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 1e-1,-1.e-2,1e6);
+            else:
+                if self.channel == "el" :
+                 if ismc == 1 and label_tstring.Contains("sb_lo"):
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 139,0.,355);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 2e-2,-1.e-2,5.5e-2);                     
+                 elif ismc == 1 and label_tstring.Contains("signal_region"):
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 162,18,395);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 1.6e-2,-1.e-2,5.5e-2);
+                 elif ismc == 0 :  
+                     rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 161,70,240);
+                     rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 8e-3,-1e-2,1.3e-1);
+                           
+                if self.channel == "mu" or self.channel == "em":
+                 if ismc == 1 and label_tstring.Contains("sb_lo"):
+                   #rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 99,10,255);
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 250,-1.e6,1e6);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-2,-1e-2,7.5e-2);                   
+                   #rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-2,-2e-2,7.5e-2);                   
+                 elif ismc == 1 and label_tstring.Contains("signal_region"):
+                  # rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 110,20,242);
+                   rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 110,20,500);
+                   #rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 2.9e-2,-1e-2,7.5e-2);
+                   rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 2.9e-2,-1,7.5e-2);
+                 elif ismc == 0 :  
+                     rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 161,40,280);
+                     rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 8e-3,-1e-2,1.3e-1);    
+      
+      	    print "HERE I AM"
+	    rrv_s_ExpTail.Print()     
+	    rrv_a_ExpTail.Print()     
+            model_pdf_1     = ROOT.RooExpTailPdf("model_pdf_1"+label+"_"+self.channel+mass_spectrum,"model_pdf_1"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_s_ExpTail, rrv_a_ExpTail);
+
+            rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,500,100,2500);
+            rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,150,100,500);
+            model_pdf_2 = ROOT.RooLandau("model_pdf_2"+label+"_"+self.channel+mass_spectrum,"model_pdf_2"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Landau, rrv_n_Landau);
+
+	    frac = RooRealVar("frac","frac",0.8,0.,1.);
+            model_pdf = ROOT.RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(frac),1);
+
         ## levelled exp for W+jets bkg fit
         if in_model_name == "ExpTail":
             print "########### ExpTai = levelled exp funtion for W+jets mlvj ############"
@@ -1821,21 +1884,8 @@ objName ==objName_before ):
       print " "
 
       ## call the make RooAbsPdf method
-      if (interpolate==1):
-          fileIn_name = TString("interpolationFiles/"+options.sample+"_"+self.channel+"_"+options.category+".root")#str(int(options.mass)));
-          print "open file for interpolation of datacard rate: ",fileIn_name
-
-          fileIn = TFile(fileIn_name.Data());
-          g_Ndatacard = fileIn.Get("Ndatacard");
-          print "extrapolated value: ",g_Ndatacard.Eval(int(options.mass))
-
-          rrv_number = RooRealVar("rrv_number"+label+"_"+self.channel+mass_spectrum,"rrv_number"+label+"_"+self.channel+mass_spectrum,g_Ndatacard.Eval(int(options.mass)));
-          print "extrapolated rate from datacards:"
-          rrv_number.Print()
-          model_pdf = self.make_Pdf_from_interpolation(label,in_model_name,mass_spectrum,ConstraintsList,ismc_wjet)
-      else:
-          rrv_number = RooRealVar("rrv_number"+label+"_"+self.channel+mass_spectrum,"rrv_number"+label+"_"+self.channel+mass_spectrum,area_init_value,0.,1e7);
-          model_pdf = self.make_Pdf(label,in_model_name,mass_spectrum,ConstraintsList,ismc_wjet)
+      rrv_number = RooRealVar("rrv_number"+label+"_"+self.channel+mass_spectrum,"rrv_number"+label+"_"+self.channel+mass_spectrum,area_init_value,0.,1e7);
+      model_pdf = self.make_Pdf(label,in_model_name,mass_spectrum,ConstraintsList,ismc_wjet)
       print "######## Model Pdf ########"        
       model_pdf.Print();
       rrv_number.Print();
@@ -2062,11 +2112,6 @@ objName ==objName_before ):
     def get_WJets_mlvj_correction_sb_lo_to_signal_region(self,label, mlvj_model):
 
         print" ############# get the extrapolation function alpha from MC : ",label,"   ",mlvj_model," ###############";          
-        #tdrstyle.setTDRStyle()
-        #tmp_Style.SetPadRightMargin(0.08);
-        #tmp_Style.SetPadTickY(0);
-        #tmp_Style.cd();
-
         ### take input var and datasets from 4fit collection --> mc not scaled to lumi --> just a shape here 
         rrv_x = self.workspace4fit_.var("rrv_mass_lvj");
         rdataset_WJets_sb_lo_mlvj = self.workspace4fit_.data("rdataset4fit%s_sb_lo_%s_mlvj"%(label,self.channel))
@@ -2074,7 +2119,7 @@ objName ==objName_before ):
 
         ### create a frame for the next plots 
         mplot = rrv_x.frame(RooFit.Title("correlation_pdf"), RooFit.Bins(int(rrv_x.getBins()/self.narrow_factor))) ;
-        mplot.GetYaxis().SetTitle("arbitrary units");
+        mplot.GetYaxis().SetTitle("F_{W+jets}^{SR,MC},F_{W+jets}^{SB,MC} (arbitrary units)");
 
         if mlvj_model=="Exp":
             rrv_c_sb    = self.workspace4fit_.var("rrv_c_Exp%s_sb_lo_%s"%(label,self.channel));
@@ -2090,6 +2135,40 @@ objName ==objName_before ):
             rrv_c_sb    = self.workspace4fit_.var("rrv_c_Pow%s_sb_lo_%s"%(label,self.channel));
             rrv_delta_c = RooRealVar("rrv_delta_c_Pow%s_%s"%(label,self.channel),"rrv_delta_c_Pow%s_%s"%(label,self.channel),0., -100*rrv_c_sb.getError(),100*rrv_c_sb.getError());
             correct_factor_pdf = RooPowPdf("correct_factor_pdf","correct_factor_pdf",rrv_x,rrv_delta_c);
+
+        if mlvj_model == "Landau":
+            
+	    rrv_c_Landau_sb = self.workspace4fit_.var("rrv_c_Landau%s_sb_lo_%s"%(label,self.channel));
+	    rrv_n_Landau_sb = self.workspace4fit_.var("rrv_n_Landau%s_sb_lo_%s"%(label,self.channel));
+
+	    rrv_delta_c_Landau = RooRealVar("rrv_delta_c_Landau%s_%s"%(label,self.channel), "rrv_delta_c_Landau%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal(),
+					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()-8*rrv_c_Landau_sb.getError(),
+					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()+8*rrv_c_Landau_sb.getError())
+	    rrv_delta_n_Landau = RooRealVar("rrv_delta_n_Landau%s_%s"%(label,self.channel), "rrv_delta_n_Landau%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal(),
+	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()-8*rrv_n_Landau_sb.getError(),
+	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()+8*rrv_n_Landau_sb.getError())
+            model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel,"model_pdf_1"+label+"_"+self.channel,rrv_x,rrv_delta_c_Landau, rrv_delta_n_Landau);
+
+            #rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.32e-3,-1e-1,-1e-6);
+	    rrv_c_ExpN_sb = self.workspace4fit_.var("rrv_c_ExpN%s_sb_lo_%s"%(label,self.channel));
+	    rrv_n_ExpN_sb = self.workspace4fit_.var("rrv_n_ExpN%s_sb_lo_%s"%(label,self.channel));
+            #rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -64.3, -1e4, 1e5);
+	    rrv_delta_c_ExpN = RooRealVar("rrv_delta_c_ExpN%s_%s"%(label,self.channel),"rrv_delta_c_ExpN%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal(),
+	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal()-8*rrv_c_ExpN_sb.getError(),
+	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal()+8*rrv_c_ExpN_sb.getError())
+	    rrv_delta_n_ExpN = RooRealVar("rrv_delta_n_ExpN%s_%s"%(label,self.channel),"rrv_delta_n_ExpN%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal(),
+	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()-8*rrv_n_ExpN_sb.getError(),
+	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()+8*rrv_n_ExpN_sb.getError())
+
+            model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel,"model_pdf_2"+label+"_"+self.channel,rrv_x,rrv_delta_c_ExpN, rrv_delta_n_ExpN);
+
+	    frac = RooRealVar("frac","frac",0.8,0.,1.);
+
+            correct_factor_pdf = ROOT.RooAddPdf("correct_factor_pdf","correct_factor_pdf",ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(frac),1);
 
         if mlvj_model=="ExpN":
             rrv_c_sb  = self.workspace4fit_.var("rrv_c_ExpN%s_sb_lo_%s"%(label,self.channel));
@@ -2228,8 +2307,11 @@ objName ==objName_before ):
         simPdf.addPdf(model_pdf_signal_region_WJets,"signal_region");
         rfresult=simPdf.fitTo(combData4fit,RooFit.Save(kTRUE), RooFit.SumW2Error(kTRUE));
         rfresult=simPdf.fitTo(combData4fit,RooFit.Save(kTRUE), RooFit.SumW2Error(kTRUE), RooFit.Minimizer("Minuit2"));
+	print "####### print rfresult=simPdf "
         rfresult.Print();
+	print "####### print rfresult=simPdf covariance matrix"
         rfresult.covarianceMatrix().Print();
+	print "--------------------\n"
 
         ### Decorrelate the parameters in the alpha shape
         wsfit_tmp = RooWorkspace("wsfit_tmp%s_sim_mlvj"%(label));
@@ -2724,12 +2806,10 @@ objName ==objName_before ):
         
         self.draw_canvas_with_pull( rrv_mass_lvj, datahist,mplot, mplot_pull,ndof,parameters_list,"%s/m_lvj_fitting/"%(self.plotsDir), in_file_name,"m_lvj"+in_range+mlvj_model, show_constant_parameter, logy);
 
-        '''
         for i in range(datahist.numEntries()):
 	 datahist.get(i)
 	 datahist.weightError(RooAbsData.SumW2)
          print "Bin %i x=%f w = %f we = %f"%(i,datahist.get(i).getRealValue("rrv_mass_lvj"),datahist.weight(),datahist.weightError(RooAbsData.SumW2))
-        '''
          
         ## if the shape parameters has to be decorrelated
         if deco :
@@ -3232,6 +3312,7 @@ objName ==objName_before ):
         #    self.fit_Signal()
 	#sys.exit()
         self.fit_WJets()
+	#sys.exit()
         self.fit_TTbar()
         self.fit_STop()
         self.fit_VV()
@@ -3799,9 +3880,10 @@ if __name__ == '__main__':
     sample = options.sample+str(int(mass))
     
     lomass = 170;
-    himass = 4000; 
+    himass = 3500; 
             
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150, 170,4000,"ExpN","ExpN",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150, 170,3500,"LandauExpTail","LandauExpTail",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo,lomass,himass,40,150, 170,3500,"Landau","Landau",options.interpolate) 
     clock.Stop()
     print 'Tree loop profiling stats:'
     print 'Real Time used:', clock.RealTime()/60,"minutes"

@@ -55,6 +55,9 @@ make_tarfile(CMSSWRel+".tgz", cmsswDirPath[1])
 
 # send the created tarball to eos
 os.system('xrdcp -f ' + CMSSWRel+".tgz" + ' root://cmseos.fnal.gov/'+outputFolder+"/" + CMSSWRel+".tgz")
+os.system('git diff > mypatch.patch')
+os.system('xrdcp -f mypatch.patch root://cmseos.fnal.gov/'+outputFolder+'/mypatch.patch')
+
 
 
 outJDL = open("runstep2condor.jdl","w");
