@@ -137,6 +137,37 @@ private:
   ClassDef(RooErfExpPdf,1) // Your description goes here...
 };
 
+/////// Dan's function defined
+
+Double_t ExpDan(Double_t x, Double_t a, Double_t b);
+
+class RooExpDan : public RooAbsPdf {
+ public:
+	 RooExpDan();
+	 RooExpDan(const char *name, const char *title,
+				    RooAbsReal& _x,
+				    RooAbsReal& _c,
+				    RooAbsReal& _offset
+				    );
+
+	RooExpDan(const RooExpDan& other, const char* name=0) ;
+
+	virtual TObject* clone(const char* newname) const { return new RooExpDan(*this,newname); }
+
+	inline virtual ~RooExpDan() { }
+
+ protected:
+
+	   RooRealProxy x ;
+	   RooRealProxy c;
+	   RooRealProxy offset;
+
+	   Double_t evaluate() const ;
+
+ private:
+
+	  ClassDef(RooExpDan,1)
+};
 
 /////// Alpha defined as ration of two Erf*Exp
 

@@ -54,6 +54,11 @@ using namespace std;
 
 void HWWLVJRooPdfs(){}
 
+//// Dan's Function
+Double_t ExpDan(Double_t x, Double_t a, Double_t b){
+    return TMath::Exp(-a*(x+b*x*x));
+}
+
 //// Erf*Exp function implementation 
 Double_t ErfExp(Double_t x, Double_t c, Double_t offset, Double_t width){
     if(width<1e-2)width=1e-2;
@@ -178,6 +183,30 @@ Double_t  AtanPow3(Double_t x,Double_t c0,Double_t c1, Double_t c2, Double_t off
  }
 
 
+/// RooExpDan pdf as ratio of two Erf*Exp
+
+ClassImp(RooExpDan)
+
+RooExpDan::RooExpDan(){}
+
+RooExpDan::RooExpDan(const char *name, const char *title,
+		   RooAbsReal& _x,
+		   RooAbsReal& _c,
+		   RooAbsReal& _offset) :
+  RooAbsPdf(name,title),
+  x("x","x",this,_x),
+  c("c","c",this,_c),
+  offset("offset","offset",this,_offset){}
+
+RooExpDan::RooExpDan(const RooExpDan& other, const char* name) :
+  RooAbsPdf(other,name),
+  x("x",this,other.x),
+  c("c",this,other.c),
+  offset("offset",this,other.offset){}
+
+double RooExpDan::evaluate() const{
+    return ExpDan(x,c,offset);
+}
 
 //// Erf*Exp pdf 
 ClassImp(RooErfExpPdf) 
