@@ -1439,12 +1439,14 @@ objName ==objName_before ):
             print "########### Landau  funtion for W+jets mlvj ############"
             label_tstring=TString(label);
             if label_tstring.Contains("signal_region"):
-            	rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,500,100,1000);
-            	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,50,1,200);
-            	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.5655e-03,-9.5655e-01,-5.5655e-04);
-            	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -64.3, -1e4, 1e5);
+	    	print "==> initialize Signal region pars"
+            	rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,483,200,800);
+            	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,84,40,120);
+            	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-4.8438e-03,-9.5655e-01,-5.5655e-04);
+            	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -985.40, -1285.4, -685.4);
             	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.,1.0);
             elif label_tstring.Contains("sb_lo"):
+	    	print "==> initialize side-band region pars"
             	rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,500,100,1000);
             	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,150,100,500);
             	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.32e-3,-1e-1,-1e-6);
@@ -1760,6 +1762,10 @@ objName ==objName_before ):
 	print "normalization of W+jet : "
         number_WJets_sb_lo.Print()
 	print "\n\n====\n\n"
+	print "\n\n====\t Print exteneded w+jet model before fit"
+	model_WJets.Print()
+	model_WJets.getParameters(ROOT.RooArgSet(rrv_mass_lvj)).Print("v");
+	print "\n\n====\n\n"
 
         ## Add the other bkg component fixed to the total model
         model_data = RooAddPdf("model_data%s%s_mlvj"%(label,mlvj_region),"model_data%s%s_mlvj"%(label,mlvj_region),RooArgList(model_WJets,model_VV_backgrounds, model_TTbar_backgrounds, model_STop_backgrounds));
@@ -1792,8 +1798,36 @@ objName ==objName_before ):
 	model_STop_backgrounds.getParameters(ROOT.RooArgSet(rrv_mass_lvj)).Print("v");
 	print "\n\n----------\tFinish----\n\n"
 
+	#hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),int(rrv_mass_lvj.getBins()/self.narrow_factor))
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_auto.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_auto.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_47bin.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_40bin.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_30bin.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_20bin.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_10bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+".root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_4bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_47bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_40bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_30bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_20bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_10bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_4bin.root")
+
         self.workspace4fit_.pdf("model_pdf%s_sb_lo_%s_mlvj"%(label,self.channel)).getParameters(rdataset_data_mlvj).Print("v");
 
         ### data in the sideband plus error from fit
@@ -3797,7 +3831,7 @@ if __name__ == '__main__':
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,3500,40,150, 170,3500,"Exp","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,3500,40,150, 170,3500,"ExpN","ExpSlowFastFall",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,2500,40,150, 170,2500,"Landau","Landau",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,2502,40,150, 170,2502,"Landau","Landau",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 0,3500,40,150, 0,2500,"ExpSlowFastFall","ExpSlowFastFall",options.interpolate) 
 
 
