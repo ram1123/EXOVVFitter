@@ -1,0 +1,8 @@
+*.root
+*.d
+*.so
+.ipynb_checkpoints
+cards_em_HP
+plots_em_HP
+Logs
+*.pcm
