@@ -58,6 +58,12 @@ void HWWLVJRooPdfs(){}
 Double_t ExpDan(Double_t x, Double_t a, Double_t b){
     return TMath::Exp(-a*(x+b*x*x));
 }
+//// Landau + Gauss Function
+Double_t LandauPlusGaus(Double_t x, Double_t f, Double_t lm, Double_t ls, Double_t gm, Double_t gs){
+  if(f<0){f=0.;}
+  if(f>1){f=1.;}
+    return f*TMath::Landau(x,lm,ls)+(1.-f)*ExpN(x,gm,gs);
+}
 
 //// Erf*Exp function implementation 
 Double_t ErfExp(Double_t x, Double_t c, Double_t offset, Double_t width){
@@ -206,6 +212,89 @@ RooExpDan::RooExpDan(const RooExpDan& other, const char* name) :
 
 double RooExpDan::evaluate() const{
     return ExpDan(x,c,offset);
+}
+
+/// RooLandauPlusGaus pdf as ratio of two Erf*Exp
+
+ClassImp(RooLandauPlusGaus)
+
+RooLandauPlusGaus::RooLandauPlusGaus(){}
+
+RooLandauPlusGaus::RooLandauPlusGaus(const char *name, const char *title,
+		   RooAbsReal& _x,
+		   RooAbsReal& _frac,
+		   RooAbsReal& _lm,
+		   RooAbsReal& _ls,
+		   RooAbsReal& _gm,
+		   RooAbsReal& _gs ) :
+  RooAbsPdf(name,title),
+  x("x","x",this,_x),
+  frac("frac","frac",this,_frac),
+  lm("lm","lm",this,_lm),
+  ls("ls","ls",this,_ls),
+  gm("gm","gm",this,_gm),
+  gs("gs","gs",this,_gs){}
+
+RooLandauPlusGaus::RooLandauPlusGaus(const RooLandauPlusGaus& other, const char* name) :
+  RooAbsPdf(other,name),
+  x("x",this,other.x),
+  frac("frac",this,other.frac),
+  lm("lm",this,other.lm),
+  ls("ls",this,other.ls),
+  gm("gm",this,other.gm),
+  gs("gs",this,other.gs){}
+
+double RooLandauPlusGaus::evaluate() const{
+    return LandauPlusGaus(x,frac, lm, ls, gm, gs);
+}
+
+
+/// Alpha function given by the ratio of sumof landau and gauss
+ClassImp(RooAlpha4LandauPlusGaus)
+
+RooAlpha4LandauPlusGaus::RooAlpha4LandauPlusGaus(){}
+
+RooAlpha4LandauPlusGaus::RooAlpha4LandauPlusGaus(const char *name, const char *title,
+		   RooAbsReal& _x,
+		   RooAbsReal& _frac1,
+		   RooAbsReal& _lm1,
+		   RooAbsReal& _ls1,
+		   RooAbsReal& _gm1,
+		   RooAbsReal& _gs1, 
+		   RooAbsReal& _frac2,
+		   RooAbsReal& _lm2,
+		   RooAbsReal& _ls2,
+		   RooAbsReal& _gm2,
+		   RooAbsReal& _gs2 ) :
+  RooAbsPdf(name,title),
+  x("x","x",this,_x),
+  frac1("frac1","frac1",this,_frac1),
+  lm1("lm1","lm1",this,_lm1),
+  ls1("ls1","ls1",this,_ls1),
+  gm1("gm1","gm1",this,_gm1),
+  gs1("gs1","gs1",this,_gs1),
+  frac2("frac2","frac2",this,_frac2),
+  lm2("lm2","lm2",this,_lm2),
+  ls2("ls2","ls2",this,_ls2),
+  gm2("gm2","gm2",this,_gm2),
+  gs2("gs2","gs2",this,_gs2){}
+
+RooAlpha4LandauPlusGaus::RooAlpha4LandauPlusGaus(const RooAlpha4LandauPlusGaus& other, const char* name) :
+  RooAbsPdf(other,name),
+  x("x",this,other.x),
+  frac1("frac1",this,other.frac1),
+  lm1("lm1",this,other.lm1),
+  ls1("ls1",this,other.ls1),
+  gm1("gm1",this,other.gm1),
+  gs1("gs1",this,other.gs1),
+  frac2("frac2",this,other.frac2),
+  lm2("lm2",this,other.lm2),
+  ls2("ls2",this,other.ls2),
+  gm2("gm2",this,other.gm2),
+  gs2("gs2",this,other.gs2){}
+
+double RooAlpha4LandauPlusGaus::evaluate() const{
+  return LandauPlusGaus(x,frac1, lm1, ls1, gm1, gs1)/LandauPlusGaus(x,frac2, lm2, ls2, gm2, gs2);
 }
 
 //// Erf*Exp pdf 

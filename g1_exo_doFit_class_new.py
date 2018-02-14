@@ -75,7 +75,7 @@ class doFit_wj_and_wlvj:
         self.BinWidth_mj=5.;
 
         ### Set the binning for mlvj plots as a function of the model
-        self.BinWidth_mlvj=50.;
+        self.BinWidth_mlvj=53.;
             
         #narrow the BinWidth_mj and BinWidth_mlvj by a factor of 5. Because Higgs-Combination-Tools will generate a binned sample, so need the bin width narrow. So, as a easy selution, we will increase the bin-width by a factor of 5 when ploting m_j m_WW
         self.narrow_factor=1
@@ -1453,11 +1453,12 @@ objName ==objName_before ):
             	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -64.3, -1e4, 1e5);
             	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.,1.0);
             
-	    model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel+mass_spectrum,"model_pdf_1"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Landau, rrv_n_Landau);
+	    #model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel+mass_spectrum,"model_pdf_1"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Landau, rrv_n_Landau);
 
-            model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel+mass_spectrum,"model_pdf_2"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ExpN, rrv_n_ExpN);
+            #model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel+mass_spectrum,"model_pdf_2"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ExpN, rrv_n_ExpN);
 
-            model_pdf = ROOT.RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(rrv_frac_ExpN),1);
+            #model_pdf = ROOT.RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(rrv_frac_ExpN),1);
+	    model_pdf = ROOT.RooLandauPlusGaus("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_frac_ExpN,rrv_c_Landau,rrv_n_Landau, rrv_c_ExpN, rrv_n_ExpN)
                                                                                                              
         ## ExpN pdf for W+jets bkg fit
         if in_model_name == "ExpN":
@@ -2076,7 +2077,7 @@ objName ==objName_before ):
 	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal(),
 	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()-4*rrv_n_Landau_sb.getError(),
 	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()+4*rrv_n_Landau_sb.getError())
-            model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel,"model_pdf_1"+label+"_"+self.channel,rrv_x,rrv_delta_c_Landau, rrv_delta_n_Landau);
+            #model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel,"model_pdf_1"+label+"_"+self.channel,rrv_x,rrv_delta_c_Landau, rrv_delta_n_Landau);
 
 	    rrv_c_ExpN_sb = self.workspace4fit_.var("rrv_c_ExpN%s_sb_lo_%s"%(label,self.channel));
 	    rrv_n_ExpN_sb = self.workspace4fit_.var("rrv_n_ExpN%s_sb_lo_%s"%(label,self.channel));
@@ -2089,7 +2090,7 @@ objName ==objName_before ):
 	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()-4*rrv_n_ExpN_sb.getError(),
 	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()+4*rrv_n_ExpN_sb.getError())
 
-            model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel,"model_pdf_2"+label+"_"+self.channel,rrv_x,rrv_delta_c_ExpN, rrv_delta_n_ExpN);
+            #model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel,"model_pdf_2"+label+"_"+self.channel,rrv_x,rrv_delta_c_ExpN, rrv_delta_n_ExpN);
 
             rrv_frac_ExpN_sb = self.workspace4fit_.var("rrv_frac_ExpN%s_sb_lo_%s"%(label,self.channel)); 
 	    rrv_delta_frac_ExpN = RooRealVar("rrv_delta_frac_ExpN%s_%s"%(label,self.channel),"rrv_delta_frac_ExpN%s_%s"%(label,self.channel),
@@ -2097,7 +2098,13 @@ objName ==objName_before ):
 	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()-4*rrv_frac_ExpN_sb.getError(),
 	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()+4*rrv_frac_ExpN_sb.getError())
 
-            correct_factor_pdf = ROOT.RooAddPdf("correct_factor_pdf","correct_factor_pdf",ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(rrv_delta_frac_ExpN),1);
+	    rrv_c_Landau_sr = RooFormulaVar("rrv_c_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_c_Landau_sb, rrv_delta_c_Landau));
+	    rrv_n_Landau_sr = RooFormulaVar("rrv_n_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_n_Landau_sb, rrv_delta_n_Landau));
+	    rrv_c_ExpN_sr = RooFormulaVar("rrv_c_ExpN_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_c_ExpN_sb, rrv_delta_c_ExpN));
+	    rrv_n_ExpN_sr = RooFormulaVar("rrv_n_ExpN_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_n_ExpN_sb, rrv_delta_n_ExpN));
+	    rrv_frac_ExpN_sr = RooFormulaVar("rrv_frac_ExpN_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_frac_ExpN_sb, rrv_delta_frac_ExpN));
+            #correct_factor_pdf = ROOT.RooAddPdf("correct_factor_pdf","correct_factor_pdf",ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(rrv_delta_frac_ExpN),1);
+	    correct_factor_pdf = ROOT.RooAlpha4LandauPlusGaus("correct_factor_pdf","correct_factor_pdf",rrv_x, rrv_frac_ExpN_sr, rrv_c_Landau_sr, rrv_n_Landau_sr, rrv_c_ExpN_sr, rrv_n_ExpN_sr, rrv_frac_ExpN_sb, rrv_c_Landau_sb, rrv_n_Landau_sb, rrv_c_ExpN_sb, rrv_n_ExpN_sb );
 
         if mlvj_model=="ExpN":
             rrv_c_sb  = self.workspace4fit_.var("rrv_c_ExpN%s_sb_lo_%s"%(label,self.channel));
@@ -2607,10 +2614,12 @@ objName ==objName_before ):
             lowerLine = TLine(self.mj_signal_min,0.,self.mj_signal_min,mplot.GetMaximum()*0.9); lowerLine.SetLineWidth(2); lowerLine.SetLineColor(kBlack); lowerLine.SetLineStyle(9);
             upperLine = TLine(self.mj_signal_max,0.,self.mj_signal_max,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
             #lowerLine = TLine(65,0.,65,mplot.GetMaximum()*0.9); lowerLine.SetLineWidth(2); lowerLine.SetLineColor(kBlack); lowerLine.SetLineStyle(9);
-#            middleLine = TLine(85,0.,85,mplot.GetMaximum()*0.9); middleLine.SetLineWidth(2); middleLine.SetLineColor(kBlack); middleLine.SetLineStyle(9);
+            middleLine1 = TLine(65,0.,65,mplot.GetMaximum()*0.9); middleLine1.SetLineWidth(2); middleLine1.SetLineColor(kBlack); middleLine1.SetLineStyle(9);
+            middleLine2 = TLine(105,0.,105,mplot.GetMaximum()*0.9); middleLine2.SetLineWidth(2); middleLine2.SetLineColor(kBlack); middleLine2.SetLineStyle(9);
             #upperLine = TLine(95,0.,95,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
+	    mplot.addObject(middleLine1);
+	    mplot.addObject(middleLine2);
             mplot.addObject(lowerLine);
-#	    mplot.addObject(middleLine);
             mplot.addObject(upperLine);
 
 	    pt = ROOT.TPaveText(0.3592965,0.02847153,0.5728643,0.1008991,"NDC")
@@ -2716,8 +2725,13 @@ objName ==objName_before ):
         ## make the fit
         model.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE) , RooFit.NumCPU(2));
         rfresult = model.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2") , RooFit.NumCPU(2));
+	print "\n\n","_"*20,"\n\n"
         rfresult.Print();
 	fitresultsmlvj.append(rfresult)
+	print "\n\n\t\t SAVE HISTOGRAM \n",in_file_name,label,in_range,mlvj_model,"\n\n"
+	hist = model.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs(in_file_name+"_"+label+"_"+in_range+"_"+mlvj_model+"_auto.root")
+	print "\n\n","_"*20,"\n\n"
 
         ## set the name of the result of the fit and put it in the workspace   
         rfresult.SetName("rfresult"+label+in_range+"_"+self.channel+"_mlvj")

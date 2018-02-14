@@ -169,6 +169,90 @@ class RooExpDan : public RooAbsPdf {
 	  ClassDef(RooExpDan,1)
 };
 
+/////// Landau+Gaus function defined
+
+Double_t LandauPlusGaus(Double_t x, Double_t f, Double_t lm, Double_t ls, Double_t gm, Double_t gs);
+
+class RooLandauPlusGaus : public RooAbsPdf {
+ public:
+	 RooLandauPlusGaus();
+	 RooLandauPlusGaus(const char *name, const char *title,
+                   RooAbsReal& _x,
+                   RooAbsReal& _frac,
+                   RooAbsReal& _lm,
+                   RooAbsReal& _ls,
+                   RooAbsReal& _gm,
+                   RooAbsReal& _gs 
+				    );
+
+	RooLandauPlusGaus(const RooLandauPlusGaus& other, const char* name=0) ;
+
+	virtual TObject* clone(const char* newname) const { return new RooLandauPlusGaus(*this,newname); }
+
+	inline virtual ~RooLandauPlusGaus() { }
+
+ protected:
+
+	   RooRealProxy x ;
+	   RooRealProxy frac;
+	   RooRealProxy lm;
+	   RooRealProxy ls;
+	   RooRealProxy gm;
+	   RooRealProxy gs;
+
+	   Double_t evaluate() const ;
+
+ private:
+
+	  ClassDef(RooLandauPlusGaus,1)
+};
+
+/////// ALPHA Landau+Gaus function defined
+
+class RooAlpha4LandauPlusGaus : public RooAbsPdf {
+ public:
+	 RooAlpha4LandauPlusGaus();
+	 RooAlpha4LandauPlusGaus(const char *name, const char *title,
+                   RooAbsReal& _x,
+                   RooAbsReal& _frac1,
+                   RooAbsReal& _lm1,
+                   RooAbsReal& _ls1,
+                   RooAbsReal& _gm1,
+                   RooAbsReal& _gs1, 
+                   RooAbsReal& _frac2,
+                   RooAbsReal& _lm2,
+                   RooAbsReal& _ls2,
+                   RooAbsReal& _gm2,
+                   RooAbsReal& _gs2 
+				    );
+
+	RooAlpha4LandauPlusGaus(const RooAlpha4LandauPlusGaus& other, const char* name=0) ;
+
+	virtual TObject* clone(const char* newname) const { return new RooAlpha4LandauPlusGaus(*this,newname); }
+
+	inline virtual ~RooAlpha4LandauPlusGaus() { }
+
+ protected:
+
+	   RooRealProxy x ;
+	   RooRealProxy frac1;
+	   RooRealProxy lm1;
+	   RooRealProxy ls1;
+	   RooRealProxy gm1;
+	   RooRealProxy gs1;
+	   RooRealProxy frac2;
+	   RooRealProxy lm2;
+	   RooRealProxy ls2;
+	   RooRealProxy gm2;
+	   RooRealProxy gs2;
+
+	   Double_t evaluate() const ;
+
+ private:
+
+	  ClassDef(RooAlpha4LandauPlusGaus,1)
+};
+
 /////// Alpha defined as ration of two Erf*Exp
 
 class RooAlpha : public RooAbsPdf {
