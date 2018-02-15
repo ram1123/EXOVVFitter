@@ -1442,14 +1442,14 @@ objName ==objName_before ):
 	    	print "==> initialize Signal region pars"
             	rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,483,200,800);
             	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,84,40,120);
-            	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-4.8438e-03,-9.5655e-01,-5.5655e-04);
-            	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -985.40, -1285.4, -685.4);
+            	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-4.8438e-03,-59.5655e-01,-5.5655e-04);
+            	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -985.40, -1285.4, -185.4);
             	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.,1.0);
             elif label_tstring.Contains("sb_lo"):
 	    	print "==> initialize side-band region pars"
             	rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,500,100,1000);
-            	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,150,100,500);
-            	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.32e-3,-1e-1,-1e-6);
+            	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,10,1,100);
+            	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.32e-3,-1e-1,-2e-6);
             	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -64.3, -1e4, 1e5);
             	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.,1.0);
             
@@ -2071,32 +2071,32 @@ objName ==objName_before ):
 
 	    rrv_delta_c_Landau = RooRealVar("rrv_delta_c_Landau%s_%s"%(label,self.channel), "rrv_delta_c_Landau%s_%s"%(label,self.channel),
 	    				self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal(),
-					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()-4*rrv_c_Landau_sb.getError(),
-					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()+4*rrv_c_Landau_sb.getError())
+					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()-8*rrv_c_Landau_sb.getError(),
+					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()+8*rrv_c_Landau_sb.getError())
 	    rrv_delta_n_Landau = RooRealVar("rrv_delta_n_Landau%s_%s"%(label,self.channel), "rrv_delta_n_Landau%s_%s"%(label,self.channel),
 	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal(),
-	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()-4*rrv_n_Landau_sb.getError(),
-	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()+4*rrv_n_Landau_sb.getError())
+	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()-8*rrv_n_Landau_sb.getError(),
+	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()+8*rrv_n_Landau_sb.getError())
             #model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel,"model_pdf_1"+label+"_"+self.channel,rrv_x,rrv_delta_c_Landau, rrv_delta_n_Landau);
 
 	    rrv_c_ExpN_sb = self.workspace4fit_.var("rrv_c_ExpN%s_sb_lo_%s"%(label,self.channel));
 	    rrv_n_ExpN_sb = self.workspace4fit_.var("rrv_n_ExpN%s_sb_lo_%s"%(label,self.channel));
 	    rrv_delta_c_ExpN = RooRealVar("rrv_delta_c_ExpN%s_%s"%(label,self.channel),"rrv_delta_c_ExpN%s_%s"%(label,self.channel),
 	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal(),
-	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal()-4*rrv_c_ExpN_sb.getError(),
-	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal()+4*rrv_c_ExpN_sb.getError())
+	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal()-8*rrv_c_ExpN_sb.getError(),
+	    				self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_ExpN_sb.getVal()+8*rrv_c_ExpN_sb.getError())
 	    rrv_delta_n_ExpN = RooRealVar("rrv_delta_n_ExpN%s_%s"%(label,self.channel),"rrv_delta_n_ExpN%s_%s"%(label,self.channel),
 	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal(),
-	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()-4*rrv_n_ExpN_sb.getError(),
-	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()+4*rrv_n_ExpN_sb.getError())
+	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()-8*rrv_n_ExpN_sb.getError(),
+	    				self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_ExpN_sb.getVal()+8*rrv_n_ExpN_sb.getError())
 
             #model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel,"model_pdf_2"+label+"_"+self.channel,rrv_x,rrv_delta_c_ExpN, rrv_delta_n_ExpN);
 
             rrv_frac_ExpN_sb = self.workspace4fit_.var("rrv_frac_ExpN%s_sb_lo_%s"%(label,self.channel)); 
 	    rrv_delta_frac_ExpN = RooRealVar("rrv_delta_frac_ExpN%s_%s"%(label,self.channel),"rrv_delta_frac_ExpN%s_%s"%(label,self.channel),
 	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal(),
-	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()-4*rrv_frac_ExpN_sb.getError(),
-	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()+4*rrv_frac_ExpN_sb.getError())
+	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()-8*rrv_frac_ExpN_sb.getError(),
+	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()+8*rrv_frac_ExpN_sb.getError())
 
 	    rrv_c_Landau_sr = RooFormulaVar("rrv_c_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_c_Landau_sb, rrv_delta_c_Landau));
 	    rrv_n_Landau_sr = RooFormulaVar("rrv_n_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_n_Landau_sb, rrv_delta_n_Landau));
@@ -3845,7 +3845,7 @@ if __name__ == '__main__':
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,3500,40,150, 170,3500,"Exp","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,3500,40,150, 170,3500,"ExpN","ExpSlowFastFall",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,2502,40,150, 170,2502,"Landau","Landau",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 160,2502,40,150, 160,2502,"Landau","Landau",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 0,3500,40,150, 0,2500,"ExpSlowFastFall","ExpSlowFastFall",options.interpolate) 
 
 
