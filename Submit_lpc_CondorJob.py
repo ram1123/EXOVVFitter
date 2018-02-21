@@ -10,12 +10,18 @@ import tarfile
 import datetime
 import commands
 
+#os.system("sed -i 's/0.8,0.,1.0/0.5,0.0,0.8/' g1_exo_doFit_class_new.py")
+OUTDIR = "LandauFitImprov_mWW_160_2502_TryingToGetBestPars_NoBtagWgt"
+changes = raw_input("\n\nWrite change summary: ")
+
+print "==> ",changes
+
+
 currentDir = os.getcwd();
 CMSSWDir =  currentDir+"/../";
 print "PWD = ",currentDir
 
 TestRun = 1
-OUTDIR = "mww_Range_170-4k_expN"
 
 if OUTDIR == "":
 	JobName = "job"
@@ -23,15 +29,17 @@ else:
 	JobName = OUTDIR
 # Get date and time for output directory
 ## ADD "test" IN OUTPUT FOLDER IF YOU ARE TESTING SO THAT LATER YOU REMEMBER TO WHICH DIRECTORY YOU HAVE TO REMOVE FROM EOS
+os.system('xrdfs root://cmseos.fnal.gov/ mkdir /store/user/rasharma/BackgroundEstimation/' + OUTDIR)
 if TestRun:
-	outputFolder = "/store/user/rasharma/BackgroundEstimation/"+OUTDIR+'_'+datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M')+"_TEST/";
-	OutputLogPath = "Logs/"+OUTDIR+'_' + datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M') + "_TEST";
+	outputFolder = "/store/user/rasharma/BackgroundEstimation/"+OUTDIR+'/'+datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M')+"_TEST/";
+	OutputLogPath = "Logs/"+OUTDIR+'/' + datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M') + "_TEST";
 else:
-	outputFolder = "/store/user/rasharma/BackgroundEstimation/"+OUTDIR+'_'+datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M');
-	OutputLogPath = "Logs/"+OUTDIR+'_' + datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M');
+	outputFolder = "/store/user/rasharma/BackgroundEstimation/"+OUTDIR+'/'+datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M');
+	OutputLogPath = "Logs/"+OUTDIR+'/' + datetime.datetime.now().strftime('%Y_%m_%d_%Hh%M');
 
 
 print "Name of output dir: ",outputFolder
+print "Name of Log dir: ",OutputLogPath
 # create a directory on eos
 os.system('xrdfs root://cmseos.fnal.gov/ mkdir ' + outputFolder)
 os.system('xrdfs root://cmseos.fnal.gov/ mkdir ' + outputFolder + '/cards_em_HP')
@@ -55,7 +63,8 @@ make_tarfile(CMSSWRel+".tgz", cmsswDirPath[1])
 
 # send the created tarball to eos
 os.system('xrdcp -f ' + CMSSWRel+".tgz" + ' root://cmseos.fnal.gov/'+outputFolder+"/" + CMSSWRel+".tgz")
-os.system('git diff > mypatch.patch')
+os.system('git diff g1_exo_doFit_class_new.py > mypatch.patch')
+os.system("sed -i '1s/^/Changes Summay : "+changes+"\\n/' mypatch.patch")
 os.system('xrdcp -f mypatch.patch root://cmseos.fnal.gov/'+outputFolder+'/mypatch.patch')
 
 
@@ -124,11 +133,11 @@ outScript.write("\n"+'echo "xrdcp output for condor"');
 outScript.write("\n"+'xrdcp -f g1_exo_doFit_class_new.py root://cmseos.fnal.gov/'+outputFolder+'/');
 outScript.write("\n"+'xrdcp -r -fs plots_em_HPW root://cmseos.fnal.gov/'+outputFolder+'/');
 outScript.write("\n"+'xrdcp -r -fs cards_em_HP root://cmseos.fnal.gov/'+outputFolder+'/cards_em_HP/');
-#outScript.write("\n"+'for FILE in plots_em_HPW/*');
-#outScript.write("\n"+'do');
-#outScript.write("\n"+'\techo "xrdcp -r -f ${FILE} root://cmseos.fnal.gov/'+outputFolder+'/"');
-#outScript.write("\n"+'\txrdcp -r -f ${FILE} root://cmseos.fnal.gov/'+outputFolder+'/ 2>&1');
-#outScript.write("\n"+'done');
+outScript.write("\n"+'for FILE in *.root');
+outScript.write("\n"+'do');
+outScript.write("\n"+'\techo "xrdcp -r -f ${FILE} root://cmseos.fnal.gov/'+outputFolder+'/"');
+outScript.write("\n"+'\txrdcp -r -f ${FILE} root://cmseos.fnal.gov/'+outputFolder+'/ 2>&1');
+outScript.write("\n"+'done');
 outScript.write("\n"+'cd ${_CONDOR_SCRATCH_DIR}');
 outScript.write("\n"+'rm -rf ' + CMSSWRel);
 outScript.write("\n");

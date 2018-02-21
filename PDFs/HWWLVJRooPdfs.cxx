@@ -110,20 +110,20 @@ Double_t Exp(Double_t x, Double_t x_min, Double_t x_max, Double_t c){
 Double_t  ErfPow2(Double_t x,Double_t c0,Double_t c1, Double_t offset, Double_t width){
 
    if(width<1e-2)width=1e-2;
-   Double_t sqrt_s=2000.;
+   Double_t sqrt_s=13000.;
    return TMath::Power(x/sqrt_s ,-1*(c0+c1*TMath::Log(x/sqrt_s)) )*(1+ TMath::Erf((x-offset)/width)) /2. ; 
 }
 
 Double_t  ErfPow3(Double_t x,Double_t c0,Double_t c1, Double_t c2, Double_t offset, Double_t width){
 
    if(width<1e-2)width=1e-2;
-   Double_t sqrt_s=2000.;
+   Double_t sqrt_s=13000.;
    return TMath::Power(x/sqrt_s ,-1*(c0+c1*TMath::Log(x/sqrt_s)+c2*TMath::Log(x/sqrt_s))*TMath::Log(x/sqrt_s))*(1+ TMath::Erf((x-offset)/width)) /2. ; 
 }
 
 Double_t  ErfPowExp(Double_t x,Double_t c0,Double_t c1, Double_t offset, Double_t width){
    if(width<1e-2)width=1e-2;
-   Double_t sqrt_s=2000.;
+   Double_t sqrt_s=13000.;
    return TMath::Power(x/sqrt_s ,-1*(c1*TMath::Log(x/sqrt_s)) )*TMath::Exp(-1*x/sqrt_s*c0)*(1+ TMath::Erf((x-offset)/width)) /2. ; 
 }
 
@@ -587,6 +587,59 @@ RooErfPow3Pdf::RooErfPow3Pdf(const RooErfPow3Pdf& other, const char* name) :
 Double_t RooErfPow3Pdf::evaluate() const { 
    Double_t width_tmp=width; if(width<1e-2){ width_tmp=1e-2;}
    return ErfPow3(x,c0,c1,c2,offset,width_tmp);
+ } 
+
+///// Alpha  function given by the ratio of two Erf*Pow2 pdf
+
+ClassImp(RooAlpha4ErfPow3Pdf) 
+
+RooAlpha4ErfPow3Pdf::RooAlpha4ErfPow3Pdf(const char *name, const char *title, 
+                        RooAbsReal& _x,
+                        RooAbsReal& _c0,
+                        RooAbsReal& _c1,
+                        RooAbsReal& _c2,
+                        RooAbsReal& _offset,
+                        RooAbsReal& _width,
+                        RooAbsReal& _c0a,
+                        RooAbsReal& _c1a,
+                        RooAbsReal& _c2a,
+                        RooAbsReal& _offseta,
+                        RooAbsReal& _widtha) :
+   RooAbsPdf(name,title), 
+   x("x","x",this,_x),
+   c0("c0","c0",this,_c0),
+   c1("c1","c1",this,_c1),
+   c2("c2","c2",this,_c2),
+   offset("offset","offset",this,_offset),
+   width("width","width",this,_width),
+   c0a("c0a","c0a",this,_c0a),
+   c1a("c1a","c1a",this,_c1a),
+   c2a("c2a","c2a",this,_c2a),
+   offseta("offseta","offseta",this,_offseta),
+   widtha("widtha","widtha",this,_widtha){} 
+
+
+RooAlpha4ErfPow3Pdf::RooAlpha4ErfPow3Pdf(const RooAlpha4ErfPow3Pdf& other, const char* name) :  
+   RooAbsPdf(other,name), 
+   x("x",this,other.x),
+   c0("c0",this,other.c0),
+   c1("c1",this,other.c1),
+   c2("c2",this,other.c2),
+   offset("offset",this,other.offset),
+   width("width",this,other.width),
+   c0a("c0a",this,other.c0a),
+   c1a("c1a",this,other.c1a),
+   c2a("c2a",this,other.c2a),
+   offseta("offseta",this,other.offseta),
+   widtha("widtha",this,other.widtha){} 
+
+
+
+Double_t RooAlpha4ErfPow3Pdf::evaluate() const { 
+
+    Double_t width_tmp=width; if(width<1e-2){ width_tmp=1e-2;}
+    Double_t widtha_tmp=widtha; if(widtha<1e-2){ widtha_tmp=1e-2;}
+    return ErfPow3(x,c0,c1,c2,offset,width_tmp)/ErfPow3(x,c0a,c1a,c2a,offseta,widtha_tmp);
  } 
 
 

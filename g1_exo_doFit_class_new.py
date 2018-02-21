@@ -75,7 +75,7 @@ class doFit_wj_and_wlvj:
         self.BinWidth_mj=5.;
 
         ### Set the binning for mlvj plots as a function of the model
-        self.BinWidth_mlvj=53.;
+        self.BinWidth_mlvj=50.;
             
         #narrow the BinWidth_mj and BinWidth_mlvj by a factor of 5. Because Higgs-Combination-Tools will generate a binned sample, so need the bin width narrow. So, as a easy selution, we will increase the bin-width by a factor of 5 when ploting m_j m_WW
         self.narrow_factor=1
@@ -1099,7 +1099,7 @@ objName ==objName_before ):
         #mplot_pull.GetYaxis().SetTitle("#frac{Data-Fit}{#sigma_{data}}");
         #mplot_pull.GetYaxis().CenterTitle();
 
-        return mplot_pull;
+        #return mplot_pull;
 
     def getData_PoissonInterval(self,data_obs,mplot):
         rrv_x = self.workspace4fit_.var("rrv_mass_lvj");
@@ -1440,26 +1440,31 @@ objName ==objName_before ):
             label_tstring=TString(label);
             if label_tstring.Contains("signal_region"):
 	    	print "==> initialize Signal region pars"
-            	rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,483,200,800);
-            	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,84,40,120);
+            	rrv_MPV_Landau = RooRealVar("rrv_MPV_Landau"+label+"_"+self.channel,"rrv_MPV_Landau"+label+"_"+self.channel,483,200,800);
+            	rrv_Sigma_Landau = RooRealVar("rrv_Sigma_Landau"+label+"_"+self.channel,"rrv_Sigma_Landau"+label+"_"+self.channel,20.0,1.0,100.0);
             	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-4.8438e-03,-59.5655e-01,-5.5655e-04);
             	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -985.40, -1285.4, -185.4);
-            	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.,1.0);
+            	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.0,0.8);
             elif label_tstring.Contains("sb_lo"):
 	    	print "==> initialize side-band region pars"
-            	rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,500,100,1000);
-            	rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,10,1,100);
+            	rrv_MPV_Landau = RooRealVar("rrv_MPV_Landau"+label+"_"+self.channel,"rrv_MPV_Landau"+label+"_"+self.channel,500,100,1000);
+            	rrv_Sigma_Landau = RooRealVar("rrv_Sigma_Landau"+label+"_"+self.channel,"rrv_Sigma_Landau"+label+"_"+self.channel,20.0,1.0,100.0);
             	rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.32e-3,-1e-1,-2e-6);
             	rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -64.3, -1e4, 1e5);
-            	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.,1.0);
+            	rrv_frac_ExpN = RooRealVar("rrv_frac_ExpN"+label+"_"+self.channel,"rrv_frac_ExpN"+label+"_"+self.channel,0.5,0.0,0.8);
             
-	    #model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel+mass_spectrum,"model_pdf_1"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Landau, rrv_n_Landau);
-
-            #model_pdf_2 = ROOT.RooExpNPdf("model_pdf_2"+label+"_"+self.channel+mass_spectrum,"model_pdf_2"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ExpN, rrv_n_ExpN);
-
-            #model_pdf = ROOT.RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(rrv_frac_ExpN),1);
-	    model_pdf = ROOT.RooLandauPlusGaus("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_frac_ExpN,rrv_c_Landau,rrv_n_Landau, rrv_c_ExpN, rrv_n_ExpN)
+	    model_pdf = ROOT.RooLandauPlusGaus("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_frac_ExpN,rrv_MPV_Landau,rrv_Sigma_Landau, rrv_c_ExpN, rrv_n_ExpN)
                                                                                                              
+	## Function for mWW fit from 160 to tail
+        if in_model_name == "ErfPow2":
+            rrv_c0     = RooRealVar("rrv_c0_ErfPow2"+label+"_"+self.channel,"rrv_c0_ErfPow2"+label+"_"+self.channel,20.696,-500.,500) 
+            rrv_c1     = RooRealVar("rrv_c1_ErfPow2"+label+"_"+self.channel,"rrv_c1_ErfPow2"+label+"_"+self.channel,3.092,-100,100)
+            rrv_c2     = RooRealVar("rrv_c2_ErfPow2"+label+"_"+self.channel,"rrv_c2_ErfPow2"+label+"_"+self.channel,3.092,-100,100)
+            rrv_offset = RooRealVar("rrv_offset_ErfPow2"+label+"_"+self.channel,"rrv_offset_ErfPow2"+label+"_"+self.channel,-482,-900,100)
+            rrv_width  = RooRealVar("rrv_width_ErfPow2"+label+"_"+self.channel,"rrv_width_ErfPow2"+label+"_"+self.channel,-4665,-7000,100.0)
+            
+	    model_pdf = ROOT.RooErfPow3Pdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c0,rrv_c1,rrv_c2,rrv_offset,rrv_width)
+
         ## ExpN pdf for W+jets bkg fit
         if in_model_name == "ExpN":
 
@@ -1508,9 +1513,9 @@ objName ==objName_before ):
 	    rrv_a_ExpTail.Print()     
             model_pdf_1     = ROOT.RooExpTailPdf("model_pdf_1"+label+"_"+self.channel+mass_spectrum,"model_pdf_1"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_s_ExpTail, rrv_a_ExpTail);
 
-            rrv_c_Landau = RooRealVar("rrv_c_Landau"+label+"_"+self.channel,"rrv_c_Landau"+label+"_"+self.channel,500,100,2500);
-            rrv_n_Landau = RooRealVar("rrv_n_Landau"+label+"_"+self.channel,"rrv_n_Landau"+label+"_"+self.channel,150,100,500);
-            model_pdf_2 = ROOT.RooLandau("model_pdf_2"+label+"_"+self.channel+mass_spectrum,"model_pdf_2"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Landau, rrv_n_Landau);
+            rrv_MPV_Landau = RooRealVar("rrv_MPV_Landau"+label+"_"+self.channel,"rrv_MPV_Landau"+label+"_"+self.channel,500,100,2500);
+            rrv_Sigma_Landau = RooRealVar("rrv_Sigma_Landau"+label+"_"+self.channel,"rrv_Sigma_Landau"+label+"_"+self.channel,150,100,500);
+            model_pdf_2 = ROOT.RooLandau("model_pdf_2"+label+"_"+self.channel+mass_spectrum,"model_pdf_2"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_MPV_Landau, rrv_Sigma_Landau);
 
 	    frac = RooRealVar("frac","frac",0.8,0.,1.);
             model_pdf = ROOT.RooAddPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(frac),1);
@@ -2061,23 +2066,23 @@ objName ==objName_before ):
 	    				self.workspace4fit_.var("rrv_frac_Gaus%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_Gaus_sb.getVal()-4*rrv_frac_Gaus_sb.getError(),
 	    				self.workspace4fit_.var("rrv_frac_Gaus%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_Gaus_sb.getVal()+4*rrv_frac_Gaus_sb.getError())
 
-            correct_factor_pdf = ROOT.RooAddPdf("correct_factor_pdf","correct_factor_pdf",ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(frac));
+            correct_factor_pdf = ROOT.RooAddPdf("correct_factor_pdf","correct_factor_pdf",ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(rrv_frac_Gaus_sb));
             #correct_factor_pdf = ROOT.RooAddPdf("correct_factor_pdf","correct_factor_pdf",ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(frac),1);
 
         if mlvj_model == "Landau":
             
-	    rrv_c_Landau_sb = self.workspace4fit_.var("rrv_c_Landau%s_sb_lo_%s"%(label,self.channel));
-	    rrv_n_Landau_sb = self.workspace4fit_.var("rrv_n_Landau%s_sb_lo_%s"%(label,self.channel));
+	    rrv_MPV_Landau_sb = self.workspace4fit_.var("rrv_MPV_Landau%s_sb_lo_%s"%(label,self.channel));
+	    rrv_Sigma_Landau_sb = self.workspace4fit_.var("rrv_Sigma_Landau%s_sb_lo_%s"%(label,self.channel));
 
-	    rrv_delta_c_Landau = RooRealVar("rrv_delta_c_Landau%s_%s"%(label,self.channel), "rrv_delta_c_Landau%s_%s"%(label,self.channel),
-	    				self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal(),
-					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()-8*rrv_c_Landau_sb.getError(),
-					self.workspace4fit_.var("rrv_c_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_Landau_sb.getVal()+8*rrv_c_Landau_sb.getError())
-	    rrv_delta_n_Landau = RooRealVar("rrv_delta_n_Landau%s_%s"%(label,self.channel), "rrv_delta_n_Landau%s_%s"%(label,self.channel),
-	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal(),
-	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()-8*rrv_n_Landau_sb.getError(),
-	    				self.workspace4fit_.var("rrv_n_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_Landau_sb.getVal()+8*rrv_n_Landau_sb.getError())
-            #model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel,"model_pdf_1"+label+"_"+self.channel,rrv_x,rrv_delta_c_Landau, rrv_delta_n_Landau);
+	    rrv_delta_MPV_Landau = RooRealVar("rrv_delta_MPV_Landau%s_%s"%(label,self.channel), "rrv_delta_MPV_Landau%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_MPV_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_MPV_Landau_sb.getVal(),
+					self.workspace4fit_.var("rrv_MPV_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_MPV_Landau_sb.getVal()-8*rrv_MPV_Landau_sb.getError(),
+					self.workspace4fit_.var("rrv_MPV_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_MPV_Landau_sb.getVal()+8*rrv_MPV_Landau_sb.getError())
+	    rrv_delta_Sigma_Landau = RooRealVar("rrv_delta_Sigma_Landau%s_%s"%(label,self.channel), "rrv_delta_Sigma_Landau%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_Sigma_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_Sigma_Landau_sb.getVal(),
+	    				self.workspace4fit_.var("rrv_Sigma_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_Sigma_Landau_sb.getVal()-8*rrv_Sigma_Landau_sb.getError(),
+	    				self.workspace4fit_.var("rrv_Sigma_Landau%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_Sigma_Landau_sb.getVal()+8*rrv_Sigma_Landau_sb.getError())
+            #model_pdf_1 = ROOT.RooLandau("model_pdf_1"+label+"_"+self.channel,"model_pdf_1"+label+"_"+self.channel,rrv_x,rrv_delta_MPV_Landau, rrv_delta_Sigma_Landau);
 
 	    rrv_c_ExpN_sb = self.workspace4fit_.var("rrv_c_ExpN%s_sb_lo_%s"%(label,self.channel));
 	    rrv_n_ExpN_sb = self.workspace4fit_.var("rrv_n_ExpN%s_sb_lo_%s"%(label,self.channel));
@@ -2098,13 +2103,13 @@ objName ==objName_before ):
 	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()-8*rrv_frac_ExpN_sb.getError(),
 	    				self.workspace4fit_.var("rrv_frac_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_frac_ExpN_sb.getVal()+8*rrv_frac_ExpN_sb.getError())
 
-	    rrv_c_Landau_sr = RooFormulaVar("rrv_c_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_c_Landau_sb, rrv_delta_c_Landau));
-	    rrv_n_Landau_sr = RooFormulaVar("rrv_n_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_n_Landau_sb, rrv_delta_n_Landau));
+	    rrv_MPV_Landau_sr = RooFormulaVar("rrv_MPV_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_MPV_Landau_sb, rrv_delta_MPV_Landau));
+	    rrv_Sigma_Landau_sr = RooFormulaVar("rrv_Sigma_Landau_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_Sigma_Landau_sb, rrv_delta_Sigma_Landau));
 	    rrv_c_ExpN_sr = RooFormulaVar("rrv_c_ExpN_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_c_ExpN_sb, rrv_delta_c_ExpN));
 	    rrv_n_ExpN_sr = RooFormulaVar("rrv_n_ExpN_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_n_ExpN_sb, rrv_delta_n_ExpN));
 	    rrv_frac_ExpN_sr = RooFormulaVar("rrv_frac_ExpN_sr%s_%s"%(label,self.channel), "@0+@1", RooArgList(rrv_frac_ExpN_sb, rrv_delta_frac_ExpN));
             #correct_factor_pdf = ROOT.RooAddPdf("correct_factor_pdf","correct_factor_pdf",ROOT.RooArgList(model_pdf_1,model_pdf_2),ROOT.RooArgList(rrv_delta_frac_ExpN),1);
-	    correct_factor_pdf = ROOT.RooAlpha4LandauPlusGaus("correct_factor_pdf","correct_factor_pdf",rrv_x, rrv_frac_ExpN_sr, rrv_c_Landau_sr, rrv_n_Landau_sr, rrv_c_ExpN_sr, rrv_n_ExpN_sr, rrv_frac_ExpN_sb, rrv_c_Landau_sb, rrv_n_Landau_sb, rrv_c_ExpN_sb, rrv_n_ExpN_sb );
+	    correct_factor_pdf = ROOT.RooAlpha4LandauPlusGaus("correct_factor_pdf","correct_factor_pdf",rrv_x, rrv_frac_ExpN_sr, rrv_MPV_Landau_sr, rrv_Sigma_Landau_sr, rrv_c_ExpN_sr, rrv_n_ExpN_sr, rrv_frac_ExpN_sb, rrv_MPV_Landau_sb, rrv_Sigma_Landau_sb, rrv_c_ExpN_sb, rrv_n_ExpN_sb );
 
         if mlvj_model=="ExpN":
             rrv_c_sb  = self.workspace4fit_.var("rrv_c_ExpN%s_sb_lo_%s"%(label,self.channel));
@@ -2180,20 +2185,38 @@ objName ==objName_before ):
 
             rrv_c0_sb     = self.workspace4fit_.var("rrv_c0_ErfPow2%s_sb_lo_%s"%(label,self.channel));
             rrv_c1_sb     = self.workspace4fit_.var("rrv_c1_ErfPow2%s_sb_lo_%s"%(label,self.channel));
+            rrv_c2_sb     = self.workspace4fit_.var("rrv_c2_ErfPow2%s_sb_lo_%s"%(label,self.channel));
             rrv_offset_sb = self.workspace4fit_.var("rrv_offset_ErfPow2%s_sb_lo_%s"%(label,self.channel));
             rrv_width_sb  = self.workspace4fit_.var("rrv_width_ErfPow2%s_sb_lo_%s"%(label,self.channel));
 
-            rrv_delta_c0      = RooRealVar("rrv_delta_c0_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_c0_ErfPow2%s_%s"%(label,self.channel),-8, -20 ,0);
-            rrv_delta_c1      = RooRealVar("rrv_delta_c1_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_c1_ErfPow2%s_%s"%(label,self.channel),0., -5, 5);
-            rrv_delta_offset  = RooRealVar("rrv_delta_offset_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_offset_ErfPow2%s_%s"%(label,self.channel),30., 1.,80 );
-            rrv_delta_width   = RooRealVar("rrv_delta_width_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_width_ErfPow2%s_%s"%(label,self.channel),15,1.,100*rrv_width_sb.getError());
+            rrv_delta_c0      = RooRealVar("rrv_delta_c0_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_c0_ErfPow2%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_c0_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c0_sb.getVal(),
+					self.workspace4fit_.var("rrv_c0_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c0_sb.getVal()-8*rrv_c0_sb.getError(),
+					self.workspace4fit_.var("rrv_c0_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c0_sb.getVal()+8*rrv_c0_sb.getError())
+            rrv_delta_c1      = RooRealVar("rrv_delta_c1_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_c1_ErfPow2%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_c1_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c1_sb.getVal(),
+					self.workspace4fit_.var("rrv_c1_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c1_sb.getVal()-8*rrv_c1_sb.getError(),
+					self.workspace4fit_.var("rrv_c1_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c1_sb.getVal()+8*rrv_c1_sb.getError())
+            rrv_delta_c2      = RooRealVar("rrv_delta_c2_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_c2_ErfPow2%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_c2_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c2_sb.getVal(),
+					self.workspace4fit_.var("rrv_c2_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c2_sb.getVal()-8*rrv_c2_sb.getError(),
+					self.workspace4fit_.var("rrv_c2_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c2_sb.getVal()+8*rrv_c2_sb.getError())
+            rrv_delta_offset  = RooRealVar("rrv_delta_offset_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_offset_ErfPow2%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_offset_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_offset_sb.getVal(),
+					self.workspace4fit_.var("rrv_offset_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_offset_sb.getVal()-8*rrv_offset_sb.getError(),
+					self.workspace4fit_.var("rrv_offset_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_offset_sb.getVal()+8*rrv_offset_sb.getError())
+            rrv_delta_width   = RooRealVar("rrv_delta_width_ErfPow2%s_%s"%(label,self.channel),"rrv_delta_width_ErfPow2%s_%s"%(label,self.channel),
+	    				self.workspace4fit_.var("rrv_width_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_width_sb.getVal(),
+					self.workspace4fit_.var("rrv_width_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_width_sb.getVal()-8*rrv_width_sb.getError(),
+					self.workspace4fit_.var("rrv_width_ErfPow2%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_width_sb.getVal()+8*rrv_width_sb.getError())
             
             rrv_c0_sr     = RooFormulaVar("rrv_c0_sr%s_%s"%(label,self.channel), "@0+@1",RooArgList(rrv_c0_sb, rrv_delta_c0 ) );
             rrv_c1_sr     = RooFormulaVar("rrv_c1_sr%s_%s"%(label,self.channel), "@0+@1",RooArgList(rrv_c1_sb, rrv_delta_c1 ) );
+            rrv_c2_sr     = RooFormulaVar("rrv_c2_sr%s_%s"%(label,self.channel), "@0+@1",RooArgList(rrv_c2_sb, rrv_delta_c2 ) );
             rrv_offset_sr = RooFormulaVar("rrv_offset_sr%s_%s"%(label,self.channel), "@0+@1",RooArgList(rrv_offset_sb, rrv_delta_offset ) );
             rrv_width_sr  = RooFormulaVar("rrv_width_sr%s_%s"%(label,self.channel), "@0+@1",RooArgList(rrv_width_sb, rrv_delta_width ) );
 
-            correct_factor_pdf = RooAlpha4ErfPow2Pdf("correct_factor_pdf","correct_factor_pdf", rrv_x, rrv_c0_sr, rrv_c1_sr, rrv_offset_sr,rrv_width_sr, rrv_c0_sb, rrv_c1_sb, rrv_offset_sb, rrv_width_sb);
+            correct_factor_pdf = ROOT.RooAlpha4ErfPow3Pdf("correct_factor_pdf","correct_factor_pdf", rrv_x, rrv_c0_sr, rrv_c1_sr,rrv_c2_sr, rrv_offset_sr,rrv_width_sr, rrv_c0_sb, rrv_c1_sb,rrv_c2_sb, rrv_offset_sb, rrv_width_sb);
 
         if mlvj_model=="ErfPowExp": ## take initial value from what was already fitted in the SR
 
@@ -3048,8 +3071,8 @@ objName ==objName_before ):
             # Analysis selection here
 
             if ((options.jetalgo).find('Puppi') != -1): #Puppi
-                #if treeIn.mass_lvj_type0> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type0<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
-                if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
+                if treeIn.mass_lvj_type0> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type0<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
+                	#if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	self.isGoodEvent = 1;   
                 #if (treeIn.type != 1 or treeIn.type!= 0) : self.isGoodEvent = 0;       # Some issue with this cut... 
                 if (treeIn.PuppiAK8_jet_tau2tau1>0.55) : self.isGoodEvent = 0;
@@ -3843,9 +3866,11 @@ if __name__ == '__main__':
     himass = 2500; 
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
-    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,3500,40,150, 170,3500,"Exp","ExpN",options.interpolate) 
-    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,3500,40,150, 170,3500,"ExpN","ExpSlowFastFall",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 160,2502,40,150, 160,2502,"Landau","Landau",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfPow2",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ExpSlowFastFall",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,2502,40,150, 170,2502,"ErfPow2","Landau",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,2502,40,150, 170,2502,"Landau","Landau",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 0,3500,40,150, 0,2500,"ExpSlowFastFall","ExpSlowFastFall",options.interpolate) 
 
 

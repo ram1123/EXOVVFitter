@@ -538,6 +538,49 @@ private:
   ClassDef(RooErfPow3Pdf,1) // Your description goes here...
 };
  
+///// Alpha function for Erf*Pow3 funtion
+class RooAlpha4ErfPow3Pdf : public RooAbsPdf {
+public:
+  RooAlpha4ErfPow3Pdf() {} ; 
+  RooAlpha4ErfPow3Pdf(const char *name, const char *title,
+	      RooAbsReal& _x,
+	      RooAbsReal& _c0,
+	      RooAbsReal& _c1,
+	      RooAbsReal& _c2,
+	      RooAbsReal& _offset,
+	      RooAbsReal& _width,
+	      RooAbsReal& _c0a,
+	      RooAbsReal& _c1a,
+	      RooAbsReal& _c2a,
+	      RooAbsReal& _offseta,
+	      RooAbsReal& _widtha);
+
+  RooAlpha4ErfPow3Pdf(const RooAlpha4ErfPow3Pdf& other, const char* name=0) ;
+
+  virtual TObject* clone(const char* newname) const { return new RooAlpha4ErfPow3Pdf(*this,newname); }
+
+  inline virtual ~RooAlpha4ErfPow3Pdf() { }
+
+protected:
+
+  RooRealProxy x ;
+  RooRealProxy c0 ;
+  RooRealProxy c1 ;
+  RooRealProxy c2 ;
+  RooRealProxy offset ;
+  RooRealProxy width ;
+  RooRealProxy c0a ;
+  RooRealProxy c1a ;
+  RooRealProxy c2a ;
+  RooRealProxy offseta ;
+  RooRealProxy widtha ;
+  
+  Double_t evaluate() const ;
+
+private:
+
+  ClassDef(RooAlpha4ErfPow3Pdf,1) // Your description goes here...
+};
 
 
 /////// ErfPow Exp function and related pdf 
