@@ -11,7 +11,7 @@ import datetime
 import commands
 
 #os.system("sed -i 's/0.8,0.,1.0/0.5,0.0,0.8/' g1_exo_doFit_class_new.py")
-OUTDIR = "LandauFitImprov_mWW_160_2502_TryingToGetBestPars_NoBtagWgt"
+OUTDIR = 'Exp_ExpN_mWW_450_2500'
 changes = raw_input("\n\nWrite change summary: ")
 
 print "==> ",changes
@@ -21,7 +21,7 @@ currentDir = os.getcwd();
 CMSSWDir =  currentDir+"/../";
 print "PWD = ",currentDir
 
-TestRun = 1
+TestRun = 0
 
 if OUTDIR == "":
 	JobName = "job"
@@ -88,7 +88,8 @@ outJDL.write("Queue\n");
 	    
 outJDL.close();
 
-command = "python g1_exo_doFit_class_new.py -b -c em --mass 600 --category HPW --sample Signal_aQGC --jetalgo PuppiAK8_jet_mass_so --type vbf"
+#command = "python g1_exo_doFit_class_new.py -b -c em --mass 600 --category HPW --sample Signal_aQGC --jetalgo PuppiAK8_jet_mass_so --type vbf"
+command = "python g1_exo_doFit_class_new.py -b "
 
 outScript = open("runstep2condor.sh","w");
 outScript.write('#!/bin/bash');

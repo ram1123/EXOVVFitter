@@ -152,7 +152,8 @@ class doFit_wj_and_wlvj:
 #        self.file_data = ("WWTree_pseudodataS.root");#fake data
 #        self.file_data = ("WWTree_pseudodata.root");#fake data
         self.file_signal     = ("WWTree_%s.root"%(self.signal_sample));
-        self.file_WJets0_mc  = ("WWTree_WJets.root");
+        self.file_WJets0_mc  = ("WWTree_VJets.root");
+        #self.file_WJets0_mc  = ("WWTree_WJets.root");
         self.file_VV_mc      = ("WWTree_VV.root");# WW+WZ
         self.file_TTbar_mc   = ("WWTree_TTbar.root");
         self.file_STop_mc    = ("WWTree_STop.root");
@@ -1806,33 +1807,33 @@ objName ==objName_before ):
 
 	#hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),int(rrv_mass_lvj.getBins()/self.narrow_factor))
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_auto.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_auto.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_47bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_40bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_30bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_20bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_10bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_4bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_47bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_40bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_30bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_20bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_10bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_4bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
 
         self.workspace4fit_.pdf("model_pdf%s_sb_lo_%s_mlvj"%(label,self.channel)).getParameters(rdataset_data_mlvj).Print("v");
 
@@ -2116,12 +2117,12 @@ objName ==objName_before ):
             rrv_n_sb  = self.workspace4fit_.var("rrv_n_ExpN%s_sb_lo_%s"%(label,self.channel));
             rrv_delta_c = RooRealVar("rrv_delta_c_ExpN%s_%s"%(label,self.channel),"rrv_delta_c_ExpN%s_%s"%(label,self.channel),
                                       self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_sb.getVal(),
-                                      self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_sb.getVal()-8*rrv_c_sb.getError(),
-                                      self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_sb.getVal()+8*rrv_c_sb.getError() )
+                                      self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_sb.getVal()-21*rrv_c_sb.getError(),
+                                      self.workspace4fit_.var("rrv_c_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_c_sb.getVal()+21*rrv_c_sb.getError() )
             rrv_delta_n = RooRealVar("rrv_delta_n_ExpN%s_%s"%(label,self.channel),"rrv_delta_n_ExpN%s_%s"%(label,self.channel),
                                       self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_sb.getVal(),
-                                      self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_sb.getVal()-8*rrv_n_sb.getError(),
-                                      self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_sb.getVal()+8*rrv_n_sb.getError() )
+                                      self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_sb.getVal()-21*rrv_n_sb.getError(),
+                                      self.workspace4fit_.var("rrv_n_ExpN%s_signal_region_%s"%(label,self.channel)).getVal()-rrv_n_sb.getVal()+21*rrv_n_sb.getError() )
 
             correct_factor_pdf = RooExpNPdf("correct_factor_pdf","correct_factor_pdf",rrv_x,rrv_delta_c, rrv_delta_n);
  
@@ -3866,7 +3867,10 @@ if __name__ == '__main__':
     himass = 2500; 
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpN",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"Landau","ExpN",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfExp_v1",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfPow2",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ExpSlowFastFall",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 170,2502,40,150, 170,2502,"ErfPow2","Landau",options.interpolate) 

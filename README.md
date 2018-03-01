@@ -13,28 +13,22 @@ To setup the code run following commands:
 	git clone git@github.com:ram1123/EXOVVFitter.git
 	cd EXOVVFitter
 	scramv1 b clean; scramv1 b
-
-Also, run next two line first time or if you change any pdf:
-
 	cd PDFs
 	root -l compilePdfs.C
 
-Before running the code:
 
-<!--
-put your ntuples in a folder called WWTree_mu or WWTree_el
-you must add the ntuples containing the same background (e.g. all the single top samples, as s-channel, t-channel, tW-channel.. into a single STop sample). In order to do that, you can use the hadda_mu.sh and hadda_el.sh scripts contained in the repository used to produce the small ntuples at the step2:
--->
-1. Provide the path of ntuples here: [link](https://github.com/ram1123/EXOVVFitter/blob/master/g1_exo_doFit_class_new.py#L146)
-2. Change the root file read method if not running from store area of fnal from here: [link](https://github.com/ram1123/EXOVVFitter/blob/master/g1_exo_doFit_class_new.py#L2967)
+## Before running the code:
+
+1. you must add the ntuples containing the same background (e.g. all the single top samples, as s-channel, t-channel, tW-channel.. into a single STop sample). <!-- In order to do that, you can use the hadda_mu.sh and hadda_el.sh scripts contained in the repository used to produce the small ntuples at the step2: -->
+2. Provide the path of ntuples here: [link](https://github.com/ram1123/EXOVVFitter/blob/master/g1_exo_doFit_class_new.py#L146)
+3. Change the root file read method if not running from store area of fnal from here: [link](https://github.com/ram1123/EXOVVFitter/blob/master/g1_exo_doFit_class_new.py#L2967)
 3. If you modify one of the libraries inside the PDF/ folder, you must recompile it with the following commands: (fo instance, if you modify Util.cxx)
 
 	cd PDFs/
 	root -l compilePdfs.C
 
 
-
-To run the code:
+## To run the code:
 
 	python g1_exo_doFit_class_new.py -b 
 	
@@ -48,7 +42,3 @@ To run the code:
 5. `get_WJets_mlvj_correction_sb_lo_to_signal_region()` :
 6. `read_workspace()` : Draw the final M_lvj plots using the data_obs, signal and backgrounds shape and rate what saved in the root file.
 7. `fit_mlvj_model_single_MC` :
-
-
-
-1. `print "CHECK 1` Search this everytime and see if the value is zero or not?
