@@ -1468,25 +1468,15 @@ objName ==objName_before ):
 
         ## ExpN pdf for W+jets bkg fit
         if in_model_name == "ExpN":
+            label_tstring=TString(label);
 
             print "########### ExpN funtion for W+jets mlvj ############"
-#            rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-3e-3,-1e-1,-1e-5);
-#	    rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, 100, 1e4);
-#            rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-3e-3,-1e-1,-1e-5);
-#            rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, -1e2, 1e4);
-            rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-5.32e-3,-1e-1,-1e-6);
-            rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -64.3, -1e4, 1e5);
-#	    if rrv_x.getMin() == 700:3
-#	       rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 0, -10000, 10000);	       
-            #if(ismc==1):
-            #  rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, -1e2, 1e4);	
-            #else :	    
-            #  if self.channel == "el" :
-            #     rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, -1e2, 1e4);
-            #  elif self.wtagger_label == "LP" :
-            #     rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 1e3, -1e2, 1e4);
-            #  else:
-            #     rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, 5e2, 0, 1e3);		 
+            if label_tstring.Contains("signal_region"):
+               rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-0.00347556,-1e-1,-1e-6);
+               rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -173.987, -1e4, 1e5);
+            elif label_tstring.Contains("sb_lo"):
+               rrv_c_ExpN = RooRealVar("rrv_c_ExpN"+label+"_"+self.channel,"rrv_c_ExpN"+label+"_"+self.channel,-0.00359157,-1e-1,-1e-6);
+               rrv_n_ExpN = RooRealVar("rrv_n_ExpN"+label+"_"+self.channel,"rrv_n_ExpN"+label+"_"+self.channel, -4.47341, -1e4, 1e5);
 
             model_pdf = ROOT.RooExpNPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ExpN, rrv_n_ExpN);
                                                                                                              
@@ -1563,15 +1553,15 @@ objName ==objName_before ):
         ## sum of two exponential 
         if in_model_name == "Exp" or in_model_name == "Exp_sr":
             print "########### Exp = levelled exp funtion for W+jets mlvj ############"
-            rrv_c_Exp = RooRealVar("rrv_c_Exp"+label+"_"+self.channel,"rrv_c_Exp"+label+"_"+self.channel,-0.05,-0.1,0.);
+            rrv_c_Exp = RooRealVar("rrv_c_Exp"+label+"_"+self.channel,"rrv_c_Exp"+label+"_"+self.channel,-0.00358516,-10,10.);
             model_pdf = ROOT.RooExponential("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_Exp);
 
         ## Erf times for mj spectrum
         if in_model_name == "ErfExp" :
             print "########### Erf*Exp for mj fit  ############"
-            rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,-0.05,-0.1,-1e-4);
-            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,60.,30.,120);
-            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,30.,10, 60.);
+            rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,-0.0323819,-0.1,-1e-4);
+            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,72.7714,30.,120);
+            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,39.5245,10, 60.);
             model_pdf         = ROOT.RooErfExpPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ErfExp,rrv_offset_ErfExp,rrv_width_ErfExp);
 
         ## different initial values -> for mlvj
@@ -1605,9 +1595,9 @@ objName ==objName_before ):
         ## User1 function 
         if in_model_name == "User1":
             print "########### User 1 Pdf  for mlvj fit ############"
-            rrv_p0     = RooRealVar("rrv_p0_User1"+label+"_"+self.channel,"rrv_p0_User1"+label+"_"+self.channel, 30, 10, 90);
+            rrv_p0     = RooRealVar("rrv_p0_User1"+label+"_"+self.channel,"rrv_p0_User1"+label+"_"+self.channel, 21.2397, 10, 90);
             if self.wtagger_label=="HP": #change this!
-                rrv_p1 = RooRealVar("rrv_p1_User1"+label+"_"+self.channel,"rrv_p1_User1"+label+"_"+self.channel, -4, -9, -2);
+                rrv_p1 = RooRealVar("rrv_p1_User1"+label+"_"+self.channel,"rrv_p1_User1"+label+"_"+self.channel, -3.26642, -9, -2);
             else:
                 rrv_p1 = RooRealVar("rrv_p1_User1"+label+"_"+self.channel,"rrv_p1_User1"+label+"_"+self.channel, -2, -4, 0.);
             model_pdf=RooUser1Pdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_p0,rrv_p1);
@@ -1776,6 +1766,11 @@ objName ==objName_before ):
 
         ## Add the other bkg component fixed to the total model
         model_data = RooAddPdf("model_data%s%s_mlvj"%(label,mlvj_region),"model_data%s%s_mlvj"%(label,mlvj_region),RooArgList(model_WJets,model_VV_backgrounds, model_TTbar_backgrounds, model_STop_backgrounds));
+	print "\n\n====\n\n"
+	print "\n\n====\t Print mWW model before fit (data and all mc added together)"
+	model_data.Print()
+	model_data.getParameters(ROOT.RooArgSet(rrv_mass_lvj)).Print("v");
+	print "\n\n====\n\n"
         
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.NumCPU(2));
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2"), RooFit.NumCPU(2));
@@ -1783,7 +1778,11 @@ objName ==objName_before ):
         rfresult.Print();
 	print "\n\n=== \t Print covariance matrix \t ==="
         rfresult.covarianceMatrix().Print();
-	print "\n\n=== \n\n"
+	print "\n\n====\n\n"
+	print "\n\n====\t Print mWW model after fit (data and all mc added together)"
+	model_data.Print()
+	model_data.getParameters(ROOT.RooArgSet(rrv_mass_lvj)).Print("v");
+	print "\n\n====\n\n"
 	fitresultsmlvj.append(rfresult)
         getattr(self.workspace4fit_,"import")(model_data)
 
@@ -2556,6 +2555,11 @@ objName ==objName_before ):
 
         ## Total Pdf and fit only in sideband 
         model_data = RooAddPdf("model_data_xww%s_%s_mj"%(massscale,self.channel),"model_data_xww%s_%s_mj"%(massscale,self.channel),RooArgList(model_WJets,model_VV,model_TTbar,model_STop));
+	print "\n\n","="*20,"==\t MODEL PRINT ","\n\n"
+	model_data.Print("v");
+	print "\n\n","="*20,"\n\n"
+	model_data.getParameters(rdataset_data_mj).Print("v");
+	print "\n\n","="*20,"\n\n"
         rfresult = model_data.fitTo( rdataset_data_mj, RooFit.Save(1) , RooFit.Range("sb_lo,sb_hi") ,RooFit.Extended(kTRUE), RooFit.NumCPU(2) );
         rfresult = model_data.fitTo( rdataset_data_mj, RooFit.Save(1) , RooFit.Range("sb_lo,sb_hi") ,RooFit.Extended(kTRUE), RooFit.NumCPU(2), RooFit.Minimizer("Minuit2") );
         rfresult.Print();
@@ -2578,6 +2582,9 @@ objName ==objName_before ):
                                                self.workspace4fit_.var("rrv_number_VV_xww%s_%s_mj"%(massscale,self.channel)).getError()+
                                                self.workspace4fit_.var("rrv_number%s_%s_mj"%(label,self.channel)).getError()*
                                                self.workspace4fit_.var("rrv_number%s_%s_mj"%(label,self.channel)).getError()));
+	print "\n\n","==== \t prit number : \n\n"
+	rrv_number_data_mj.Print("v")
+	print "\n\n","="*20
         getattr(self.workspace4fit_,"import")(rrv_number_data_mj);
         
         ## if fit on Wjets default with the default shape
@@ -2745,12 +2752,18 @@ objName ==objName_before ):
 
         ## make the extended pdf model
         model = self.make_Model(label+in_range,mlvj_model,"_mlvj",constrainslist,ismc);
+	print "\n\n","="*20,"==\t MODEL MLVJ PRINT ","\n\n"
+	model.Print("v");
+	print "\n\n","="*20,"\n\n"
+	model.getParameters(rdataset).Print("v");
+	print "\n\n","="*20,"\n\n"
 
         ## make the fit
         model.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE) , RooFit.NumCPU(2));
         rfresult = model.fitTo( rdataset, RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2") , RooFit.NumCPU(2));
 	print "\n\n","_"*20,"\n\n"
         rfresult.Print();
+        rfresult.Print("v");
 	fitresultsmlvj.append(rfresult)
 	print "\n\n\t\t SAVE HISTOGRAM \n",in_file_name,label,in_range,mlvj_model,"\n\n"
 	hist = model.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
@@ -2866,10 +2879,17 @@ objName ==objName_before ):
 
         ## make the extended model
         model = self.make_Model(label,in_model_name);
+	print "\n\n","="*20,"==\t MODEL PRINT ","\n\n"
+	model.Print("v");
+	print "\n\n","="*20,"\n\n"
+	model.getParameters(rdataset_mj).Print("v");
+	print "\n\n","="*20,"\n\n"
         rfresult = model.fitTo(rdataset_mj,RooFit.Save(1), RooFit.Extended(kTRUE) , RooFit.NumCPU(2));
         rfresult = model.fitTo(rdataset_mj,RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2") , RooFit.NumCPU(2));
         rfresult = model.fitTo(rdataset_mj,RooFit.Save(1), RooFit.SumW2Error(kTRUE) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2") , RooFit.NumCPU(2));
-        rfresult.Print();
+	print "\n\n","="*20,"==\t FIT RESULT","\n\n"
+        rfresult.Print("v");
+	print "\n\n","="*20,"\n\n"
 	fitresultsmj.append(rfresult)
 	
         ## Plot the result
@@ -3075,7 +3095,7 @@ objName ==objName_before ):
                 if treeIn.mass_lvj_type0> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type0<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	#if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	self.isGoodEvent = 1;   
-                #if (treeIn.type != 1 or treeIn.type!= 0) : self.isGoodEvent = 0;       # Some issue with this cut... 
+                if (treeIn.type != 1) : self.isGoodEvent = 0;       # Some issue with this cut... 
                 if (treeIn.PuppiAK8_jet_tau2tau1>0.55) : self.isGoodEvent = 0;
                 if (treeIn.l_pt2>0) : self.isGoodEvent = 0;
                 if (treeIn.l_pt1<30 or abs(treeIn.l_eta1)>2.5) : self.isGoodEvent = 0;
@@ -3266,6 +3286,7 @@ objName ==objName_before ):
         #### Fit the mlvj in sb_lo, signal region using two different model as done in the mj
         self.fit_mlvj_model_single_MC(self.file_WJets0_mc,"_WJets0_xww","_sb_lo",self.MODEL_4_mlvj, 0, 0, 1, 1);
         self.fit_mlvj_model_single_MC(self.file_WJets0_mc,"_WJets0_xww","_signal_region",self.MODEL_4_mlvj, 0, 0, 1, 1);
+        #self.fit_mlvj_model_single_MC(self.file_WJets0_mc,"_WJets01_xww","_sb_lo",self.MODEL_4_mlvj, 0, 0, 1, 1);
         self.fit_mlvj_model_single_MC(self.file_WJets0_mc,"_WJets01_xww","_sb_lo",self.MODEL_4_mlvj_alter, 0, 0, 1, 1);
         self.fit_mlvj_model_single_MC(self.file_WJets0_mc,"_WJets01_xww","_signal_region",self.MODEL_4_mlvj_alter, 0, 0, 1, 1);       
         print "________________________________________________________________________"
@@ -3868,7 +3889,8 @@ if __name__ == '__main__':
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpN",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpN",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpSlowFastFall",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"Landau","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfExp_v1",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfPow2",options.interpolate) 
