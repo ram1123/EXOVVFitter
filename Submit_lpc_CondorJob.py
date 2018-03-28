@@ -43,6 +43,7 @@ print "Name of Log dir: ",OutputLogPath
 # create a directory on eos
 os.system('xrdfs root://cmseos.fnal.gov/ mkdir ' + outputFolder)
 os.system('xrdfs root://cmseos.fnal.gov/ mkdir ' + outputFolder + '/cards_em_HP')
+os.system('xrdfs root://cmseos.fnal.gov/ mkdir ' + outputFolder + '/plots_em_HP')
 # create directory in pwd for log files
 os.system('mkdir -p ' + OutputLogPath)
 
@@ -65,6 +66,7 @@ make_tarfile(CMSSWRel+".tgz", cmsswDirPath[1])
 os.system('xrdcp -f ' + CMSSWRel+".tgz" + ' root://cmseos.fnal.gov/'+outputFolder+"/" + CMSSWRel+".tgz")
 os.system('git diff g1_exo_doFit_class_new.py > mypatch.patch')
 os.system("sed -i '1s/^/Changes Summay : "+changes+"\\n/' mypatch.patch")
+os.system('git log -1 --format="%H" >> mypatch.patch ')
 os.system('xrdcp -f mypatch.patch root://cmseos.fnal.gov/'+outputFolder+'/mypatch.patch')
 
 
@@ -129,10 +131,10 @@ outScript.write("\n"+'cd ../');
 outScript.write("\n"+'echo "===========\t Run main script	=====================" ');
 outScript.write("\n"+command);
 outScript.write("\n"+'echo "====> List output files : " ');
-outScript.write("\n"+'ls plots_em_HPW/');
+outScript.write("\n"+'ls plots_em_HP/');
 outScript.write("\n"+'echo "xrdcp output for condor"');
 outScript.write("\n"+'xrdcp -f g1_exo_doFit_class_new.py root://cmseos.fnal.gov/'+outputFolder+'/');
-outScript.write("\n"+'xrdcp -r -fs plots_em_HPW root://cmseos.fnal.gov/'+outputFolder+'/');
+outScript.write("\n"+'xrdcp -r -fs plots_em_HP root://cmseos.fnal.gov/'+outputFolder+'/plots_em_HP/');
 outScript.write("\n"+'xrdcp -r -fs cards_em_HP root://cmseos.fnal.gov/'+outputFolder+'/cards_em_HP/');
 outScript.write("\n"+'for FILE in *.root');
 outScript.write("\n"+'do');

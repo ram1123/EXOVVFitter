@@ -119,16 +119,16 @@ class doFit_wj_and_wlvj:
         #define sidebands
         self.mj_sideband_lo_min = in_mj_min;
         self.mj_sideband_lo_max = 65
-        self.mj_sideband_hi_min = 105
+        self.mj_sideband_hi_min = 110
         self.mj_sideband_hi_max = in_mj_max;
         self.mj_signal_min = 65
-        self.mj_signal_max = 105
+        self.mj_signal_max = 110
         if (options.category).find('W') != -1:
          self.mj_signal_min = 65
          self.mj_signal_max = 85	        
 	elif (options.category).find('Z') != -1:
          self.mj_signal_min = 85
-         self.mj_signal_max = 105
+         self.mj_signal_max = 110
 	 	    
         ## zone definition in the jet mass 
         rrv_mass_j.setRange("sb_lo",self.mj_sideband_lo_min,self.mj_sideband_lo_max);
@@ -143,8 +143,8 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",1500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
+	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
                  
         #prepare background data and signal samples            
         self.signal_sample=in_signal_sample;
@@ -2651,7 +2651,7 @@ objName ==objName_before ):
             upperLine = TLine(self.mj_signal_max,0.,self.mj_signal_max,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
             #lowerLine = TLine(65,0.,65,mplot.GetMaximum()*0.9); lowerLine.SetLineWidth(2); lowerLine.SetLineColor(kBlack); lowerLine.SetLineStyle(9);
             middleLine1 = TLine(65,0.,65,mplot.GetMaximum()*0.9); middleLine1.SetLineWidth(2); middleLine1.SetLineColor(kBlack); middleLine1.SetLineStyle(9);
-            middleLine2 = TLine(105,0.,105,mplot.GetMaximum()*0.9); middleLine2.SetLineWidth(2); middleLine2.SetLineColor(kBlack); middleLine2.SetLineStyle(9);
+            middleLine2 = TLine(110,0.,110,mplot.GetMaximum()*0.9); middleLine2.SetLineWidth(2); middleLine2.SetLineColor(kBlack); middleLine2.SetLineStyle(9);
             #upperLine = TLine(95,0.,95,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
 	    mplot.addObject(middleLine1);
 	    mplot.addObject(middleLine2);
@@ -3096,39 +3096,43 @@ objName ==objName_before ):
 
             # Analysis selection here
 
+	    #if treeIn.l_pt2>0:
+	    #	print "tmp_scale_to_lumi = ",tmp_scale_to_lumi,"\t treeIn.mass_llj_PuppiAK8 = ",treeIn.mass_llj_PuppiAK8,"\t type = ",treeIn.type,"\ttau21 = ",treeIn.PuppiAK8_jet_tau2tau1,"\t l_pt = ",treeIn.l_pt2,"\t l_pt2 = ",treeIn.l_pt2,"\t ak8 pt = ",treeIn.ungroomed_PuppiAK8_jet_pt,"\tmass = ",treeIn.PuppiAK8_jet_mass_so,"\tbtag = ",treeIn.nBTagJet_loose,"\tmjj = ",treeIn.vbf_maxpt_jj_m,"\t jpt = ",treeIn.vbf_maxpt_j1_pt,"\t",treeIn.vbf_maxpt_j2_pt,"\t\n"
             if ((options.jetalgo).find('Puppi') != -1): #Puppi
-                if treeIn.mass_lvj_type0_PuppiAK8> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type0_PuppiAK8<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
+                if treeIn.mass_llj_PuppiAK8> rrv_mass_lvj.getMin() and treeIn.mass_llj_PuppiAK8<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	#if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	self.isGoodEvent = 1;   
                 #if (treeIn.type != 1) : self.isGoodEvent = 0;       # Some issue with this cut... 
                 if (treeIn.PuppiAK8_jet_tau2tau1>0.55) : self.isGoodEvent = 0;
-                if (treeIn.l_pt2>0) : self.isGoodEvent = 0;
+                if (treeIn.l_pt2<0) : self.isGoodEvent = 0;
                 if (treeIn.l_pt1<30 or abs(treeIn.l_eta1)>2.5) : self.isGoodEvent = 0;
-		if (treeIn.pfMET_Corr<50) : self.isGoodEvent = 0;
+                if (treeIn.l_pt2<30 or abs(treeIn.l_eta2)>2.5) : self.isGoodEvent = 0;
                 if (treeIn.ungroomed_PuppiAK8_jet_pt<200.) : self.isGoodEvent = 0;
                 if (abs(treeIn.ungroomed_PuppiAK8_jet_eta)>2.4): self.isGoodEvent = 0;
                 if (treeIn.PuppiAK8_jet_mass_so > 150.) : self.isGoodEvent = 0;
                 if (treeIn.PuppiAK8_jet_mass_so < 40.) : self.isGoodEvent = 0;
                 if (treeIn.nBTagJet_loose!=0) : self.isGoodEvent = 0;
-                if (treeIn.BosonCentrality_type0<1.0) : self.isGoodEvent = 0;
-                if (abs(treeIn.ZeppenfeldWL_type0/treeIn.vbf_maxpt_jj_Deta)>0.3) : self.isGoodEvent = 0;
-                if (abs(treeIn.ZeppenfeldWH/treeIn.vbf_maxpt_jj_Deta)>0.3) : self.isGoodEvent = 0;
+                #if (treeIn.BosonCentrality_type0<1.0) : self.isGoodEvent = 0;
+                #if (abs(treeIn.ZeppenfeldWL_type0/treeIn.vbf_maxpt_jj_Deta)>0.3) : self.isGoodEvent = 0;
+                #if (abs(treeIn.ZeppenfeldWH/treeIn.vbf_maxpt_jj_Deta)>0.3) : self.isGoodEvent = 0;
 
-                if (label=="_data_xww") and ((treeIn.PuppiAK8_jet_mass_so > 65.) and (treeIn.PuppiAK8_jet_mass_so < 105.)) : self.isGoodEvent = 0; #BLINDING
+                if (label=="_data_xww") and ((treeIn.PuppiAK8_jet_mass_so > 65.) and (treeIn.PuppiAK8_jet_mass_so < 110.)) : self.isGoodEvent = 0; #BLINDING
 
             #VBF SELECTION
-            if ((options.type).find('vbf') != -1 and treeIn.vbf_maxpt_jj_m<800): self.isGoodEvent=0;
-            if ((options.type).find('vbf') != -1 and abs(treeIn.vbf_maxpt_j1_eta-treeIn.vbf_maxpt_j2_eta)<4.0): self.isGoodEvent=0;
+            if ((options.type).find('vbf') != -1 and treeIn.vbf_maxpt_jj_m<600): self.isGoodEvent=0;
+            #if ((options.type).find('vbf') != -1 and abs(treeIn.vbf_maxpt_j1_eta-treeIn.vbf_maxpt_j2_eta)<4.0): self.isGoodEvent=0;
             if ((options.type).find('vbf') != -1 and (treeIn.vbf_maxpt_j1_pt<30 or treeIn.vbf_maxpt_j2_pt<30)): self.isGoodEvent=0;
 
-#            if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
+#            if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >110 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
 
 	    
             if self.isGoodEvent == 1:
+	    	#print "tmp_scale_to_lumi = ",tmp_scale_to_lumi,"\t treeIn.mass_llj_PuppiAK8 = ",treeIn.mass_llj_PuppiAK8,"\t type = ",treeIn.type,"\ttau21 = ",treeIn.PuppiAK8_jet_tau2tau1,"\t l_pt = ",treeIn.l_pt2,"\t l_pt2 = ",treeIn.l_pt2,"\t ak8 pt = ",treeIn.ungroomed_PuppiAK8_jet_pt,"\tmass = ",treeIn.PuppiAK8_jet_mass_so,"\tbtag = ",treeIn.nBTagJet_loose,"\tmjj = ",treeIn.vbf_maxpt_jj_m,"\t jpt = ",treeIn.vbf_maxpt_j1_pt,"\t",treeIn.vbf_maxpt_j2_pt,"\t\n"
                 ### weigh MC events              
-		tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.btag0Wgt; 
+                #tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.btag0Wgt;		
+                tmp_event_weight     = treeIn.totalEventWeight_2Lep*treeIn.pu_Weight*treeIn.btag0Wgt;		
                 tmp_event_weight4fit = treeIn.genWeight;
-		tmp_event_weight4fit = tmp_event_weight4fit*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt/tmp_scale_to_lumi;
+                tmp_event_weight4fit = treeIn.totalEventWeight_2Lep*treeIn.pu_Weight*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt/tmp_scale_to_lumi;
 	
                 if label =="_data" or label =="_data_xww" :
                     tmp_event_weight=1.;
@@ -3139,7 +3143,7 @@ objName ==objName_before ):
                     else:
                         tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forV.getVal();
                 
-                rrv_mass_lvj.setVal(treeIn.mass_lvj_type0_PuppiAK8);
+                rrv_mass_lvj.setVal(treeIn.mass_llj_PuppiAK8);
 
                 if tmp_jet_mass >= self.mj_sideband_lo_min and tmp_jet_mass < self.mj_sideband_lo_max:
                     rdataset_sb_lo_mlvj.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight );
@@ -3158,7 +3162,7 @@ objName ==objName_before ):
                     combData4fit.add(RooArgSet(rrv_mass_lvj,data_category),tmp_event_weight4fit);
                     hnum_2region.Fill(1,tmp_event_weight);
 
-                    if treeIn.mass_lvj_type0_PuppiAK8 >=self.mlvj_signal_min and treeIn.mass_lvj_type0_PuppiAK8 <self.mlvj_signal_max:
+                    if treeIn.mass_llj_PuppiAK8 >=self.mlvj_signal_min and treeIn.mass_llj_PuppiAK8 <self.mlvj_signal_max:
                         hnum_2region.Fill(0,tmp_event_weight);
 
                 if tmp_jet_mass >= self.mj_sideband_hi_min and tmp_jet_mass < self.mj_sideband_hi_max:
