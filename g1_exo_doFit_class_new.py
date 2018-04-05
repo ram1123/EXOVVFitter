@@ -143,6 +143,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",1500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
+	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_2018_01_25_14h36/Hadds_for_BkgEstimation/";
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
 	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
                  
@@ -156,7 +157,13 @@ class doFit_wj_and_wlvj:
         self.file_WJets0_mc  = ("WWTree_VJets.root");
         #self.file_WJets0_mc  = ("WWTree_WJets.root");
         self.file_VV_mc      = ("WWTree_VV.root");# WW+WZ
+        #self.file_VV_mc      = ("DebugDiboson_1234567.root");# WW+WZ
+        #self.file_VV_mc      = ("DibosonFIx_noZZsample.root");# WW+WZ
+        #self.file_VV_mc      = ("WWTree_TTbar.root");# WW+WZ
+        #self.file_VV_mc      = ("VV_WWWZZZ.root");# WW+WZ
+        #self.file_VV_mc      = ("VV.root");# WW+WZ
         self.file_TTbar_mc   = ("WWTree_TTbar.root");
+        #self.file_TTbar_mc   = ("WWTree_VV.root");
         self.file_STop_mc    = ("WWTree_STop.root");
 
         ## event categorization as a function of the purity and the applied selection
@@ -3095,20 +3102,21 @@ objName ==objName_before ):
             self.isGoodEvent = 0;   
 
             # Analysis selection here
-
+	    
             if ((options.jetalgo).find('Puppi') != -1): #Puppi
                 if treeIn.mass_lvj_type0_PuppiAK8> rrv_mass_lvj.getMin() and treeIn.mass_lvj_type0_PuppiAK8<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	#if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	self.isGoodEvent = 1;   
-                #if (treeIn.type != 1) : self.isGoodEvent = 0;       # Some issue with this cut... 
-                if (treeIn.PuppiAK8_jet_tau2tau1>0.55) : self.isGoodEvent = 0;
-                if (treeIn.l_pt2>0) : self.isGoodEvent = 0;
-                if (treeIn.l_pt1<30 or abs(treeIn.l_eta1)>2.5) : self.isGoodEvent = 0;
-		if (treeIn.pfMET_Corr<50) : self.isGoodEvent = 0;
+		#if (treeIn.type != 0 or treeIn.type != 1): self.isGoodEvent = 0;
+		if (treeIn.l_pt2>0) : self.isGoodEvent = 0;
+		if (treeIn.l_pt1<30): self.isGoodEvent = 0;
+		if ((treeIn.type == 0 and abs(treeIn.l_eta1)>2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta1)>2.5) or (abs(treeIn.l_eta1)>1.4442  and abs(treeIn.l_eta1)<1.566))) ): self.isGoodEvent = 0;
+		if ((treeIn.type == 0 and treeIn.pfMET_Corr<50)  or  (treeIn.type==1 and treeIn.pfMET_Corr<80) ): self.isGoodEvent = 0;
+
                 if (treeIn.ungroomed_PuppiAK8_jet_pt<200.) : self.isGoodEvent = 0;
                 if (abs(treeIn.ungroomed_PuppiAK8_jet_eta)>2.4): self.isGoodEvent = 0;
-                if (treeIn.PuppiAK8_jet_mass_so > 150.) : self.isGoodEvent = 0;
-                if (treeIn.PuppiAK8_jet_mass_so < 40.) : self.isGoodEvent = 0;
+                if (treeIn.PuppiAK8_jet_tau2tau1>0.55) : self.isGoodEvent = 0;
+
                 if (treeIn.nBTagJet_loose!=0) : self.isGoodEvent = 0;
                 if (treeIn.BosonCentrality_type0<1.0) : self.isGoodEvent = 0;
                 if (abs(treeIn.ZeppenfeldWL_type0/treeIn.vbf_maxpt_jj_Deta)>0.3) : self.isGoodEvent = 0;
@@ -3133,11 +3141,11 @@ objName ==objName_before ):
                 if label =="_data" or label =="_data_xww" :
                     tmp_event_weight=1.;
                     tmp_event_weight4fit=1.;                    
-                else:
-                    if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
-                        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forT.getVal();
-                    else:
-                        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forV.getVal();
+                #else:
+                #    if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
+                #        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forT.getVal();
+                #    else:
+                #        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forV.getVal();
                 
                 rrv_mass_lvj.setVal(treeIn.mass_lvj_type0_PuppiAK8);
 
@@ -3179,10 +3187,11 @@ objName ==objName_before ):
                 hnum_4region.Fill(2,tmp_event_weight);
 
         if not label=="_data" and not label =="_data_xww": ## correct also because events in 4fit dataset were not rescaled in the cycle
-            if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
-                tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forT.getVal();
-            else:
-                tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forV.getVal();
+	    tmp_scale_to_lumi=tmp_scale_to_lumi;
+            #if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
+            #    tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forT.getVal();
+            #else:
+            #    tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forV.getVal();
 
         ### scaler to lumi for MC in 4fit datasets
         rrv_scale_to_lumi=RooRealVar("rrv_scale_to_lumi"+label+"_"+self.channel,"rrv_scale_to_lumi"+label+"_"+self.channel,tmp_scale_to_lumi)
@@ -3271,8 +3280,7 @@ objName ==objName_before ):
         print "################################ fit_TTbar #########################################"
         ### Build the dataset
         self.get_mj_and_mlvj_dataset(self.file_TTbar_mc,"_TTbar_xww", self.jetalgo)# to get the shape of m_lvj
-        if self.wtagger_label.find("LP") != -1: self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","ExpGaus");
-        else:                          self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","2Gaus_ErfExp");
+        self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","2Gaus_ErfExp");
 	self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_sb_lo","ExpN");
         self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","ExpN",1, 0, 1);
         print "________________________________________________________________________"
@@ -3320,10 +3328,10 @@ objName ==objName_before ):
         #    self.fit_Signal()
 	#sys.exit()
         self.fit_WJets()
-	#sys.exit()
+        self.fit_VV()
         self.fit_TTbar()
         self.fit_STop()
-        self.fit_VV()
+	#sys.exit()
         print "________________________________________________________________________"
 
     ##### Analysis with sideband alpha correction 
@@ -3894,8 +3902,8 @@ if __name__ == '__main__':
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
-    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpN",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpSlowFastFall",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpN",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpSlowFastFall",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"Landau","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfExp_v1",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfPow2",options.interpolate) 
