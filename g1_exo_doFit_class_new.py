@@ -32,7 +32,7 @@ parser.add_option('-b', action='store_true', dest='noX', default=False, help='no
 parser.add_option('--inPath', action="store",type="string",dest="inPath",default="./")
 parser.add_option('--category', action="store",type="string",dest="category",default="HP")
 parser.add_option('--type', action="store",type="string",dest="type",default="vbf")
-parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="PuppiAK8_jet_mass_so")
+parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="PuppiAK8_jet_mass_so_corr")
 parser.add_option('--interpolate', action="store_true",dest="interpolate",default=False)
 
 (options, args) = parser.parse_args()
@@ -144,8 +144,8 @@ class doFit_wj_and_wlvj:
 
         #prepare the data and mc files --> set the working directory and the files name
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_2018_01_25_14h36/Hadds_for_BkgEstimation/";
-	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
+	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
                  
         #prepare background data and signal samples            
         self.signal_sample=in_signal_sample;
@@ -357,7 +357,7 @@ class doFit_wj_and_wlvj:
        infile.close()
        
     ### in order to make the legend
-    def legend4Plot(self, plot, left=1, isFill=1, x_offset_low=0., y_offset_low=0., x_offset_high =0., y_offset_high =0., TwoCoulum =1., isalpha=False, ismj=False):
+    def legend4Plot(self, plot, left=1, isFill=1, x_offset_low=0., y_offset_low=0., x_offset_high =0., y_offset_high =0., TwoCoulum =0., isalpha=False, ismj=False):
         print "############### draw the legend ########################"
         if left==-1:
             theLeg = TLegend(0.65+x_offset_low, 0.58+y_offset_low, 0.93+x_offset_low, 0.87+y_offset_low, "", "NDC");
@@ -407,7 +407,8 @@ objName ==objName_before ):
             if drawoption=="P":drawoption="PE"
             if TString(objName).Contains("Uncertainty") or TString(objName).Contains("sigma"):  objName_before=objName; continue ;
             elif TString(objName).Contains("Graph") :  objName_before=objName; continue ;
-            elif TString(objName).Data()=="data" : theLeg.AddEntry(theObj, "Data "+legHeader,"PE");  objName_before=objName;                 
+            elif TString(objName).Data()=="data" : theLeg.AddEntry(theObj, "Observed","PE");  objName_before=objName;                 
+            #elif TString(objName).Data()=="data" : theLeg.AddEntry(theObj, "Data "+legHeader,"PE");  objName_before=objName;                 
             else: objName_before=objName; continue ;
 
         entryCnt = 0;
@@ -427,7 +428,7 @@ objName ==objName_before ):
             if drawoption=="P":drawoption="PE"
             if TString(objName).Contains("Uncertainty") or TString(objName).Contains("sigma"):  objName_before=objName; continue ;
             elif TString(objName).Contains("Graph") :  objName_before=objName; continue ;
-            elif TString(objName).Data()=="WJets" : theLeg.AddEntry(theObj, "W+jets","F");  objName_before=objName;                 
+            elif TString(objName).Data()=="WJets" : theLeg.AddEntry(theObj, "V+jets","F");  objName_before=objName;                 
             else:  objName_before=objName; continue ;
 
         entryCnt = 0;
@@ -449,11 +450,11 @@ objName ==objName_before ):
                 if TString(objName).Contains("Uncertainty") or TString(objName).Contains("sigma"):
                     theLeg.AddEntry(theObj, objName,"F");
                 elif TString(objName).Contains("Graph") :
-                    if not (objName_before=="Graph" or objName_before=="Uncertainty"): theLeg.AddEntry(theObj, "Uncertainty","F");
+                    if not (objName_before=="Graph" or objName_before=="Uncertainty"): theLeg.AddEntry(theObj, "Stat. Uncertainty","F");
                 else:
-                    if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "Single Top","F");
-                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "t#bar{t}","F");
-                    elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "WW/WZ","F");
+                    if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "SingleTop","F");
+                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "TTbar","F");
+                    elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "Diboson","F");
                     elif TString(objName).Data()=="data" :  objName_before=objName; entryCnt = entryCnt+1; continue ;
                     elif TString(objName).Data()=="WJets" : objName_before=objName; entryCnt = entryCnt+1; continue;
                     elif TString(objName).Contains("vbfH"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("vbfH","qqH")).Data() ,"L");
@@ -1186,7 +1187,7 @@ objName ==objName_before ):
         while (param):
             if (TString(label).Contains("VV") or TString(label).Contains("STop") or TString(label).Contains("TTbar")):
                 param.Print();
-            param.setConstant(kTRUE);
+	    param.setConstant(kTRUE);
             param=par.Next()
         ## return the pdf after having fixed the paramters
         return self.workspace4fit_.pdf("model%s_%s_mj"%(label,self.channel))
@@ -1568,8 +1569,8 @@ objName ==objName_before ):
         if in_model_name == "ErfExp" :
             print "########### Erf*Exp for mj fit  ############"
             rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,-0.0323819,-0.1,-1e-4);
-            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,72.7714,30.,120);
-            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,39.5245,10, 60.);
+            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,65.0,0.,200);
+            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,34.71,0., 200.);
             model_pdf         = ROOT.RooErfExpPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ErfExp,rrv_offset_ErfExp,rrv_width_ErfExp);
 
         ## different initial values -> for mlvj
@@ -1728,7 +1729,7 @@ objName ==objName_before ):
       return self.workspace4fit_.pdf("model"+label+"_"+self.channel+mass_spectrum);
 
     ##### Method to fit data mlvj shape in the sideband -> first step for the background extraction of the shape
-    def fit_mlvj_in_Mj_sideband(self, label, mlvj_region, mlvj_model,logy=0):
+    def fit_mlvj_in_Mj_sideband(self, label, mlvj_region, mlvj_model,logy=0, massscale=""):
 
         print "\n\n############### Fit mlvj in mj sideband: ",label," ",mlvj_region,"  ",mlvj_model," ##################"
         rrv_mass_j   = self.workspace4fit_.var("rrv_mass_j")
@@ -1745,6 +1746,17 @@ objName ==objName_before ):
         model_STop_backgrounds  = self.get_STop_mlvj_Model("_sb_lo");
         number_STop_sb_lo_mlvj  = self.workspace4fit_.var("rrv_number_STop_xww_sb_lo_%s_mlvj"%(self.channel))
 	print "------> number_STop_sb_lo_mlvj = ",number_STop_sb_lo_mlvj.Print()
+	print "\n\n","*"*20,"\n\n"
+	print "\t\tCheck normalization of MJ and MLVJ"
+	print "\n\n","*"*20,"\n\n"
+	number_VV_sb_lo_mj = self.workspace4fit_.var("rrv_number_VV_xww%s_%s_mj"%(massscale,self.channel))
+	number_TTbar_sb_lo_mj = self.workspace4fit_.var("rrv_number_TTbar_xww%s_%s_mj"%(massscale,self.channel))
+	number_STop_sb_lo_mj = self.workspace4fit_.var("rrv_number_STop_xww%s_%s_mj"%(massscale,self.channel))
+	print "------> number_VV_sb_lo_mj = ",number_VV_sb_lo_mj.Print()
+	print "------> number_TTbar_sb_lo_mj = ",number_TTbar_sb_lo_mj.Print()
+	print "------> number_STop_sb_lo_mj = ",number_STop_sb_lo_mj.Print()
+	print "\n\n","*"*20,"\n\n"
+
 
         self.workspace4fit_.var("rrv_number_TTbar_xww_sb_lo_%s_mlvj"%(self.channel)).Print();
         self.workspace4fit_.var("rrv_number_STop_xww_sb_lo_%s_mlvj"%(self.channel)).Print();
@@ -2411,10 +2423,7 @@ objName ==objName_before ):
         correct_factor_pdf_deco.getVal(RooArgSet(rrv_x))
         tmp_alpha_ratio = ( model_pdf_signal_region_WJets.getVal(RooArgSet(rrv_x))/model_pdf_sb_lo_WJets.getVal(RooArgSet(rrv_x)) );
         tmp_alpha_pdf   = correct_factor_pdf_deco.getVal(RooArgSet(rrv_x)) * mplot.getFitRangeBinW(); ## value of the pdf in each point
-	if tmp_alpha_pdf == 0:
-		tmp_alpha_scale = 125.0
-	else:
-        	tmp_alpha_scale = tmp_alpha_ratio/tmp_alpha_pdf;
+        tmp_alpha_scale = tmp_alpha_ratio/tmp_alpha_pdf;
 	print "CHECK 1: tmp_alpha_scale = ",tmp_alpha_scale,"\ttmp_alpha_pdf = ",tmp_alpha_pdf
 
 
@@ -2523,7 +2532,9 @@ objName ==objName_before ):
         ### total uncertainty combining the result with two different shapes
         total_uncertainty = TMath.Sqrt( TMath.Power(rrv_WJets0.getError(),2) + TMath.Power(rrv_WJets01.getVal()-rrv_WJets0.getVal(),2) );
         rrv_WJets0.setError(total_uncertainty);
+	print "Total uncertainty combining the result of two different shapes : "
         rrv_WJets0.Print();
+	print "*"*20
 
         ##jet mass uncertainty on WJets normalization and the other bkg component
         if self.workspace4fit_.var("rrv_number_WJets0_xww_massup_in_mj_signal_region_from_fitting_%s"%(self.channel)) and self.workspace4fit_.var("rrv_number_WJets0_xww_massdn_in_mj_signal_region_from_fitting_%s"%(self.channel)):            
@@ -2562,6 +2573,7 @@ objName ==objName_before ):
         model_TTbar = self.get_TTbar_mj_Model("_TTbar_xww"+massscale);
         model_STop  = self.get_STop_mj_Model("_STop_xww"+massscale);
         model_VV    = self.get_VV_mj_Model("_VV_xww"+massscale);
+	#sys.exit()
         ## only two parameters are fix, offset and width while the exp is floating , otherwise if shape different User1 or ErfExp everything is flaoting
         model_WJets = self.get_WJets_mj_Model(label);
 
@@ -2659,9 +2671,11 @@ objName ==objName_before ):
             #lowerLine = TLine(65,0.,65,mplot.GetMaximum()*0.9); lowerLine.SetLineWidth(2); lowerLine.SetLineColor(kBlack); lowerLine.SetLineStyle(9);
             middleLine1 = TLine(65,0.,65,mplot.GetMaximum()*0.9); middleLine1.SetLineWidth(2); middleLine1.SetLineColor(kBlack); middleLine1.SetLineStyle(9);
             middleLine2 = TLine(105,0.,105,mplot.GetMaximum()*0.9); middleLine2.SetLineWidth(2); middleLine2.SetLineColor(kBlack); middleLine2.SetLineStyle(9);
+            #middleLine3 = TLine(125,0.,125,mplot.GetMaximum()*0.9); middleLine3.SetLineWidth(2); middleLine3.SetLineColor(kBlack); middleLine3.SetLineStyle(9);
             #upperLine = TLine(95,0.,95,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
 	    mplot.addObject(middleLine1);
 	    mplot.addObject(middleLine2);
+	   #mplot.addObject(middleLine3);
             mplot.addObject(lowerLine);
             mplot.addObject(upperLine);
 
@@ -2704,7 +2718,7 @@ objName ==objName_before ):
 #	    mplot.addObject(pt2);
 	    	    
             ### legend of the plot
-            self.leg = self.legend4Plot(mplot,0,1,0.,0.,0.13,0.02,1,0,1);
+            self.leg = self.legend4Plot(mplot,0,1,0.,0.,0.13,0.02,0,0,1);
             #self.leg = self.legend4Plot(mplot,0,1,-0.10,-0.01,0.10,0.01);
             mplot.addObject(self.leg);
             mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.8);
@@ -3086,7 +3100,7 @@ objName ==objName_before ):
         tmp_scale_to_lumi=1.;
             
 	nnevents = treeIn.GetEntries()
-	#nnevents = 50000
+	#nnevents = 5000
 	if nnevents > treeIn.GetEntries():
 		nnevents = treeIn.GetEntries()
 	print "Number of events to run = ",nnevents
@@ -3122,7 +3136,7 @@ objName ==objName_before ):
                 if (abs(treeIn.ZeppenfeldWL_type0/treeIn.vbf_maxpt_jj_Deta)>0.3) : self.isGoodEvent = 0;
                 if (abs(treeIn.ZeppenfeldWH/treeIn.vbf_maxpt_jj_Deta)>0.3) : self.isGoodEvent = 0;
 
-                if (label=="_data_xww") and ((treeIn.PuppiAK8_jet_mass_so > 65.) and (treeIn.PuppiAK8_jet_mass_so < 105.)) : self.isGoodEvent = 0; #BLINDING
+                if (label=="_data_xww") and ((treeIn.PuppiAK8_jet_mass_so_corr > 65.) and (treeIn.PuppiAK8_jet_mass_so_corr < 105.)) : self.isGoodEvent = 0; #BLINDING
 
             #VBF SELECTION
             if ((options.type).find('vbf') != -1 and treeIn.vbf_maxpt_jj_m<800): self.isGoodEvent=0;
@@ -3136,20 +3150,22 @@ objName ==objName_before ):
                 ### weigh MC events              
 		tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.btag0Wgt; 
                 tmp_event_weight4fit = treeIn.genWeight;
-		tmp_event_weight4fit = tmp_event_weight4fit*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt/tmp_scale_to_lumi;
+		tmp_event_weight4fit = tmp_event_weight4fit*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt;
+		#tmp_event_weight4fit = tmp_event_weight4fit*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt/tmp_scale_to_lumi;
 	
                 if label =="_data" or label =="_data_xww" :
                     tmp_event_weight=1.;
                     tmp_event_weight4fit=1.;                    
-                #else:
-                #    if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
-                #        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forT.getVal();
-                #    else:
-                #        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forV.getVal();
+                else:
+                    if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
+                        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forT.getVal();
+                    else:
+                        tmp_event_weight=tmp_event_weight*self.rrv_wtagger_eff_reweight_forV.getVal();
                 
                 rrv_mass_lvj.setVal(treeIn.mass_lvj_type0_PuppiAK8);
 
-                if tmp_jet_mass >= self.mj_sideband_lo_min and tmp_jet_mass < self.mj_sideband_lo_max:
+                #if ((tmp_jet_mass >= self.mj_sideband_lo_min and tmp_jet_mass < self.mj_sideband_lo_max)):
+                if ((tmp_jet_mass >= self.mj_sideband_lo_min and tmp_jet_mass < self.mj_sideband_lo_max) or (tmp_jet_mass >= self.mj_sideband_hi_min and tmp_jet_mass < self.mj_sideband_hi_max)):
                     rdataset_sb_lo_mlvj.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight );
                     rdataset4fit_sb_lo_mlvj.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight4fit );
 
@@ -3193,6 +3209,7 @@ objName ==objName_before ):
             #else:
             #    tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forV.getVal();
 
+	tmp_scale_to_lumi = 1.0;
         ### scaler to lumi for MC in 4fit datasets
         rrv_scale_to_lumi=RooRealVar("rrv_scale_to_lumi"+label+"_"+self.channel,"rrv_scale_to_lumi"+label+"_"+self.channel,tmp_scale_to_lumi)
         rrv_scale_to_lumi.Print()
@@ -3258,8 +3275,10 @@ objName ==objName_before ):
     def fit_STop(self):
         print "############################## fit_STop  #################################"
         self.get_mj_and_mlvj_dataset(self.file_STop_mc,"_STop_xww", self.jetalgo)
-#        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ExpGaus");
-        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","2Gaus_ErfExp");
+        #self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","2Gaus_ErfExp");
+        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ExpGaus");
+        #self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","User1");
+        #self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ErfExp");
         self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_sb_lo","ExpN", 0, 0, 1);
         self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","ExpN", 1, 0, 1);
         print "________________________________________________________________________"
@@ -3270,7 +3289,9 @@ objName ==objName_before ):
         ### Build the dataset
         self.get_mj_and_mlvj_dataset(self.file_VV_mc,"_VV_xww", self.jetalgo)
         ### fitting shape as a function of the mlvj region -> signal mass
-        self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","2Gaus_ErfExp");
+        #self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","2Gaus_ErfExp");
+        self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","ExpGaus");
+        #self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","ErfExp");
         self.fit_mlvj_model_single_MC(self.file_VV_mc,"_VV_xww","_sb_lo","ExpN", 0, 0, 1);
         self.fit_mlvj_model_single_MC(self.file_VV_mc,"_VV_xww","_signal_region",self.MODEL_4_mlvj, 1, 0, 1); 
         print "________________________________________________________________________"
@@ -3902,7 +3923,7 @@ if __name__ == '__main__':
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 450,2500,40,150, 450,2500,"Exp","ExpN",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpSlowFastFall",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"Landau","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfExp_v1",options.interpolate) 

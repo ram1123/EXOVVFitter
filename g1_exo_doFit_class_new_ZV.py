@@ -2552,14 +2552,14 @@ objName ==objName_before ):
         rdataset_data_mj=self.workspace4fit_.data("rdataset_data_xww_%s_mj"%(self.channel))
 
         ### Fix TTbar, VV and STop
-        model_TTbar = self.get_TTbar_mj_Model("_TTbar_xww"+massscale);
-        model_STop  = self.get_STop_mj_Model("_STop_xww"+massscale);
+        #model_TTbar = self.get_TTbar_mj_Model("_TTbar_xww"+massscale);
+        #model_STop  = self.get_STop_mj_Model("_STop_xww"+massscale);
         model_VV    = self.get_VV_mj_Model("_VV_xww"+massscale);
         ## only two parameters are fix, offset and width while the exp is floating , otherwise if shape different User1 or ErfExp everything is flaoting
         model_WJets = self.get_WJets_mj_Model(label);
 
         ## Total Pdf and fit only in sideband 
-        model_data = RooAddPdf("model_data_xww%s_%s_mj"%(massscale,self.channel),"model_data_xww%s_%s_mj"%(massscale,self.channel),RooArgList(model_WJets,model_VV,model_TTbar,model_STop));
+        model_data = RooAddPdf("model_data_xww%s_%s_mj"%(massscale,self.channel),"model_data_xww%s_%s_mj"%(massscale,self.channel),RooArgList(model_WJets,model_VV));
 	print "\n\n","="*20,"==\t MODEL PRINT ","\n\n"
 	model_data.Print("v");
 	print "\n\n","="*20,"\n\n"
@@ -2574,15 +2574,10 @@ objName ==objName_before ):
 
         ## Total numver of event 
         rrv_number_data_mj = RooRealVar("rrv_number_data_xww%s_%s_mj"%(massscale,self.channel),"rrv_number_data_xww%s_%s_mj"%(massscale,self.channel),
-                                         self.workspace4fit_.var("rrv_number_TTbar_xww%s_%s_mj"%(massscale,self.channel)).getVal()+
-                                         self.workspace4fit_.var("rrv_number_STop_xww%s_%s_mj"%(massscale,self.channel)).getVal()+
                                          self.workspace4fit_.var("rrv_number_VV_xww%s_%s_mj"%(massscale,self.channel)).getVal()+
                                          self.workspace4fit_.var("rrv_number%s_%s_mj"%(label,self.channel)).getVal());
 
-        rrv_number_data_mj.setError(TMath.Sqrt(self.workspace4fit_.var("rrv_number_TTbar_xww%s_%s_mj"%(massscale,self.channel)).getError()*
-                                               self.workspace4fit_.var("rrv_number_TTbar_xww%s_%s_mj"%(massscale,self.channel)).getError()+
-                                               self.workspace4fit_.var("rrv_number_STop_xww%s_%s_mj"%(massscale,self.channel)).getError()*
-                                               self.workspace4fit_.var("rrv_number_STop_xww%s_%s_mj"%(massscale,self.channel)).getError()+
+        rrv_number_data_mj.setError(TMath.Sqrt(
                                                self.workspace4fit_.var("rrv_number_VV_xww%s_%s_mj"%(massscale,self.channel)).getError()*
                                                self.workspace4fit_.var("rrv_number_VV_xww%s_%s_mj"%(massscale,self.channel)).getError()+
                                                self.workspace4fit_.var("rrv_number%s_%s_mj"%(label,self.channel)).getError()*
@@ -2600,20 +2595,12 @@ objName ==objName_before ):
             rdataset_data_mj.plotOn(mplot, RooFit.Name("data_invisible"), RooFit.MarkerSize(1), RooFit.DataError(RooAbsData.Poisson), RooFit.XErrorSize(0) );
 
             ## plot solid style 
-            model_data.plotOn(mplot,RooFit.Name("VV"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj,model_TTbar_xww_%s_mj,model_VV_xww_%s_mj"%(label,self.channel,self.channel,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["VV"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
+            model_data.plotOn(mplot,RooFit.Name("VV"), RooFit.Components("model%s_%s_mj,model_VV_xww_%s_mj"%(label,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["VV"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
             
-	    model_data.plotOn(mplot,RooFit.Name("TTbar"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj,model_TTbar_xww_%s_mj"%(label,self.channel,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["TTbar"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
-
-            model_data.plotOn(mplot,RooFit.Name("STop"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj"%(label,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
-
             model_data.plotOn(mplot,RooFit.Name("WJets"), RooFit.Components("model%s_%s_mj"%(label,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["WJets"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
     
             ## plot "dashed" style area
             model_data.plotOn(mplot,RooFit.Name("VV_invisible"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj,model_TTbar_xww_%s_mj,model_VV_xww_%s_mj"%(label,self.channel,self.channel,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["VV"]), RooFit.LineColor(kBlack),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
-
-            model_data.plotOn(mplot,RooFit.Name("TTbar_invisible"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj,model_TTbar_xww_%s_mj"%(label,self.channel,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["TTbar"]), RooFit.LineColor(kBlack),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
-
-            model_data.plotOn(mplot,RooFit.Name("STop_invisible"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj"%(label,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(kBlack),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
 
             model_data.plotOn(mplot,RooFit.Name("WJets_invisible"), RooFit.Components("model%s_%s_mj"%(label,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["WJets"]),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
     
@@ -3325,8 +3312,8 @@ objName ==objName_before ):
 	#sys.exit()
         self.fit_WJets()
 	#sys.exit()
-        self.fit_TTbar()
-        self.fit_STop()
+        #self.fit_TTbar()
+        #self.fit_STop()
         self.fit_VV()
         print "________________________________________________________________________"
 
