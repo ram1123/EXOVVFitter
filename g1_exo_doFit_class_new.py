@@ -357,7 +357,7 @@ class doFit_wj_and_wlvj:
        infile.close()
        
     ### in order to make the legend
-    def legend4Plot(self, plot, left=1, isFill=1, x_offset_low=0., y_offset_low=0., x_offset_high =0., y_offset_high =0., TwoCoulum =0., isalpha=False, ismj=False):
+    def legend4Plot(self, plot, left=1, isFill=1, x_offset_low=0.4, y_offset_low=0.1, x_offset_high =0.27, y_offset_high =0.1, TwoCoulum =1., isalpha=False, ismj=False):
         print "############### draw the legend ########################"
         if left==-1:
             theLeg = TLegend(0.65+x_offset_low, 0.58+y_offset_low, 0.93+x_offset_low, 0.87+y_offset_low, "", "NDC");
@@ -1794,6 +1794,7 @@ objName ==objName_before ):
         
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.NumCPU(2));
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2"), RooFit.NumCPU(2));
+        rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2"), RooFit.NumCPU(2));
 	print "\n\n=== \t Print results after fit \t ==="
         rfresult.Print();
 	print "\n\n=== \t Print covariance matrix \t ==="
@@ -1809,8 +1810,19 @@ objName ==objName_before ):
 	print "\n\n===\t Print W+jet model : \n\n"
         model_WJets.Print();
 	print "\n\n=== \n\n"
-	print "=== \t Print parameters\t==="
+	print "=== \t Print parameters (WJets) \t==="
         model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "== GetVariables ="
+	params = model_WJets.getVariables();
+	params.Print("v");
+	print "=== print model model_pdf_WJets ==="
+	model_pdf_WJets.Print();
+	print "pars..."
+	model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	#rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em = params.find("rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em")
+	#rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em.setVal(rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em.getVal()+rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em.getError())
+	print "\n\n=== \n\n"
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
 	print "\n\n=== \n\n"
 	print "\n\n== Print all MC model after Fit == \n\n"
 	print "#### VV model "
@@ -1857,6 +1869,146 @@ objName ==objName_before ):
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
+
+
+	#############3
+	print "\n\n------------\tUp variation\t -------------------------\n\n"
+	print "print parameters before variation...\n\n"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "--"*21
+        parameters_list = model_WJets.getParameters(rdataset_data_mlvj);
+        par=parameters_list.createIterator();
+        par.Reset();
+        param=par.Next()
+        while (param):
+            #param.Print();
+            if TString(param.GetName()).Contains("rrv_number"):
+	    	print "don't change normalization"
+	    else:
+            	param.setVal(param.getVal()+param.getError());
+            param=par.Next()
+	print "Print model after reset parameters (par = par + parError)"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        print "*"*20
+
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Up.root")
+	#
+	#
+	#	DOWN VARIATION
+	print "\n\n------------\tDown variation\t -------------------------\n\n"
+	print "print parameters before variation...\n\n"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "--"*21
+        parameters_list = model_WJets.getParameters(rdataset_data_mlvj);
+        par=parameters_list.createIterator();
+        par.Reset();
+        param=par.Next()
+        while (param):
+            #param.Print();
+            if TString(param.GetName()).Contains("rrv_number"):
+	    	print "don't change normalization"
+	    else:
+            	param.setVal(param.getVal()-2*param.getError());
+            param=par.Next()
+	print "Print model after reset parameters (par = par - 2*parError)"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "*"*20
+
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Down.root")
+	#
+	#############3
+	#
+	#	RESET parameters
+	#
+	##############
+	print "\n\n"
+	print "=====	RESET parameters	========"
+	print "\n\n"
+	print "print parameters before reset...\n\n"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "--"*21
+        parameters_list = model_WJets.getParameters(rdataset_data_mlvj);
+        par=parameters_list.createIterator();
+        par.Reset();
+        param=par.Next()
+        while (param):
+            #param.Print();
+            if TString(param.GetName()).Contains("rrv_number"):
+	    	print "don't change normalization"
+	    else:
+            	param.setVal(param.getVal()+param.getError());
+            param=par.Next()
+	print "Print model after reset parameters"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "*"*20
+
+
+
 
         self.workspace4fit_.pdf("model_pdf%s_sb_lo_%s_mlvj"%(label,self.channel)).getParameters(rdataset_data_mlvj).Print("v");
 
@@ -2409,7 +2561,7 @@ objName ==objName_before ):
                 self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets0_sim_%s_%s_mlvj_13TeV"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha_invisible: Alternate Function") );
 
         ### Add the legend
-        self.leg=self.legend4Plot(mplot,1,0, -0.01, -0.14, 0.01, -0.06, 0., True);
+        self.leg=self.legend4Plot(mplot,0,0, -0.01, -0.14, 0.01, -0.06, 0., True);
         mplot.addObject(self.leg);
         
         ## set the Y axis in arbitrary unit 
