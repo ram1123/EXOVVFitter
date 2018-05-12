@@ -98,7 +98,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WW} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -143,7 +143,8 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",2500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
+	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_04_06_09h22/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
                  
         #prepare background data and signal samples            
@@ -1797,15 +1798,15 @@ objName ==objName_before ):
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
@@ -1813,17 +1814,156 @@ objName ==objName_before ):
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
+
+
+	#############3
+	print "\n\n------------\tUp variation\t -------------------------\n\n"
+	print "print parameters before variation...\n\n"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "--"*21
+        parameters_list = model_WJets.getParameters(rdataset_data_mlvj);
+        par=parameters_list.createIterator();
+        par.Reset();
+        param=par.Next()
+        while (param):
+            #param.Print();
+            if TString(param.GetName()).Contains("rrv_number"):
+	    	print "don't change normalization"
+	    else:
+            	param.setVal(param.getVal()+param.getError());
+            param=par.Next()
+	print "Print model after reset parameters (par = par + parError)"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        print "*"*20
+
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Up.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Up.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Up.root")
+	#
+	#
+	#	DOWN VARIATION
+	print "\n\n------------\tDown variation\t -------------------------\n\n"
+	print "print parameters before variation...\n\n"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "--"*21
+        parameters_list = model_WJets.getParameters(rdataset_data_mlvj);
+        par=parameters_list.createIterator();
+        par.Reset();
+        param=par.Next()
+        while (param):
+            #param.Print();
+            if TString(param.GetName()).Contains("rrv_number"):
+	    	print "don't change normalization"
+	    else:
+            	param.setVal(param.getVal()-2*param.getError());
+            param=par.Next()
+	print "Print model after reset parameters (par = par - 2*parError)"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "*"*20
+
+
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Down.root")
+	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Down.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Down.root")
+	#
+	#############3
+	#
+	#	RESET parameters
+	#
+	##############
+	print "\n\n"
+	print "=====	RESET parameters	========"
+	print "\n\n"
+	print "print parameters before reset...\n\n"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "--"*21
+        parameters_list = model_WJets.getParameters(rdataset_data_mlvj);
+        par=parameters_list.createIterator();
+        par.Reset();
+        param=par.Next()
+        while (param):
+            #param.Print();
+            if TString(param.GetName()).Contains("rrv_number"):
+	    	print "don't change normalization"
+	    else:
+            	param.setVal(param.getVal()+param.getError());
+            param=par.Next()
+	print "Print model after reset parameters"
+        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "*"*20
+
 
         self.workspace4fit_.pdf("model_pdf%s_sb_lo_%s_mlvj"%(label,self.channel)).getParameters(rdataset_data_mlvj).Print("v");
 
@@ -2716,7 +2856,7 @@ objName ==objName_before ):
         getattr(self.workspace4fit_,"import")(rfresult)
 
         ## plot the result
-        mplot = rrv_mass_lvj.frame(RooFit.Title("M_{lvj"+in_range+"} fitted by "+mlvj_model), RooFit.Bins(int(rrv_mass_lvj.getBins()/self.narrow_factor)));
+        mplot = rrv_mass_lvj.frame(RooFit.Title("M_{llj"+in_range+"} fitted by "+mlvj_model), RooFit.Bins(int(rrv_mass_lvj.getBins()/self.narrow_factor)));
         rdataset.plotOn( mplot , RooFit.MarkerSize(1), RooFit.DataError(RooAbsData.SumW2), RooFit.XErrorSize(0) );
         ## plot the error band but don't store the canvas (only plotted without -b option
         draw_error_band_extendPdf(rdataset, model, rfresult,mplot,6,"L")

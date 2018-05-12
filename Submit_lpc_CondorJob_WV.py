@@ -11,7 +11,8 @@ import datetime
 import commands
 
 #os.system("sed -i 's/0.8,0.,1.0/0.5,0.0,0.8/' g1_exo_doFit_class_new.py")
-OUTDIR = 'WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13_BothLSBUSB_UpDownVarWjet'
+#OUTDIR = 'WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13_BothLSBUSB_UpDownVarWjet'
+OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_2018_04_06_09h22_BothLSBUSB_UpDownVarWjet_WV_600_4TeV'
 changes = raw_input("\n\nWrite change summary: ")
 
 print "==> ",changes
@@ -71,10 +72,10 @@ os.system('xrdcp -f mypatch.patch root://cmseos.fnal.gov/'+outputFolder+'/mypatc
 
 
 
-outJDL = open("runstep2condor.jdl","w");
+outJDL = open("runstep2condor_WV.jdl","w");
 
 
-outJDL.write("Executable = runstep2condor.sh\n");
+outJDL.write("Executable = runstep2condor_WV.sh\n");
 outJDL.write("Universe = vanilla\n");
 #outJDL.write("Requirements =FileSystemDomain==\"fnal.gov\" && Arch==\"X86_64\"");
 outJDL.write("Notification = ERROR\n");
@@ -93,7 +94,7 @@ outJDL.close();
 #command = "python g1_exo_doFit_class_new.py -b -c em --mass 600 --category HPW --sample Signal_aQGC --jetalgo PuppiAK8_jet_mass_so --type vbf"
 command = "python g1_exo_doFit_class_new.py -b "
 
-outScript = open("runstep2condor.sh","w");
+outScript = open("runstep2condor_WV.sh","w");
 outScript.write('#!/bin/bash');
 outScript.write("\n"+'source /uscmst1/prod/sw/cms/bashrc prod');
 outScript.write("\n"+'echo "Starting job on " `date`');
@@ -145,9 +146,9 @@ outScript.write("\n"+'cd ${_CONDOR_SCRATCH_DIR}');
 outScript.write("\n"+'rm -rf ' + CMSSWRel);
 outScript.write("\n");
 outScript.close();
-os.system("chmod 777 runstep2condor.sh");
+os.system("chmod 777 runstep2condor_WV.sh");
 
 print "===> Set Proxy Using:";
 print "\tvoms-proxy-init --voms cms --valid 168:00";
-print "\"condor_submit runstep2condor.jdl\" to submit";
-os.system("condor_submit runstep2condor.jdl")
+print "\"condor_submit runstep2condor_WV.jdl\" to submit";
+os.system("condor_submit runstep2condor_WV.jdl")

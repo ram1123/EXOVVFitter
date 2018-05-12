@@ -144,7 +144,8 @@ class doFit_wj_and_wlvj:
 
         #prepare the data and mc files --> set the working directory and the files name
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_2018_01_25_14h36/Hadds_for_BkgEstimation/";
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
+	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_04_06_09h22/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
                  
         #prepare background data and signal samples            
@@ -1842,15 +1843,15 @@ objName ==objName_before ):
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
@@ -1858,15 +1859,15 @@ objName ==objName_before ):
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
 
@@ -1897,15 +1898,15 @@ objName ==objName_before ):
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Up.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Up.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Up.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Up.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Up.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Up.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Up.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Up.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Up.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Up.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Up.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Up.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
@@ -1913,15 +1914,15 @@ objName ==objName_before ):
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Up.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Up.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Up.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Up.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Up.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Up.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Up.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Up.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Up.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Up.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Up.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Up.root")
 	#
@@ -1952,15 +1953,15 @@ objName ==objName_before ):
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Down.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Down.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Down.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Down.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Down.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Down.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Down.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Down.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Down.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Down.root")
+	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Down.root")
 	hist = model_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Down.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
@@ -1968,15 +1969,15 @@ objName ==objName_before ):
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin_Down.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_47bin_Down.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin_Down.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_40bin_Down.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin_Down.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_30bin_Down.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin_Down.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_20bin_Down.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin_Down.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_10bin_Down.root")
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin_Down.root")
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin_Down.root")
 	#
@@ -2823,11 +2824,11 @@ objName ==objName_before ):
             #lowerLine = TLine(65,0.,65,mplot.GetMaximum()*0.9); lowerLine.SetLineWidth(2); lowerLine.SetLineColor(kBlack); lowerLine.SetLineStyle(9);
             middleLine1 = TLine(65,0.,65,mplot.GetMaximum()*0.9); middleLine1.SetLineWidth(2); middleLine1.SetLineColor(kBlack); middleLine1.SetLineStyle(9);
             middleLine2 = TLine(105,0.,105,mplot.GetMaximum()*0.9); middleLine2.SetLineWidth(2); middleLine2.SetLineColor(kBlack); middleLine2.SetLineStyle(9);
-            #middleLine3 = TLine(125,0.,125,mplot.GetMaximum()*0.9); middleLine3.SetLineWidth(2); middleLine3.SetLineColor(kBlack); middleLine3.SetLineStyle(9);
+            middleLine3 = TLine(125,0.,125,mplot.GetMaximum()*0.9); middleLine3.SetLineWidth(2); middleLine3.SetLineColor(kBlack); middleLine3.SetLineStyle(9);
             #upperLine = TLine(95,0.,95,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
 	    mplot.addObject(middleLine1);
 	    mplot.addObject(middleLine2);
-	   #mplot.addObject(middleLine3);
+	    #mplot.addObject(middleLine3);
             mplot.addObject(lowerLine);
             mplot.addObject(upperLine);
 
@@ -4075,7 +4076,7 @@ if __name__ == '__main__':
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpN",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,4000,40,150, 600,4000,"Exp","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpSlowFastFall",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"Landau","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfExp_v1",options.interpolate) 
