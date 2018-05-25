@@ -146,7 +146,7 @@ class doFit_wj_and_wlvj:
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_2018_01_25_14h36/Hadds_for_BkgEstimation/";
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_04_06_09h22/HaddedFiles/Hadds_for_BkgEstimation/";
-	self.file_Directory="Ntuples/";
+	self.file_Directory="Ntuples2/";
 	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_AlphaRatioBkgEst_2018_03_27_02h28/HaddedFiles/Hadds_for_BkgEstimation/";
                  
         #prepare background data and signal samples            
@@ -155,8 +155,9 @@ class doFit_wj_and_wlvj:
         self.file_data = ("WWTree_data_golden.root");#keep blind!!!!
 #        self.file_data = ("WWTree_pseudodataS.root");#fake data
 #        self.file_data = ("WWTree_pseudodata.root");#fake data
-        self.file_signal     = ("WWTree_%s.root"%(self.signal_sample));
+        #self.file_signal     = ("WWTree_%s.root"%(self.signal_sample));
         self.file_WJets0_mc  = ("WWTree_VJets.root");
+        #self.file_VV_mc      = ("WWTree_VV.root");# WW+WZ
         self.file_VV_mc      = ("WWTree_VV_EWK_QCD.root");# WW+WZ
         #self.file_VV_mc      = ("WWTree_VV.root");# WW+WZ
         self.file_TTbar_mc   = ("WWTree_TTbar.root");
@@ -1524,8 +1525,8 @@ objName ==objName_before ):
               rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 250,-1.e6,1e6);
               rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 3e-2,-1e-2,7.5e2);
             elif ismc == 1 and label_tstring.Contains("signal_region"):
-              rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 110,-500,500);
-              rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 2.9e-2,-1,7.5e2);
+              rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 110,-20,50);
+              rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 2.9e-2,-1,7.5e-2);
             elif ismc == 0 :  
                 rrv_s_ExpTail = RooRealVar("rrv_s_ExpTail"+label+"_"+self.channel,"rrv_s_ExpTail"+label+"_"+self.channel, 161,40,280);
                 rrv_a_ExpTail = RooRealVar("rrv_a_ExpTail"+label+"_"+self.channel,"rrv_a_ExpTail"+label+"_"+self.channel, 8e-3,-1e-2,1.3e-1);    
@@ -1850,49 +1851,7 @@ objName ==objName_before ):
 	print "==> Covariance matrix :"
 	cov.Print()
 
-	parToVary = cov.GetNrows() -1
-
-	print "Parameters to vary = ",parToVary
-
-	covNew = ROOT.TMatrixDSym(parToVary)
-
-	if (TString(label).Contains("WJets01")):
-		inew=0
-		for i in xrange(cov.GetNrows()):
-		   jnew=0
-		   if (i==1):
-		      print "skip this par i = ",i
-		   else:
-		      for j in xrange(cov.GetNrows()):
-			if (j==1):
-			   print "skip this parameter..."
-			else:
-			   print "=> [",i,",",j,"] = ",cov[i][j]
-			   print "=> New i's : ",inew,jnew
-		   	   covNew[inew][jnew]=cov[i][j]
-			   jnew+=1
-		      inew+=1
-	elif (TString(label).Contains("WJets0")):
-		inew=0
-		for i in xrange(cov.GetNrows()):
-		   jnew=0
-		   if (i==1):
-		      print "skip this par i = ",i
-		   else:
-		      for j in xrange(cov.GetNrows()):
-			if (j==1):
-			   print "skip this parameter..."
-			else:
-			   print "=> [",i,",",j,"] = ",cov[i][j]
-		   	   covNew[inew][jnew]=cov[i][j]
-			   jnew+=1
-		      inew+=1
-
-
-	print "New covariance matrix:"
-	covNew.Print()
-
-	eigen = ROOT.TMatrixDSymEigen(covNew)
+	eigen = ROOT.TMatrixDSymEigen(cov)
 
 	EigenVector_matrix = eigen.GetEigenVectors()
 	EigenValues = eigen.GetEigenValues()
@@ -1919,6 +1878,7 @@ objName ==objName_before ):
 	    eigenvalue = EigenValues[k]
 	    sigma = math.sqrt(ROOT.TMath.Abs(eigenvalue))
 
+	    print "Debug: unit eigenvector = ",norm
 	    # compute unit vector in direction of i-th Eigenvector
 	    # eigenvector_unit = (1.0/float(norm))*eigenvector
 	    eigenvector_unit = eigenvector
@@ -1927,6 +1887,9 @@ objName ==objName_before ):
 	    downPars = []
 	
 	    #print "initial pars = ",len(initialPars)
+	    print "Model parameters before change: "
+	    model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	    print "... done1"
 	    for i in xrange(len(initialPars)):
 	        newParUp = initialPars[i] + sigma*eigenvector_unit[i]
 	        upPars.append(newParUp)
@@ -1935,16 +1898,21 @@ objName ==objName_before ):
 	        newParDown = initialPars[i] - sigma*eigenvector_unit[i]
 	        downPars.append(newParDown)
 	        print "==> Down: ",initialPars[i],"\t",newParDown,"\t",sigma,"\t",eigenvector_unit[i]
-	    model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
 	    print "--"*21
 	    print "Up pars..."
+	    print upPars
+	    print downPars
 	    print "--"*21
 	    parameters_list = model_pdf_WJets.getParameters(rdataset_data_mlvj);
 	    par=parameters_list.createIterator();
 	    par.Reset();
+	    param=par.Next()
 	    parCount=0
 	    while (param):
 	    	param.setVal(upPars[parCount])
+		param.Print()
+		print "set par to ",upPars[parCount]
+		parCount+=1
 		param=par.Next()
 	    model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
 
@@ -1972,9 +1940,13 @@ objName ==objName_before ):
 	    parameters_list = model_pdf_WJets.getParameters(rdataset_data_mlvj);
 	    par=parameters_list.createIterator();
 	    par.Reset();
+	    param=par.Next()
 	    parCount=0
 	    while (param):
 	    	param.setVal(downPars[parCount])
+		param.Print()
+		print "set par to ",downPars[parCount]
+		parCount+=1
 		param=par.Next()
 	    model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
 
@@ -2003,9 +1975,11 @@ objName ==objName_before ):
 	    parameters_list = model_pdf_WJets.getParameters(rdataset_data_mlvj);
 	    par=parameters_list.createIterator();
 	    par.Reset();
+	    param=par.Next()
 	    parCount=0
 	    while (param):
 	    	param.setVal(initialPars[parCount])
+		param.Print()
 		param=par.Next()
 	    model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
 
@@ -2014,36 +1988,6 @@ objName ==objName_before ):
 
 	    print "\n\n** \t",i
 	
-	        
-	#############3
-	#
-	#	RESET parameters
-	#
-	##############
-	print "\n\n"
-	print "=====	RESET parameters	========"
-	print "\n\n"
-	print "print parameters before reset...\n\n"
-        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
-        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
-	print "--"*21
-        parameters_list = model_WJets.getParameters(rdataset_data_mlvj);
-        par=parameters_list.createIterator();
-        par.Reset();
-        param=par.Next()
-        while (param):
-            #param.Print();
-            if TString(param.GetName()).Contains("rrv_number"):
-	    	print "don't change normalization"
-	    else:
-            	param.setVal(param.getVal()+param.getError());
-            param=par.Next()
-	print "Print model after reset parameters"
-        model_WJets.getParameters(rdataset_data_mlvj).Print("v");
-	print "*"*20
-
-
-
 
         self.workspace4fit_.pdf("model_pdf%s_sb_lo_%s_mlvj"%(label,self.channel)).getParameters(rdataset_data_mlvj).Print("v");
 
@@ -4136,7 +4080,7 @@ if __name__ == '__main__':
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","Landau",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,4000,40,150, 600,4000,"Exp","ExpTail",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpTail",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpSlowFastFall",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"Landau","ExpN",options.interpolate) 
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 400,2500,40,150, 400,2500,"ExpN","ErfExp_v1",options.interpolate) 
