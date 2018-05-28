@@ -48,10 +48,16 @@ os.system('xrdfs root://cmseos.fnal.gov/ mkdir ' + outputFolder + '/plots_em_HP'
 # create directory in pwd for log files
 os.system('mkdir -p ' + OutputLogPath)
 
+def exclude_function(filename):
+    if filename.endswith('.root'):
+            return True
+    else:
+            return False
+
 ## Function to create a tar file
 def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
-            tar.add(source_dir, arcname=os.path.basename(source_dir))
+            tar.add(source_dir, arcname=os.path.basename(source_dir),  exclude=exclude_function)
 
 # Get CMSSW directory path and name
 cmsswDirPath = commands.getstatusoutput('echo ${CMSSW_BASE}')
