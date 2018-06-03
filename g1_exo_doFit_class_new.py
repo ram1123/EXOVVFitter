@@ -94,6 +94,8 @@ class doFit_wj_and_wlvj:
 	varname = "Softdrop jet mass (GeV)"
 	if self.jetalgo == "jet_mass_pr": varname = "Pruned jet mass (GeV)"
 	if self.jetalgo == "PuppiAK8_jet_mass_pr": varname = "Pruned jet mass (GeV)"
+	if self.jetalgo == "PuppiAK8_jet_mass_so_corr": varname = "Softdrop jet mass (GeV)"
+
         rrv_mass_j = RooRealVar("rrv_mass_j",varname,(in_mj_min+in_mj_max)/2.,in_mj_min,in_mj_max,"GeV");
         rrv_mass_j.setBins(nbins_mj);
 
@@ -3332,8 +3334,8 @@ objName ==objName_before ):
             if ((options.type).find('vbf') != -1 and treeIn.vbf_maxpt_jj_m<800): self.isGoodEvent=0;
             if ((options.type).find('vbf') != -1 and abs(treeIn.vbf_maxpt_j1_eta-treeIn.vbf_maxpt_j2_eta)<4.0): self.isGoodEvent=0;
             if ((options.type).find('vbf') != -1 and (treeIn.vbf_maxpt_j1_pt<30 or treeIn.vbf_maxpt_j2_pt<30)): self.isGoodEvent=0;
-
-#            if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
+	    
+	    #if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
 
 	    
             if self.isGoodEvent == 1:
