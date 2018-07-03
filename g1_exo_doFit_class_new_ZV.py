@@ -3192,7 +3192,6 @@ objName ==objName_before ):
                 #tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.btag0Wgt;		
 		#print "mass = ",treeIn.PuppiAK8_jet_mass_so_corr
                 tmp_event_weight     = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt;		
-                tmp_event_weight4fit = treeIn.genWeight;
                 tmp_event_weight4fit = treeIn.totalEventWeight_2Lep*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt;
 	
                 if label =="_data" or label =="_data_xww" :

@@ -12,7 +12,7 @@ import commands
 
 #os.system("sed -i 's/0.8,0.,1.0/0.5,0.0,0.8/' g1_exo_doFit_class_new.py")
 #OUTDIR = 'WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13_BothLSBUSB_UpDownVarWjet'
-OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_2018_04_06_09h22_BothLSBUSB_UpDownVarWjet_ZV'
+OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_ZV'
 changes = raw_input("\n\nWrite change summary: ")
 
 print "==> ",changes
@@ -98,7 +98,8 @@ outJDL.write("Queue\n");
 outJDL.close();
 
 #command = "python g1_exo_doFit_class_new.py -b -c em --mass 600 --category HPW --sample Signal_aQGC --jetalgo PuppiAK8_jet_mass_so --type vbf"
-command = "python g1_exo_doFit_class_new_ZV.py -b "
+#command = "python g1_exo_doFit_class_new_ZV.py -b "
+command = "python g1_exo_doFit_class_new_ZV_3June.py -b "
 
 outScript = open("runstep2condor_ZV.sh","w");
 outScript.write('#!/bin/bash');

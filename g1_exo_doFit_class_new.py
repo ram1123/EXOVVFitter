@@ -2862,11 +2862,11 @@ objName ==objName_before ):
             #lowerLine = TLine(65,0.,65,mplot.GetMaximum()*0.9); lowerLine.SetLineWidth(2); lowerLine.SetLineColor(kBlack); lowerLine.SetLineStyle(9);
             middleLine1 = TLine(65,0.,65,mplot.GetMaximum()*0.9); middleLine1.SetLineWidth(2); middleLine1.SetLineColor(kBlack); middleLine1.SetLineStyle(9);
             middleLine2 = TLine(105,0.,105,mplot.GetMaximum()*0.9); middleLine2.SetLineWidth(2); middleLine2.SetLineColor(kBlack); middleLine2.SetLineStyle(9);
-            #middleLine3 = TLine(125,0.,125,mplot.GetMaximum()*0.9); middleLine3.SetLineWidth(2); middleLine3.SetLineColor(kBlack); middleLine3.SetLineStyle(9);
+            middleLine3 = TLine(125,0.,125,mplot.GetMaximum()*0.9); middleLine3.SetLineWidth(2); middleLine3.SetLineColor(kBlack); middleLine3.SetLineStyle(9);
             #upperLine = TLine(95,0.,95,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
 	    mplot.addObject(middleLine1);
 	    mplot.addObject(middleLine2);
-	   #mplot.addObject(middleLine3);
+	    #mplot.addObject(middleLine3);
             mplot.addObject(lowerLine);
             mplot.addObject(upperLine);
 
@@ -4111,11 +4111,11 @@ if __name__ == '__main__':
     sample = options.sample+str(int(mass))
     
     lomass = 170;
-    himass = 2500; 
+    himass = 5000; 
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
-    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpTail",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"ExpTail","Exp",options.interpolate) 
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,5000,40,150, 600,5000,"Exp","ExpTail",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,5000,40,150, 600,5000,"ExpTail","Exp",options.interpolate) 
 
     print "\n\n","_"*30,"\n\n\t Fit results of mj","\n\n"
     for i in fitresultsmj:
