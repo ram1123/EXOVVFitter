@@ -9,6 +9,7 @@ double Wjet_Normalization_FromBkgEstimation = 140.626122846+101.117465308;
 //
 // grep -A 10 "_WJets01_xww+++" WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
 
+//	FUNCTION TO CONVERT TF1 TO TH1F
 TH1F* convertTF1toTH1F(TF1* f, TH1F* hIn){
 
   TH1F* hOut = (TH1F*)hIn->Clone();
@@ -23,6 +24,7 @@ TH1F* convertTF1toTH1F(TF1* f, TH1F* hIn){
   return hOut;
 }
 
+//	FUNCTION TO GET WJET INTO SIGNAL REGION FROM SIDEBAND USING ALPHA
 TH1F* getWjetSignalRegion_usingAlpha(TH1F* wjet, TH1F* alpha){
    
    TH1F* hOut = (TH1F*)wjet->Clone();
@@ -36,6 +38,7 @@ TH1F* getWjetSignalRegion_usingAlpha(TH1F* wjet, TH1F* alpha){
    return hOut;
 }
 
+//	RESET A HISTOGRAM TO THE DIFFERENT NUMBER OF BINS...
 TH1F *ResetTo4bins(TH1F *wjet, int nbins, double xmin, double xmax) {
   if (debug) cout << "For " << wjet->GetName() << "\n\n" << endl;
   TH1F *h = new TH1F("hOut", ";M_{WW} (Vjet Signal Region);Events", nbins, xmin, xmax);
@@ -56,24 +59,26 @@ TH1F *ResetTo4bins(TH1F *wjet, int nbins, double xmin, double xmax) {
 
 void GetAll_Systematic_Shape() {
 
-   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets01_xww+++\" WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
 
    string functionForFit = "pol1";
-
    char* fitFormula;	fitFormula = new char[functionForFit.size()+1];	strcpy(fitFormula, functionForFit.c_str());
+
+   int nbins = 4;
    double xmin_fit = 600.0;
    double xmax_fit = 5000.0;
    
+   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets01_xww+++\" WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
  
    // Open the file containing the tree.
    TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
 
-   // Open file that we get after background estimation:
+   // Open all necessary file that we get after background estimation:
    TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/2018_06_22_07h37/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
    TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/2018_06_22_07h37/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
    TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/2018_06_22_07h37/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
    TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/2018_06_22_07h37/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
    TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/2018_06_22_07h37/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
+   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_5TeV/2018_06_22_07h37/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
 
    // Create a TTreeReader for the tree, for instance by passing the
    // TTree's name and the TDirectory / TFile it is in. (otree is the name of tree)
@@ -273,8 +278,6 @@ void GetAll_Systematic_Shape() {
    TTreeReaderValue<Float_t> LeptonProjection_2Lep = {fReader, "LeptonProjection_2Lep"};
 
 
-
-
    TFile f("bkg_estimation.root", "RECREATE");
 
    // Create a histogram for the values we read.
@@ -287,10 +290,9 @@ void GetAll_Systematic_Shape() {
    TH1F *hSideBand_88bin = new TH1F("hSideBand_88bin", "hSideBand_88bin;M_{WW};Events", 88, 600, 5000);
 
 
-   // Loop over all entries of the TTree or TChain.
+   // Loop over all entries of the TTree.
    while (fReader.Next()) {
-      // Just access the data as if myPx and btag were iterators (note the '*'
-      // in front of them):
+      // Just access the data as if variables were iterators (note the '*' in front of them):
       if(!(*l_pt2<0 && *l_pt1>30)) continue;
       if(!(((*type==0)&&(abs(*l_eta1)<2.4))||((*type==1)&&((abs(*l_eta1)<2.5)&&!(abs(*l_eta1)>1.4442 && abs(*l_eta1)<1.566))))) continue;
       if(!(((*type==0)&&(*pfMET_Corr>50)) || ((*type==1)&&(*pfMET_Corr>80)))) continue;
@@ -326,13 +328,19 @@ void GetAll_Systematic_Shape() {
 
    // include overflow bin
    hMC_Signal_4bin->SetBinContent(4,hMC_Signal_4bin->GetBinContent(4)+hMC_Signal_4bin->GetBinContent(5));
-   hMC_Signal_15bin->SetBinContent(4,hMC_Signal_15bin->GetBinContent(4)+hMC_Signal_15bin->GetBinContent(5));
-   hMC_Signal_88bin->SetBinContent(4,hMC_Signal_88bin->GetBinContent(4)+hMC_Signal_88bin->GetBinContent(5));
+   hMC_Signal_15bin->SetBinContent(15,hMC_Signal_15bin->GetBinContent(15)+hMC_Signal_15bin->GetBinContent(16));
+   hMC_Signal_88bin->SetBinContent(88,hMC_Signal_88bin->GetBinContent(88)+hMC_Signal_88bin->GetBinContent(89));
    //hSideBand_4bin->SetBinContent(4,hSideBand_4bin->GetBinContent(4)+hSideBand_4bin->GetBinContent(5));
-   hSideBand_15bin->SetBinContent(4,hSideBand_15bin->GetBinContent(4)+hSideBand_15bin->GetBinContent(5));
-   hSideBand_88bin->SetBinContent(4,hSideBand_88bin->GetBinContent(4)+hSideBand_88bin->GetBinContent(5));
+   hSideBand_15bin->SetBinContent(15,hSideBand_15bin->GetBinContent(15)+hSideBand_15bin->GetBinContent(16));
+   hSideBand_88bin->SetBinContent(88,hSideBand_88bin->GetBinContent(88)+hSideBand_88bin->GetBinContent(88));
 
-   // Calculate alpha
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //	PART- 1: Get alpha by taking ratio of Vjet signal region and sideband region distribution. 
+   //
+   //	Note that in alpha over-flow bin in already included as the both signal and side-band distribution for wjets includes overflow bin.
+   //
+   ////////////////////////////////////////////////////////////////////////////////////////////////
    TH1F* alpha = (TH1F*)hMC_Signal_15bin->Clone();
    alpha->Divide(hSideBand_15bin);
    alpha->SetMinimum(-1.0);
@@ -393,7 +401,7 @@ void GetAll_Systematic_Shape() {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   //
-  //	PART- 2: Alpha function variation by +/- 1 sigma
+  //	PART- 2: Get Alpha function variation by +/- 1 sigma
   //
   ////////////////////////////////////////////////////////////////////////////////////////////////
    c1->SetName("AlphaSyst_ParVariation");
@@ -527,345 +535,370 @@ void GetAll_Systematic_Shape() {
    for (int k=0; k<systFunctions.size(); k++)
 	systFunctions[k]->Write();
 
-  if (debug) {
-    cout << "Number of fit functions " << systFunctions.size() << endl;
-    cout << "Order of functions is such: " << endl;
-    cout << "[0] -- par1 Up" << endl;
-    cout << "[1] -- par1 Down" << endl;
-    cout << "[2] -- par2 Up" << endl;
-    cout << "[3] -- par2 Down" << endl;
-    cout << "Etc......" << endl;
-  }
+   if (debug) {
+     cout << "Number of fit functions " << systFunctions.size() << endl;
+     cout << "Order of functions is such: " << endl;
+     cout << "[0] -- par1 Up" << endl;
+     cout << "[1] -- par1 Down" << endl;
+     cout << "[2] -- par2 Up" << endl;
+     cout << "[3] -- par2 Down" << endl;
+     cout << "Etc......" << endl;
+   }
 
-  //First convert nominal fit into histogram
+   //First convert nominal fit into histogram
 
-  c1->Clear();
-  leg->Clear();
-  c1->SetName("Alpha_Hist_Systematic_fits");
-  TH1F* hCentral = convertTF1toTH1F(f1, hMC_Signal_88bin);
-  hCentral->SetName("AlphaSyst_Nominal");
-  hCentral->SetTitle("");
+   c1->Clear();
+   leg->Clear();
+   c1->SetName("Alpha_Hist_Systematic_fits");
+   TH1F* hCentral = convertTF1toTH1F(f1, hMC_Signal_88bin);
+   hCentral->SetName("AlphaSyst_Nominal");
+   hCentral->SetTitle("");
+   hCentral->SetLineColor(1);
+   hCentral->SetMarkerSize(1.5);
+   hCentral->SetMarkerStyle(5);
 
-  hCentral->SetLineColor(1);
-  hCentral->SetMarkerSize(1.5);
-  hCentral->SetMarkerStyle(5);
-  alpha->Draw();
-  hCentral->Draw("same");
-  leg->AddEntry(alpha,"Alpha MC","lep");
-  leg->AddEntry(hCentral,"Alpha Nominal","l");
-  //Now conver systematic fits into histos
-  std::vector<TH1F*> histos;
-  TString catname = "AlphaSyst_";
-  for (int ifun=0; ifun<systFunctions.size(); ++ifun){
-    TF1* thisFunc = systFunctions[ifun];
-    TH1F* thisHisto = convertTF1toTH1F(thisFunc, hMC_Signal_88bin);
-    TString thisHistoName = catname+names[ifun];
-    thisHisto->SetName(thisHistoName);
-    thisHisto->SetTitle(thisHistoName);
-    //thisHisto->Write();
-    thisHisto->SetLineColor(ifun+1);
-    thisHisto->Draw("same");
-    histos.push_back(thisHisto);
-    leg->AddEntry(thisHisto,thisHistoName);
-  }
-  leg->Draw();	pt->Draw();
-  c1->Draw();
-  c1->Write();
-  leg->Clear();
-  c1->Clear();
+   alpha->Draw();
+   hCentral->Draw("same");
+   leg->AddEntry(alpha,"Alpha MC","lep");
+   leg->AddEntry(hCentral,"Alpha Nominal","l");
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //	PART - 3: Get signal histogram from alpha multiplication
-  //
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //File is opened at start of program so that TFile will not interfer with the output TFile
+   //Now convert systematic fits into histos
+   std::vector<TH1F*> histos;
+   TString catname = "AlphaSyst_";
+   for (int ifun=0; ifun<systFunctions.size(); ++ifun){
+     TF1* thisFunc = systFunctions[ifun];
+     TH1F* thisHisto = convertTF1toTH1F(thisFunc, hMC_Signal_88bin);
+     TString thisHistoName = catname+names[ifun];
+     thisHisto->SetName(thisHistoName);
+     thisHisto->SetTitle(thisHistoName);
+     thisHisto->SetLineColor(ifun+1);
+     thisHisto->SetMarkerColor(ifun+1);
+     thisHisto->Draw("same");
+     histos.push_back(thisHisto);
+     leg->AddEntry(thisHisto,thisHistoName);
+   }
+   leg->Draw();	pt->Draw();
+   c1->Draw();
+   c1->Write();
+   leg->Clear();
+   c1->Clear();
+
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //	PART - 3: Get side-band Nominal Main histogram which is corrected using data 
+   //
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //File is opened at start of program so that TFile will not interfer with the output TFile
 
    TLegend* leg2 = new TLegend(0.35,0.90,0.90,0.70);
    leg2->SetNColumns(2);
-  c1->SetName("Compare_Vjet_SideBand_MC_CorrShape");
-   //TH1F* alpha = (TH1F*)hMC_Signal_15bin->Clone();
-  TH1F* Wjet_Corr_Hist = (TH1F*)bkgEstFile->Get("rrv_mass_lvj__rrv_mass_lvj");
-  Wjet_Corr_Hist->Scale(Wjet_Normalization_FromBkgEstimation);
-  Wjet_Corr_Hist->SetStats(0);
-  Wjet_Corr_Hist->SetLineColor(2);
-  Wjet_Corr_Hist->SetMarkerColor(2);
-  hSideBand_88bin->SetStats(0);
+   c1->SetName("Compare_Vjet_SideBand_MC_CorrShape");
+   TH1F* Wjet_Corr_Hist = (TH1F*)bkgEstFile->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist->SetStats(0);
+   Wjet_Corr_Hist->SetLineColor(2);
+   Wjet_Corr_Hist->SetMarkerColor(2);
+   Wjet_Corr_Hist->SetName("Vjet_SideBand_CorrShape_From_Data");
+   Wjet_Corr_Hist->SetTitle("Comparison of Vjet MC and corrected shape from data");
+   Wjet_Corr_Hist->Write();	// Need to write explicitly. Somehow its not written automatically to output root file.
 
-  Wjet_Corr_Hist->SetName("Vjet_SideBand_CorrShape_From_Data");
-  Wjet_Corr_Hist->SetTitle("Comparison of Vjet MC and corrected shape from data");
-  Wjet_Corr_Hist->Write();	// Need to write explicitly. Somehow its not written automatically to output root file.
-  Wjet_Corr_Hist->Draw("hist");
-  hSideBand_88bin->Draw("E1 same");
-  leg2->AddEntry(Wjet_Corr_Hist,"SideBand Region (Corr)");
-  leg2->AddEntry(hSideBand_88bin,"SideBand Region (MC)","lep");
+   Wjet_Corr_Hist->Draw("hist");
+   hSideBand_88bin->SetStats(0);
+   hSideBand_88bin->Draw("E1 same");
+   leg2->AddEntry(Wjet_Corr_Hist,"SideBand Region (Corr)");
+   leg2->AddEntry(hSideBand_88bin,"SideBand Region (MC)","lep");
 
-  leg2->Draw();
-  c1->Draw();
-  c1->Write();
-  c1->SetName("Compare_Vjet_SideBand_MC_CorrShape_Log");
-  c1->SetLogy(1);
-  c1->Write();
-  c1->SetLogy(0);
-  c1->Clear();
-  leg2->Clear();
+   leg2->Draw();
+   c1->Draw();
+   c1->Write();
+   c1->SetName("Compare_Vjet_SideBand_MC_CorrShape_Log");
+   c1->SetLogy(1);
+   c1->Write();
+   c1->SetLogy(0);
+   c1->Clear();
+   leg2->Clear();
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //	PART - 3: Get signal histogram from alpha multiplication
-  //
-  ////////////////////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //	PART - 4: Get signal histogram from alpha multiplication
+   //
+   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion");
-  TH1F* hCorr_Signal_Central = getWjetSignalRegion_usingAlpha(Wjet_Corr_Hist,hCentral);
-  hCorr_Signal_Central->SetName("AlphaSyst_Vjet_SR_Nominal");
-  hCorr_Signal_Central->SetTitle("Vjets Signal Region Corrected From Data");
-  hCorr_Signal_Central->SetStats(0);
-  hCorr_Signal_Central->SetLineColor(2);
-  hCorr_Signal_Central->SetMarkerColor(2);
-  hCorr_Signal_Central->SetMarkerSize(1.5);
-  hCorr_Signal_Central->SetMarkerStyle(5);
+   c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion");
+   TH1F* hCorr_Signal_Central = getWjetSignalRegion_usingAlpha(Wjet_Corr_Hist,hCentral);
+   hCorr_Signal_Central->SetName("AlphaSyst_Vjet_SR_Nominal");
+   hCorr_Signal_Central->SetTitle("Vjets Signal Region Corrected From Data");
+   hCorr_Signal_Central->SetStats(0);
+   hCorr_Signal_Central->SetLineColor(2);
+   hCorr_Signal_Central->SetMarkerColor(2);
+   hCorr_Signal_Central->SetMarkerSize(1.5);
+   hCorr_Signal_Central->SetMarkerStyle(5);
 
-  hMC_Signal_88bin->SetStats(0);
-  hMC_Signal_88bin->SetTitle("Vjets Signal Region Corrected From Data");
-  hMC_Signal_88bin->Draw();
-  hCorr_Signal_Central->Draw("same");
+   hMC_Signal_88bin->SetStats(0);
+   hMC_Signal_88bin->SetTitle("Vjets Signal Region Corrected From Data");
+   hMC_Signal_88bin->Draw();
+   hCorr_Signal_Central->Draw("same");
 
-  leg2->AddEntry(hMC_Signal_88bin,"Vjet MC","lep");
-  leg2->AddEntry(hCorr_Signal_Central,"Vjet Corr Nominal","l");
+   leg2->AddEntry(hMC_Signal_88bin,"Vjet MC","lep");
+   leg2->AddEntry(hCorr_Signal_Central,"Vjet Corr Nominal","l");
 
-  std::vector<TH1F*> histos_Vjet_SR;
-  histos_Vjet_SR.push_back(hCorr_Signal_Central);
-  catname = "AlphaSyst_Vjet_SR_";
-  for (int ifun=0; ifun<histos.size(); ++ifun){
-    TH1F* thisFunc = histos[ifun];
-    TH1F* thisHisto = getWjetSignalRegion_usingAlpha(Wjet_Corr_Hist, thisFunc);
-    TString thisHistoName = catname+names[ifun];
-    thisHisto->SetName(thisHistoName);
-    thisHisto->SetTitle(thisHistoName);
-    //thisHisto->Write();
-    thisHisto->SetLineColor(ifun+3);
-    thisHisto->SetMarkerColor(ifun+3);
-    thisHisto->SetStats(0);
-    histos_Vjet_SR.push_back(thisHisto);
-    thisHisto->Draw("same");
-    TString thisLegName = "Vjet Corr "+names[ifun];
-    leg2->AddEntry(thisHisto,thisLegName);
-  }
-  leg2->Draw();
-  c1->Draw();
-  c1->Write();
-  c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_Log");
-  c1->SetLogy(1);
-  c1->Write();
-  leg2->Clear();
-  c1->Clear();
-  c1->SetLogy(0);
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //	PART - 5: Reset to 4 bins
-  //
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_4Bins");
-  catname = "AlphaSyst_Vjet_SR_4bins_";
-  for (int ifun=0; ifun<histos_Vjet_SR.size(); ++ifun){
-    TH1F* thisFunc = histos_Vjet_SR[ifun];
-    TH1F* thisHisto = ResetTo4bins(thisFunc, 4, 600, 2500);
-    TString thisHistoName;
-    if (ifun == 0) thisHistoName = catname+"Nominal";
-    else thisHistoName = catname+names[ifun-1];
-    thisHisto->SetName(thisHistoName);
-    //thisHisto->SetTitle(thisHistoName);
-    thisHisto->SetTitle("");
-    thisHisto->SetStats(0);
-    thisHisto->SetLineColor(ifun+2);
-    thisHisto->SetMarkerColor(ifun+2);
-    if (ifun == 0) thisHisto->Draw();
-    else thisHisto->Draw("same");
-    TString thisLegName;
-    if (ifun == 0) thisLegName = "Vjet Corr Nominal";
-    else thisLegName = "Vjet Corr "+names[ifun-1];
-    leg2->AddEntry(thisHisto,thisLegName);
-  }
-  hMC_Signal_4bin->Draw("same");
-  leg2->AddEntry(hMC_Signal_4bin,"MC","lep");
-  leg2->Draw();	
-  c1->Draw();
-  c1->Write();
-  c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_4Bins_Log");
-  c1->SetLogy(1);
-  c1->Write();
-  leg2->Clear();
-  c1->Clear();
-  c1->SetLogy(0);
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //	PART - 6: Get Wjet fit systematics shapes 
-  //
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  std::vector<TH1F*> histos_WjetSyst;
-  //histos_WjetSyst.push_back(Wjet_Corr_Hist)
-  c1->SetName("WjetFitSyst_Vjet_CorrShape_SideBandRegion");
-  TH1F* Wjet_Corr_Hist_Up0 = (TH1F*)bkgEstFile_Up0->Get("rrv_mass_lvj__rrv_mass_lvj");
-  Wjet_Corr_Hist_Up0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Up");
-  Wjet_Corr_Hist_Up0->Scale(Wjet_Normalization_FromBkgEstimation);
-  Wjet_Corr_Hist_Up0->SetStats(0);
-  Wjet_Corr_Hist_Up0->SetLineColor(3);
-  Wjet_Corr_Hist_Up0->SetMarkerColor(3);
-  histos_WjetSyst.push_back(Wjet_Corr_Hist_Up0);
-  Wjet_Corr_Hist_Up0->Write();
-
-  TH1F* Wjet_Corr_Hist_Up1 = (TH1F*)bkgEstFile_Up1->Get("rrv_mass_lvj__rrv_mass_lvj");
-  Wjet_Corr_Hist_Up1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Up");
-  Wjet_Corr_Hist_Up1->Scale(Wjet_Normalization_FromBkgEstimation);
-  Wjet_Corr_Hist_Up1->SetStats(0);
-  Wjet_Corr_Hist_Up1->SetLineColor(4);
-  Wjet_Corr_Hist_Up1->SetMarkerColor(4);
-  histos_WjetSyst.push_back(Wjet_Corr_Hist_Up1);
-  Wjet_Corr_Hist_Up1->Write();
-
-  TH1F* Wjet_Corr_Hist_Down0 = (TH1F*)bkgEstFile_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
-  Wjet_Corr_Hist_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Down");
-  Wjet_Corr_Hist_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
-  Wjet_Corr_Hist_Down0->SetStats(0);
-  Wjet_Corr_Hist_Down0->SetLineColor(5);
-  Wjet_Corr_Hist_Down0->SetMarkerColor(5);
-  histos_WjetSyst.push_back(Wjet_Corr_Hist_Down0);
-  Wjet_Corr_Hist_Down0->Write();
-
-  TH1F* Wjet_Corr_Hist_Down1 = (TH1F*)bkgEstFile_Down1->Get("rrv_mass_lvj__rrv_mass_lvj");
-  Wjet_Corr_Hist_Down1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Down");
-  Wjet_Corr_Hist_Down1->Scale(Wjet_Normalization_FromBkgEstimation);
-  Wjet_Corr_Hist_Down1->SetStats(0);
-  Wjet_Corr_Hist_Down1->SetLineColor(6);
-  Wjet_Corr_Hist_Down1->SetMarkerColor(6);
-  histos_WjetSyst.push_back(Wjet_Corr_Hist_Down1);
-  Wjet_Corr_Hist_Down1->Write();
-
-  hSideBand_88bin->SetTitle("Vjet SideBand Region Corrected From Data");
-  hSideBand_88bin->Draw("E1");
-  Wjet_Corr_Hist->Draw("hist same");
-  Wjet_Corr_Hist_Up0->Draw("hist same");
-  Wjet_Corr_Hist_Up1->Draw("hist same");
-  Wjet_Corr_Hist_Down0->Draw("hist same");
-  Wjet_Corr_Hist_Down1->Draw("hist same");
+   std::vector<TH1F*> histos_Vjet_SR;
+   histos_Vjet_SR.push_back(hCorr_Signal_Central);
+   catname = "AlphaSyst_Vjet_SR_";
+   for (int ifun=0; ifun<histos.size(); ++ifun){
+     TH1F* thisFunc = histos[ifun];
+     TH1F* thisHisto = getWjetSignalRegion_usingAlpha(Wjet_Corr_Hist, thisFunc);
+     TString thisHistoName = catname+names[ifun];
+     thisHisto->SetName(thisHistoName);
+     thisHisto->SetTitle(thisHistoName);
+     //thisHisto->Write();
+     thisHisto->SetLineColor(ifun+3);
+     thisHisto->SetMarkerColor(ifun+3);
+     thisHisto->SetStats(0);
+     histos_Vjet_SR.push_back(thisHisto);
+     thisHisto->Draw("same");
+     TString thisLegName = "Vjet Corr "+names[ifun];
+     leg2->AddEntry(thisHisto,thisLegName);
+   }
+   leg2->Draw();
+   c1->Draw();
+   c1->Write();
+   c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_Log");
+   c1->SetLogy(1);
+   c1->Write();
+   leg2->Clear();
+   c1->Clear();
+   c1->SetLogy(0);
 
 
-  leg2->AddEntry(hSideBand_88bin,"MC","lep");
-  leg2->AddEntry(Wjet_Corr_Hist,"Vjet Corr Nominal");
-  leg2->AddEntry(Wjet_Corr_Hist_Up0,"Vjet Corr Par0 Up");
-  leg2->AddEntry(Wjet_Corr_Hist_Up1,"Vjet Corr Par1 Up");
-  leg2->AddEntry(Wjet_Corr_Hist_Down0,"Vjet Corr Par0 Down");
-  leg2->AddEntry(Wjet_Corr_Hist_Down1,"Vjet Corr Par1 Down");
-  leg2->Draw();
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //	PART - 5: Reset to 4 bins
+   //
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   
+   c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_4Bins");
+   catname = "AlphaSyst_Vjet_SR_4bins_";
+   for (int ifun=0; ifun<histos_Vjet_SR.size(); ++ifun){
+     TH1F* thisFunc = histos_Vjet_SR[ifun];
+     TH1F* thisHisto = ResetTo4bins(thisFunc, 4, 600, 2500);
+     TString thisHistoName;
+     if (ifun == 0) thisHistoName = catname+"Nominal";
+     else thisHistoName = catname+names[ifun-1];
+     thisHisto->SetName(thisHistoName);
+     //thisHisto->SetTitle(thisHistoName);
+     thisHisto->SetTitle("");
+     thisHisto->SetStats(0);
+     thisHisto->SetLineColor(ifun+2);
+     thisHisto->SetMarkerColor(ifun+2);
+     if (ifun == 0) thisHisto->Draw();
+     else thisHisto->Draw("same");
+     TString thisLegName;
+     if (ifun == 0) thisLegName = "Vjet Corr Nominal";
+     else thisLegName = "Vjet Corr "+names[ifun-1];
+     leg2->AddEntry(thisHisto,thisLegName);
+   }
+   hMC_Signal_4bin->Draw("same");
+   leg2->AddEntry(hMC_Signal_4bin,"MC","lep");
+   leg2->Draw();	
+   c1->Draw();
+   c1->Write();
+   c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_4Bins_Log");
+   c1->SetLogy(1);
+   c1->Write();
+   leg2->Clear();
+   c1->Clear();
+   c1->SetLogy(0);
 
-  c1->Draw();
-  c1->Write();
-  c1->SetName("WjetFitSyst_Vjet_CorrShape_SideBandRegion_Log");
-  c1->SetLogy(1);
-  c1->Write();
-  leg2->Clear();
-  c1->Clear();
-  c1->SetLogy(0);
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //	PART - 6: Get Wjet fit all ystematics shapes including alternate shape 
+   //
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   
+   std::vector<TH1F*> histos_WjetSyst;
+   //histos_WjetSyst.push_back(Wjet_Corr_Hist)
+   c1->SetName("WjetFitSyst_Vjet_CorrShape_SideBandRegion");
+   TH1F* Wjet_Corr_Hist_Up0 = (TH1F*)bkgEstFile_Up0->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist_Up0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Up");
+   Wjet_Corr_Hist_Up0->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist_Up0->SetStats(0);
+   Wjet_Corr_Hist_Up0->SetLineColor(3);
+   Wjet_Corr_Hist_Up0->SetMarkerColor(3);
+   histos_WjetSyst.push_back(Wjet_Corr_Hist_Up0);
+   Wjet_Corr_Hist_Up0->Write();
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //	PART - 6: Get Wjet fit systematics (in signal region by multiplying it with alpha)
-  //
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion");
-  //TH1F* hCorr_Signal_Central = getWjetSignalRegion_usingAlpha(Wjet_Corr_Hist,hCentral);
-  //hCorr_Signal_Central->SetName("Corr_Vjet_Signal_Region_Nominal");
-  //hCorr_Signal_Central->SetTitle("Corr Vjet Signal Region (Nominal)");
-  //hCorr_Signal_Central->SetLineColor(1);
-  //hCorr_Signal_Central->SetMarkerSize(1.5);
-  //hCorr_Signal_Central->SetMarkerStyle(5);
-  hMC_Signal_88bin->SetTitle("Vjets Signal Region Corrected From Data");
-  hMC_Signal_88bin->Draw("E1");
-  hCorr_Signal_Central->SetLineColor(2);
-  hCorr_Signal_Central->SetMarkerColor(2);
-  hCorr_Signal_Central->Draw("hist same");
-  leg2->AddEntry(hMC_Signal_88bin,"MC","lep");
-  leg2->AddEntry(hCorr_Signal_Central,"Vjet Nominal");
+   TH1F* Wjet_Corr_Hist_Up1 = (TH1F*)bkgEstFile_Up1->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist_Up1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Up");
+   Wjet_Corr_Hist_Up1->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist_Up1->SetStats(0);
+   Wjet_Corr_Hist_Up1->SetLineColor(4);
+   Wjet_Corr_Hist_Up1->SetMarkerColor(4);
+   histos_WjetSyst.push_back(Wjet_Corr_Hist_Up1);
+   Wjet_Corr_Hist_Up1->Write();
+
+   TH1F* Wjet_Corr_Hist_Down0 = (TH1F*)bkgEstFile_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Down");
+   Wjet_Corr_Hist_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist_Down0->SetStats(0);
+   Wjet_Corr_Hist_Down0->SetLineColor(5);
+   Wjet_Corr_Hist_Down0->SetMarkerColor(5);
+   histos_WjetSyst.push_back(Wjet_Corr_Hist_Down0);
+   Wjet_Corr_Hist_Down0->Write();
+
+   TH1F* Wjet_Corr_Hist_Down1 = (TH1F*)bkgEstFile_Down1->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist_Down1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Down");
+   Wjet_Corr_Hist_Down1->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist_Down1->SetStats(0);
+   Wjet_Corr_Hist_Down1->SetLineColor(6);
+   Wjet_Corr_Hist_Down1->SetMarkerColor(6);
+   histos_WjetSyst.push_back(Wjet_Corr_Hist_Down1);
+   Wjet_Corr_Hist_Down1->Write();
+
+   TH1F* Wjet_Corr_Hist_alter = (TH1F*)bkgEstFile_alternate->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist_alter->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_AlterNameShape");
+   Wjet_Corr_Hist_alter->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist_alter->SetStats(0);
+   Wjet_Corr_Hist_alter->SetLineColor(7);
+   Wjet_Corr_Hist_alter->SetMarkerColor(7);
+   histos_WjetSyst.push_back(Wjet_Corr_Hist_alter);
+   Wjet_Corr_Hist_alter->Write();
+   names.push_back("AlternateShape_Down");
+
+   hSideBand_88bin->SetTitle("Vjet SideBand Region Corrected From Data");
+   hSideBand_88bin->Draw("E1");
+   Wjet_Corr_Hist->Draw("hist same");
+   Wjet_Corr_Hist_Up0->Draw("hist same");
+   Wjet_Corr_Hist_Up1->Draw("hist same");
+   Wjet_Corr_Hist_Down0->Draw("hist same");
+   Wjet_Corr_Hist_Down1->Draw("hist same");
+   Wjet_Corr_Hist_alter->Draw("hist same");
 
 
-  std::vector<TH1F*> histos_WjetSyst_SR;
-  histos_WjetSyst_SR.push_back(hCorr_Signal_Central);
-  catname = "WjetFitSyst_SignalRegion_Corr_Hist_From_Data_";
-  for (int ifun=0; ifun<histos_WjetSyst.size(); ++ifun){
-    TH1F* thisFunc = histos_WjetSyst[ifun];
-    TH1F* thisHisto = getWjetSignalRegion_usingAlpha(thisFunc, hCentral);
-    TString thisHistoName;
-    thisHistoName = catname+names[ifun];
-    thisHisto->SetName(thisHistoName);
-    //thisHisto->SetTitle(thisHistoName);
-    //thisHisto->SetTitle("");
-    thisHisto->SetStats(0);
-    thisHisto->SetLineColor(ifun+3);
-    thisHisto->SetMarkerColor(ifun+3);
-    histos_WjetSyst_SR.push_back(thisHisto);
-    thisHisto->Draw("same");
-    TString thisLegName = "Vjet "+names[ifun];
-    leg2->AddEntry(thisHisto,thisLegName);
-  }
-  leg2->Draw();
+   leg2->AddEntry(hSideBand_88bin,"MC","lep");
+   leg2->AddEntry(Wjet_Corr_Hist,"Vjet Corr Nominal");
+   leg2->AddEntry(Wjet_Corr_Hist_Up0,"Vjet Corr Par0 Up");
+   leg2->AddEntry(Wjet_Corr_Hist_Up1,"Vjet Corr Par1 Up");
+   leg2->AddEntry(Wjet_Corr_Hist_Down0,"Vjet Corr Par0 Down");
+   leg2->AddEntry(Wjet_Corr_Hist_Down1,"Vjet Corr Par1 Down");
+   leg2->AddEntry(Wjet_Corr_Hist_alter,"Vjet Corr Alternate");
+   leg2->Draw();
 
-  c1->Draw();
-  c1->Write();
-  c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion_Log");
-  c1->SetLogy(1);
-  c1->Write();
-  leg2->Clear();
-  c1->Clear();
-  c1->SetLogy(0);
+   c1->Draw();
+   c1->Write();
+   c1->SetName("WjetFitSyst_Vjet_CorrShape_SideBandRegion_Log");
+   c1->SetLogy(1);
+   c1->Write();
+   leg2->Clear();
+   c1->Clear();
+   c1->SetLogy(0);
 
-  
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  //
-  //	PART - 6: Get Wjet fit systematics (in signal region by multiplying it with alpha)
-  //	Change to 4 bins
-  //
-  ////////////////////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //	PART - 7: Get Wjet fit systematics (in signal region by multiplying it with alpha)
+   //
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion");
 
-  c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion_4bins");
-  catname = "WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_";
-  for (int ifun=0; ifun<histos_WjetSyst_SR.size(); ++ifun){
-    TH1F* thisFunc = histos_WjetSyst_SR[ifun];
-    TH1F* thisHisto = ResetTo4bins(thisFunc, 4, 600, 2500);
-    TString thisHistoName;
-    if (ifun == 0) thisHistoName = catname+"Nominal";
-    else thisHistoName = catname+names[ifun-1];
-    thisHisto->SetName(thisHistoName);
-    thisHisto->SetTitle("Vjets Signal Region Corrected From Data");
-    //thisHisto->SetTitle(thisHistoName);
-    thisHisto->SetTitle("");
-    thisHisto->SetStats(0);
-    thisHisto->SetLineColor(ifun+2);
-    thisHisto->SetMarkerColor(ifun+2);
-    if (ifun == 0) thisHisto->Draw();
-    else thisHisto->Draw("same");
-    TString thisLegName;
-    if (ifun == 0) thisLegName = "Vjet Nominal";
-    else thisLegName = "Vjet "+names[ifun-1];
-    leg2->AddEntry(thisHisto,thisLegName);
-  }
-  hMC_Signal_4bin->Draw("same");
-  leg2->AddEntry(hMC_Signal_4bin,"MC","lep");
-  leg2->Draw();	
-  c1->Draw();
-  c1->Write();
-  c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion_4bins_Log");
-  c1->SetLogy(1);
-  c1->Write();
-  leg2->Clear();
-  c1->Clear();
-  c1->SetLogy(0);
+   hMC_Signal_88bin->SetTitle("Vjets Signal Region Corrected From Data");
+   leg2->AddEntry(hMC_Signal_88bin,"MC","lep");
+   hMC_Signal_88bin->Draw("E1");
 
-   f1->Write();   f.Write();   f.Close();
+   hCorr_Signal_Central->SetLineColor(2);
+   hCorr_Signal_Central->SetMarkerColor(2);
+   hCorr_Signal_Central->Draw("hist same");
+   leg2->AddEntry(hCorr_Signal_Central,"Vjet Nominal");
+
+   std::vector<TH1F*> histos_WjetSyst_SR;
+   histos_WjetSyst_SR.push_back(hCorr_Signal_Central);
+   catname = "WjetFitSyst_SignalRegion_Corr_Hist_From_Data_";
+   for (int ifun=0; ifun<histos_WjetSyst.size(); ++ifun){
+     TH1F* thisFunc = histos_WjetSyst[ifun];
+     TH1F* thisHisto = getWjetSignalRegion_usingAlpha(thisFunc, hCentral);
+     TString thisHistoName;
+     thisHistoName = catname+names[ifun];
+     thisHisto->SetName(thisHistoName);
+     thisHisto->SetStats(0);
+     thisHisto->SetLineColor(ifun+3);
+     thisHisto->SetMarkerColor(ifun+3);
+     histos_WjetSyst_SR.push_back(thisHisto);
+     thisHisto->Draw("same");
+     TString thisLegName = "Vjet "+names[ifun];
+     leg2->AddEntry(thisHisto,thisLegName);
+   }
+   leg2->Draw();
+
+   c1->Draw();
+   c1->Write();
+   c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion_Log");
+   c1->SetLogy(1);
+   c1->Write();
+   leg2->Clear();
+   c1->Clear();
+   c1->SetLogy(0);
+
+   
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //	PART - 8: Get Wjet fit systematics (in signal region by multiplying it with alpha)
+   //
+   //	Change to 4 bins
+   //
+   ////////////////////////////////////////////////////////////////////////////////////////////////
+
+   c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion_4bins");
+   catname = "WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_";
+   std::vector<TH1F*> histos_WjetSyst_SR_4bin;
+   for (int ifun=0; ifun<histos_WjetSyst_SR.size(); ++ifun){
+     TH1F* thisFunc = histos_WjetSyst_SR[ifun];
+     TH1F* thisHisto = ResetTo4bins(thisFunc, 4, 600, 2500);
+     TString thisHistoName;
+     if (ifun == 0) thisHistoName = catname+"Nominal";
+     else thisHistoName = catname+names[ifun-1];
+     thisHisto->SetName(thisHistoName);
+     thisHisto->SetTitle("Vjets Signal Region Corrected From Data");
+     //thisHisto->SetTitle(thisHistoName);
+     thisHisto->SetTitle("");
+     thisHisto->SetStats(0);
+     thisHisto->SetLineColor(ifun+2);
+     thisHisto->SetMarkerColor(ifun+2);
+     histos_WjetSyst_SR_4bin.push_back(thisHisto);
+     if (ifun == 0) thisHisto->Draw();
+     else thisHisto->Draw("same");
+     TString thisLegName;
+     if (ifun == 0) thisLegName = "Vjet Nominal";
+     else thisLegName = "Vjet "+names[ifun-1];
+     leg2->AddEntry(thisHisto,thisLegName);
+   }
+   //	Get Altername shape down :
+   //	we have only one alternate shape so just get the difference of main and alternate shape bin by bin and make another alternate shape...
+   TH1F* mainWjetHist = histos_WjetSyst_SR_4bin[0];
+   TH1F* alterWjetHist = histos_WjetSyst_SR_4bin[histos_WjetSyst_SR.size()-1];
+   cout<<" ==> "<< mainWjetHist->GetName() << "\t" << alterWjetHist->GetName() << endl;
+   TH1F* hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{WW};Events",4, 600, 2500);
+   for (int ibin=1; ibin<mainWjetHist->GetNbinsX()+2; ibin++)
+   {
+      hAlter_WjetHist_Up->SetBinContent(ibin,mainWjetHist->GetBinContent(ibin) + (mainWjetHist->GetBinContent(ibin) - alterWjetHist->GetBinContent(ibin)));
+      cout<< ibin << "\t" << mainWjetHist->GetBinContent(ibin) << "\t" << alterWjetHist->GetBinContent(ibin) << "\t" << hAlter_WjetHist_Up->GetBinContent(ibin) << endl;
+   }
+   hAlter_WjetHist_Up->SetLineColor(histos_WjetSyst_SR.size()+2);
+   hAlter_WjetHist_Up->SetMarkerColor(histos_WjetSyst_SR.size()+2);
+
+   hAlter_WjetHist_Up->Draw("same");
+   leg2->AddEntry(hAlter_WjetHist_Up,"Vjet AlternateShape Up");
+   hMC_Signal_4bin->Draw("same");
+   leg2->AddEntry(hMC_Signal_4bin,"MC","lep");
+   leg2->Draw();	
+   c1->Draw();
+   c1->Write();
+   c1->SetName("WjetFitSyst_Vjet_CorrShape_SignalRegion_4bins_Log");
+   c1->SetLogy(1);
+   c1->Write();
+   leg2->Clear();
+   c1->Clear();
+   c1->SetLogy(0);
+
+
+    f1->Write();   f.Write();   f.Close();
 }
