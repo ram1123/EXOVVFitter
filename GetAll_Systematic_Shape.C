@@ -30,8 +30,31 @@ TH1F* getWjetSignalRegion_usingAlpha(TH1F* wjet, TH1F* alpha){
    TH1F* hOut = (TH1F*)wjet->Clone();
    hOut->Reset();
 
+   int LastPositiveAlphaBin;
+   double LastPositiveAlphaBin_LowEdge, LastPositiveAlphaBin_UpperEdge;
+   // Get bin info from where alpha starts becoming negative
+   for (unsigned int ibin=1; ibin<alpha->GetNbinsX()+1; ++ibin){
+      if(alpha->GetBinContent(ibin) < 0) continue;
+      LastPositiveAlphaBin = ibin;
+      LastPositiveAlphaBin_LowEdge = alpha->GetBinLowEdge(ibin);
+      LastPositiveAlphaBin_UpperEdge = alpha->GetBinLowEdge(ibin+1);
+   }
+
+   int AvgAlphaInInterestedRegion_CountFreq = 0;
+   double AvgAlphaInInterestedRegion = 0.0;
+   // Take the appropriate choice of average value of alpha
+   for (unsigned int ibin=1; ibin<alpha->GetNbinsX()+1; ++ibin){
+      if ( (alpha->GetBinLowEdge(ibin) > LastPositiveAlphaBin_UpperEdge - 500) && (alpha->GetBinContent(ibin) > 0))
+      {
+      	AvgAlphaInInterestedRegion += alpha->GetBinContent(ibin);
+	AvgAlphaInInterestedRegion_CountFreq++;
+      }
+   }
+   AvgAlphaInInterestedRegion = AvgAlphaInInterestedRegion/((double)AvgAlphaInInterestedRegion_CountFreq);
+
    for (unsigned int ibin=1; ibin<hOut->GetNbinsX()+1; ++ibin){
-      hOut->SetBinContent(ibin, wjet->GetBinContent(ibin)*alpha->GetBinContent(ibin));
+      if (alpha->GetBinContent(ibin)>0) hOut->SetBinContent(ibin, wjet->GetBinContent(ibin)*alpha->GetBinContent(ibin));
+      else hOut->SetBinContent(ibin, wjet->GetBinContent(ibin)*AvgAlphaInInterestedRegion);
       hOut->SetBinError(ibin, 0.0);
    }
 
@@ -53,6 +76,8 @@ TH1F *ResetTo4bins(TH1F *wjet, int nbins, double xmin, double xmax) {
   cout << h->GetBinContent(4) << endl;
   cout << h->GetBinContent(5) << endl;
   }
+  // Add overflow bin
+  h->SetBinContent(h->GetNbinsX() , h->GetBinContent(h->GetNbinsX()) + h->GetBinContent(h->GetNbinsX()+1) );
   return h;
 }
 
@@ -297,7 +322,6 @@ void GetAll_Systematic_Shape() {
       if(!(((*type==0)&&(abs(*l_eta1)<2.4))||((*type==1)&&((abs(*l_eta1)<2.5)&&!(abs(*l_eta1)>1.4442 && abs(*l_eta1)<1.566))))) continue;
       if(!(((*type==0)&&(*pfMET_Corr>50)) || ((*type==1)&&(*pfMET_Corr>80)))) continue;
       if(!((*ungroomed_PuppiAK8_jet_pt>200)&&(abs(*ungroomed_PuppiAK8_jet_eta)<2.4)&&(*PuppiAK8_jet_tau2tau1<0.55))) continue;
-      //if(!((*PuppiAK8_jet_mass_so_corr>65) && (*PuppiAK8_jet_mass_so_corr<105))) continue;
       if(!(*nBTagJet_loose==0)) continue;
       if(!(*vbf_maxpt_jj_m>800)) continue;
       if(!(abs(*vbf_maxpt_j2_eta-*vbf_maxpt_j1_eta)>4.0)) continue;
@@ -315,9 +339,7 @@ void GetAll_Systematic_Shape() {
       	hMC_Signal_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
       	hMC_Signal_88bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
       }
-
-      // Fill histogram for side-band region
-      if ((*PuppiAK8_jet_mass_so_corr<65) || (*PuppiAK8_jet_mass_so_corr>105))
+      else if ((*PuppiAK8_jet_mass_so_corr>40) && (*PuppiAK8_jet_mass_so_corr<150))
       {
       	//hSideBand_4bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
       	hSideBand_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
@@ -327,12 +349,22 @@ void GetAll_Systematic_Shape() {
    }
 
    // include overflow bin
-   hMC_Signal_4bin->SetBinContent(4,hMC_Signal_4bin->GetBinContent(4)+hMC_Signal_4bin->GetBinContent(5));
-   hMC_Signal_15bin->SetBinContent(15,hMC_Signal_15bin->GetBinContent(15)+hMC_Signal_15bin->GetBinContent(16));
-   hMC_Signal_88bin->SetBinContent(88,hMC_Signal_88bin->GetBinContent(88)+hMC_Signal_88bin->GetBinContent(89));
-   //hSideBand_4bin->SetBinContent(4,hSideBand_4bin->GetBinContent(4)+hSideBand_4bin->GetBinContent(5));
-   hSideBand_15bin->SetBinContent(15,hSideBand_15bin->GetBinContent(15)+hSideBand_15bin->GetBinContent(16));
-   hSideBand_88bin->SetBinContent(88,hSideBand_88bin->GetBinContent(88)+hSideBand_88bin->GetBinContent(88));
+    hMC_Signal_4bin->SetBinContent(hMC_Signal_4bin->GetNbinsX(), hMC_Signal_4bin->GetBinContent(hMC_Signal_4bin->GetNbinsX())+ hMC_Signal_4bin->GetBinContent(hMC_Signal_4bin->GetNbinsX()+1));
+   hMC_Signal_15bin->SetBinContent(hMC_Signal_15bin->GetNbinsX(),hMC_Signal_15bin->GetBinContent(hMC_Signal_15bin->GetNbinsX())+hMC_Signal_15bin->GetBinContent(hMC_Signal_15bin->GetNbinsX()+1));
+   hMC_Signal_88bin->SetBinContent(hMC_Signal_88bin->GetNbinsX(),hMC_Signal_88bin->GetBinContent(hMC_Signal_88bin->GetNbinsX())+hMC_Signal_88bin->GetBinContent(hMC_Signal_88bin->GetNbinsX()+1));
+   //hSideBand_4bin->SetBinContent(hSideBand_4bin->GetNbinsX(),  hSideBand_4bin->GetBinContent(hSideBand_4bin->GetNbinsX())+  hSideBand_4bin->GetBinContent(hSideBand_4bin->GetNbinsX()+1));
+    hSideBand_15bin->SetBinContent(hSideBand_15bin->GetNbinsX(), hSideBand_15bin->GetBinContent(hSideBand_15bin->GetNbinsX())+ hSideBand_15bin->GetBinContent(hSideBand_15bin->GetNbinsX()+1));
+    hSideBand_88bin->SetBinContent(hSideBand_88bin->GetNbinsX(), hSideBand_88bin->GetBinContent(hSideBand_88bin->GetNbinsX())+ hSideBand_88bin->GetBinContent(hSideBand_88bin->GetNbinsX()+1));
+
+    if (debug){
+    	cout << "============== Cross-Check	===============\n\n" << endl;
+    	for (int i=1; i<=hMC_Signal_15bin->GetNbinsX()+1; i++)
+    		cout<< i << "\t" << hMC_Signal_15bin->GetBinContent(i) << endl;
+
+    	cout << "============== Cross-Check	===============\n\n" << endl;
+    	for (int i=1; i<=hSideBand_15bin->GetNbinsX()+1; i++)
+    		cout<< i << "\t" << hSideBand_15bin->GetBinContent(i) << endl;
+    }
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    //
@@ -530,6 +562,11 @@ void GetAll_Systematic_Shape() {
    }
 
    leg->Draw();	pt->Draw();
+
+   TLine *line =new TLine(c1->GetUxmin(),0.0,c1->GetUxmax(),0.0);
+   line->SetLineColor(kViolet);
+   line->Draw();
+
    c1->Draw();
    c1->Write();
    for (int k=0; k<systFunctions.size(); k++)
@@ -553,7 +590,7 @@ void GetAll_Systematic_Shape() {
    TH1F* hCentral = convertTF1toTH1F(f1, hMC_Signal_88bin);
    hCentral->SetName("AlphaSyst_Nominal");
    hCentral->SetTitle("");
-   hCentral->SetLineColor(1);
+   hCentral->SetLineColor(2);
    hCentral->SetMarkerSize(1.5);
    hCentral->SetMarkerStyle(5);
 
@@ -571,13 +608,14 @@ void GetAll_Systematic_Shape() {
      TString thisHistoName = catname+names[ifun];
      thisHisto->SetName(thisHistoName);
      thisHisto->SetTitle(thisHistoName);
-     thisHisto->SetLineColor(ifun+1);
-     thisHisto->SetMarkerColor(ifun+1);
+     thisHisto->SetLineColor(ifun+3);
+     thisHisto->SetMarkerColor(ifun+3);
      thisHisto->Draw("same");
      histos.push_back(thisHisto);
      leg->AddEntry(thisHisto,thisHistoName);
    }
    leg->Draw();	pt->Draw();
+   line->Draw();
    c1->Draw();
    c1->Write();
    leg->Clear();
@@ -863,6 +901,7 @@ void GetAll_Systematic_Shape() {
      thisHisto->SetStats(0);
      thisHisto->SetLineColor(ifun+2);
      thisHisto->SetMarkerColor(ifun+2);
+     //thisHisto->SetBinContent(thisHisto->GetNbinsX(), thisHisto->GetBinContent(thisHisto->GetNbinsX()) + thisHisto->GetBinContent(thisHisto->GetNbinsX()+1) );
      histos_WjetSyst_SR_4bin.push_back(thisHisto);
      if (ifun == 0) thisHisto->Draw();
      else thisHisto->Draw("same");
@@ -882,6 +921,7 @@ void GetAll_Systematic_Shape() {
       hAlter_WjetHist_Up->SetBinContent(ibin,mainWjetHist->GetBinContent(ibin) + (mainWjetHist->GetBinContent(ibin) - alterWjetHist->GetBinContent(ibin)));
       cout<< ibin << "\t" << mainWjetHist->GetBinContent(ibin) << "\t" << alterWjetHist->GetBinContent(ibin) << "\t" << hAlter_WjetHist_Up->GetBinContent(ibin) << endl;
    }
+   //hAlter_WjetHist_Up->SetBinContent(hAlter_WjetHist_Up->GetNbinsX(), hAlter_WjetHist_Up->GetBinContent(hAlter_WjetHist_Up->GetNbinsX()) + hAlter_WjetHist_Up->GetBinContent(hAlter_WjetHist_Up->GetNbinsX()+1) );
    hAlter_WjetHist_Up->SetLineColor(histos_WjetSyst_SR.size()+2);
    hAlter_WjetHist_Up->SetMarkerColor(histos_WjetSyst_SR.size()+2);
 
