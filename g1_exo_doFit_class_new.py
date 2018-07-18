@@ -100,7 +100,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WW} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WV} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -145,7 +145,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",1500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="Ntuples2/";
                  
         #prepare background data and signal samples            
@@ -844,6 +844,17 @@ objName ==objName_before ):
         rlt_file.ReplaceAll(".root",".C");
         cMassFit.SaveAs(rlt_file.Data());
 
+        rlt_file.ReplaceAll(".C","_log.png");
+	pad2.SetLogy()
+        mplot.GetYaxis().SetRangeUser(0.001,mplot.GetMaximum()*200);
+        cMassFit.SaveAs(rlt_file.Data());
+
+        rlt_file.ReplaceAll(".png",".pdf");
+        cMassFit.SaveAs(rlt_file.Data());
+
+        rlt_file.ReplaceAll(".pdf",".root");
+        cMassFit.SaveAs(rlt_file.Data());
+
         string_file_name = TString(in_file_name);
         if string_file_name.EndsWith(".root"):
             string_file_name.ReplaceAll(".root","_"+in_model_name);
@@ -851,17 +862,22 @@ objName ==objName_before ):
             string_file_name.ReplaceAll(".root","");
             string_file_name.Append("_"+in_model_name);
 
-        if logy:
-            mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
-            pad2.SetLogy() ;
-            pad2.Update();
-            cMassFit.Update();
-            rlt_file.ReplaceAll(".root","_log.root");
-            cMassFit.SaveAs(rlt_file.Data());
-            rlt_file.ReplaceAll(".root",".pdf");
-            cMassFit.SaveAs(rlt_file.Data());
-            rlt_file.ReplaceAll(".pdf",".png");
-            cMassFit.SaveAs(rlt_file.Data());
+        #if logy:
+        #    mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
+	#    mplot.GetXaxis().SetTitle("M_{WW} (GeV)")
+        #    pad2.SetLogy() ;
+        #    pad2.Update();
+        #    pad1.cd();
+        #    mplot_pull.Draw("AP");
+	#    medianLine.Draw()
+	#    mplot_pull.Draw("Psame");
+        #    cMassFit.Update();
+        #    rlt_file.ReplaceAll(".root","_log.root");
+        #    cMassFit.SaveAs(rlt_file.Data());
+        #    rlt_file.ReplaceAll(".root",".pdf");
+        #    cMassFit.SaveAs(rlt_file.Data());
+        #    rlt_file.ReplaceAll(".pdf",".png");
+        #    cMassFit.SaveAs(rlt_file.Data());
 
         self.draw_canvas(mplot,in_directory,string_file_name.Data(),0,logy,1);
 
@@ -1009,8 +1025,13 @@ objName ==objName_before ):
 
         if logy:
             mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
+	    mplot.GetXaxis().SetTitle("M_{WW} (GeV)")
             pad2.SetLogy() ;
             pad2.Update();
+            pad1.cd();
+            mplot_pull.Draw("AP");
+	    medianLine.Draw()
+	    mplot_pull.Draw("Psame");
             cMassFit.Update();
             rlt_file.ReplaceAll(".root","_log.root");
             cMassFit.SaveAs(rlt_file.Data());
@@ -1942,20 +1963,12 @@ objName ==objName_before ):
 
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),132)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_132bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),80)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_80bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),60)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_60bin.root")
 
 	##
 	#
@@ -3292,7 +3305,7 @@ objName ==objName_before ):
         tmp_scale_to_lumi=1.;
             
 	nnevents = treeIn.GetEntries()
-	#nnevents = 4
+	#nnevents = 30000
 	if nnevents > treeIn.GetEntries():
 		nnevents = treeIn.GetEntries()
 	print "Number of events to run = ",nnevents
@@ -3316,7 +3329,7 @@ objName ==objName_before ):
 		#if (treeIn.type != 0 or treeIn.type != 1): self.isGoodEvent = 0;
 		if (treeIn.l_pt2>0) : self.isGoodEvent = 0;
 		if (treeIn.l_pt1<30): self.isGoodEvent = 0;
-		if ((treeIn.type == 0 and abs(treeIn.l_eta1)>2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta1)>2.5) or (abs(treeIn.l_eta1)>1.4442  and abs(treeIn.l_eta1)<1.566))) ): self.isGoodEvent = 0;
+		if ((treeIn.type == 0 and abs(treeIn.l_eta1)>=2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta1)>2.5) or (abs(treeIn.l_eta1)>1.4442  and abs(treeIn.l_eta1)<1.566))) ): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and treeIn.pfMET_Corr<50)  or  (treeIn.type==1 and treeIn.pfMET_Corr<80) ): self.isGoodEvent = 0;
 
                 if (treeIn.ungroomed_PuppiAK8_jet_pt<200.) : self.isGoodEvent = 0;
