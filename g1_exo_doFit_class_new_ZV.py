@@ -100,7 +100,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"TeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -145,7 +145,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",2500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="Ntuples2/";
                  
         #prepare background data and signal samples            
@@ -1021,7 +1021,7 @@ objName ==objName_before ):
 
         if logy:
             mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
-	    mplot.GetXaxis().SetTitle("M_{ZV} (GeV)")
+	    mplot.GetXaxis().SetTitle("M_{ZV} (TeV)")
             pad2.SetLogy() ;
             pad2.Update();
             cMassFit.Update();
@@ -3319,7 +3319,7 @@ objName ==objName_before ):
                 	#if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	self.isGoodEvent = 1;   
 		if (treeIn.l_pt2<=30) : self.isGoodEvent = 0;
-		if (treeIn.l_pt1<=30): self.isGoodEvent = 0;
+		if (treeIn.l_pt1<=50): self.isGoodEvent = 0;
 		if (treeIn.dilep_m<76 or treeIn.dilep_m>107): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and abs(treeIn.l_eta1)>=2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta1)>=2.5) or (abs(treeIn.l_eta1)>=1.4442  and abs(treeIn.l_eta1)<=1.566))) ): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and abs(treeIn.l_eta2)>=2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta2)>=2.5) or (abs(treeIn.l_eta2)>=1.4442  and abs(treeIn.l_eta2)<=1.566))) ): self.isGoodEvent = 0;

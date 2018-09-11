@@ -7,15 +7,15 @@
 #include "CMS_lumi.C"
 
 int debug = 0;
-double Wjet_Normalization_FromBkgEstimation = 240.656;
+double Wjet_Normalization_FromBkgEstimation = 212.373;
 
 int VarBins = 1; 
-double bins[6] = {600, 900, 1200, 1500, 2000, 2500};
-int NBINS = 5;
+double bins[9] = {600, 700, 800, 900, 1000, 1200, 1500, 2000, 2500};
+int NBINS = 8;
 
 // To get above normalization using below command with proper file name and path
 //
-// grep -A 10 "_WJets01_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/cards_em_HP/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
+// grep -A 10 "_WJets0_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
 
 //	FUNCTION TO CONVERT TF1 TO TH1F
 TH1F* convertTF1toTH1F(TF1* f, TH1F* hIn){
@@ -129,18 +129,20 @@ void GetAll_Systematic_Shape() {
 
 
    
-   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets01_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/cards_em_HP/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
+   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets0_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
  
    // Open the file containing the tree.
-   TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
+   //TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
+   TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
+
 
    // Open all necessary file that we get after background estimation:
-   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
-   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
-   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
-   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
-   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
-   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV/2018_07_17_09h36/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
+   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
+   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
+   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
+   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
+   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
+   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
 
    // Create a TTreeReader for the tree, for instance by passing the
    // TTree's name and the TDirectory / TFile it is in. (otree is the name of tree)
@@ -179,7 +181,6 @@ void GetAll_Systematic_Shape() {
    TTreeReaderValue<Float_t> l_eta1 = {fReader, "l_eta1"};
    TTreeReaderValue<Float_t> l_phi1 = {fReader, "l_phi1"};
    TTreeReaderValue<Float_t> l_e1 = {fReader, "l_e1"};
-   TTreeReaderValue<Float_t> l_charge1 = {fReader, "l_charge1"};
    TTreeReaderValue<Float_t> l_iso1 = {fReader, "l_iso1"};
    TTreeReaderValue<Float_t> l_pt2 = {fReader, "l_pt2"};
    TTreeReaderValue<Float_t> l_eta2 = {fReader, "l_eta2"};
@@ -189,14 +190,12 @@ void GetAll_Systematic_Shape() {
    TTreeReaderValue<Float_t> dilep_eta = {fReader, "dilep_eta"};
    TTreeReaderValue<Float_t> dilep_phi = {fReader, "dilep_phi"};
    TTreeReaderValue<Float_t> dilep_m = {fReader, "dilep_m"};
-   TTreeReaderValue<Float_t> l_charge2 = {fReader, "l_charge2"};
    TTreeReaderValue<Float_t> l_iso2 = {fReader, "l_iso2"};
    TTreeReaderValue<Float_t> ungroomed_AK8jet_pt = {fReader, "ungroomed_AK8jet_pt"};
    TTreeReaderValue<Float_t> ungroomed_AK8jet_pt_jer = {fReader, "ungroomed_AK8jet_pt_jer"};
    TTreeReaderValue<Float_t> ungroomed_AK8jet_eta = {fReader, "ungroomed_AK8jet_eta"};
    TTreeReaderValue<Float_t> ungroomed_AK8jet_phi = {fReader, "ungroomed_AK8jet_phi"};
    TTreeReaderValue<Float_t> ungroomed_AK8jet_e = {fReader, "ungroomed_AK8jet_e"};
-   TTreeReaderValue<Float_t> ungroomed_AK8jet_charge = {fReader, "ungroomed_AK8jet_charge"};
    TTreeReaderValue<Float_t> AK8jet_mass = {fReader, "AK8jet_mass"};
    TTreeReaderValue<Float_t> AK8jet_mass_pr = {fReader, "AK8jet_mass_pr"};
    TTreeReaderValue<Float_t> AK8jet_mass_pr_jer = {fReader, "AK8jet_mass_pr_jer"};
@@ -212,7 +211,6 @@ void GetAll_Systematic_Shape() {
    TTreeReaderValue<Float_t> ungroomed_PuppiAK8_jet_eta = {fReader, "ungroomed_PuppiAK8_jet_eta"};
    TTreeReaderValue<Float_t> ungroomed_PuppiAK8_jet_phi = {fReader, "ungroomed_PuppiAK8_jet_phi"};
    TTreeReaderValue<Float_t> ungroomed_PuppiAK8_jet_e = {fReader, "ungroomed_PuppiAK8_jet_e"};
-   TTreeReaderValue<Float_t> ungroomed_PuppiAK8_jet_charge = {fReader, "ungroomed_PuppiAK8_jet_charge"};
    TTreeReaderValue<Float_t> PuppiAK8_jet_mass = {fReader, "PuppiAK8_jet_mass"};
    TTreeReaderValue<Float_t> PuppiAK8_jet_mass_pr = {fReader, "PuppiAK8_jet_mass_pr"};
    TTreeReaderValue<Float_t> PuppiAK8_jet_mass_pr_jer = {fReader, "PuppiAK8_jet_mass_pr_jer"};
@@ -280,7 +278,6 @@ void GetAll_Systematic_Shape() {
    TTreeReaderValue<Float_t> vbf_maxpt_j1_e = {fReader, "vbf_maxpt_j1_e"};
    TTreeReaderValue<Float_t> vbf_maxpt_j1_mass = {fReader, "vbf_maxpt_j1_mass"};
    TTreeReaderValue<Float_t> vbf_maxpt_j1_bDiscriminatorCSV = {fReader, "vbf_maxpt_j1_bDiscriminatorCSV"};
-   TTreeReaderValue<Float_t> vbf_maxpt_j1_charge = {fReader, "vbf_maxpt_j1_charge"};
    TTreeReaderValue<Float_t> vbf_maxpt_j2_pt = {fReader, "vbf_maxpt_j2_pt"};
    TTreeReaderValue<Float_t> vbf_maxpt_j2_pt_jer = {fReader, "vbf_maxpt_j2_pt_jer"};
    TTreeReaderValue<Float_t> vbf_maxpt_j2_eta = {fReader, "vbf_maxpt_j2_eta"};
@@ -289,7 +286,6 @@ void GetAll_Systematic_Shape() {
    TTreeReaderValue<Float_t> vbf_maxpt_j2_e = {fReader, "vbf_maxpt_j2_e"};
    TTreeReaderValue<Float_t> vbf_maxpt_j2_mass = {fReader, "vbf_maxpt_j2_mass"};
    TTreeReaderValue<Float_t> vbf_maxpt_j2_bDiscriminatorCSV = {fReader, "vbf_maxpt_j2_bDiscriminatorCSV"};
-   TTreeReaderValue<Float_t> vbf_maxpt_j2_charge = {fReader, "vbf_maxpt_j2_charge"};
    TTreeReaderValue<Float_t> vbf_maxpt_jj_pt = {fReader, "vbf_maxpt_jj_pt"};
    TTreeReaderValue<Float_t> vbf_maxpt_jj_eta = {fReader, "vbf_maxpt_jj_eta"};
    TTreeReaderValue<Float_t> vbf_maxpt_jj_phi = {fReader, "vbf_maxpt_jj_phi"};
@@ -341,8 +337,8 @@ void GetAll_Systematic_Shape() {
 
 
    TFile *f;
-   if (VarBins)	f = new TFile("bkg_estimation_VariableBins.root", "RECREATE");
-   else f = new TFile("bkg_estimation_4Bins.root", "RECREATE");
+   if (VarBins)	f = new TFile("WV_bkg_estimation_8bins_ChargedHiggs.root", "RECREATE");
+   else f = new TFile("WV_bkg_estimation_4Bins_50GeVLepCut.root", "RECREATE");
 
    // Create a histogram for the values we read.
    TH1F *hMC_Signal_4bin;
@@ -361,7 +357,7 @@ void GetAll_Systematic_Shape() {
    // Loop over all entries of the TTree.
    while (fReader.Next()) {
       // Just access the data as if variables were iterators (note the '*' in front of them):
-      if(!(*l_pt2<0 && *l_pt1>30)) continue;
+      if(!(*l_pt2<0 && *l_pt1>50)) continue;
       if(!(((*type==0)&&(abs(*l_eta1)<2.4))||((*type==1)&&((abs(*l_eta1)<2.5)&&!(abs(*l_eta1)>1.4442 && abs(*l_eta1)<1.566))))) continue;
       if(!(((*type==0)&&(*pfMET_Corr>50)) || ((*type==1)&&(*pfMET_Corr>80)))) continue;
       if(!((*ungroomed_PuppiAK8_jet_pt>200)&&(abs(*ungroomed_PuppiAK8_jet_eta)<2.4)&&(*PuppiAK8_jet_tau2tau1<0.55))) continue;
@@ -656,6 +652,7 @@ void GetAll_Systematic_Shape() {
      thisHisto->Draw("same");
      histos.push_back(thisHisto);
      leg->AddEntry(thisHisto,thisHistoName);
+     cout<<"\t DEGUB: 4 ==> "<<names[ifun]<<"\t"<< thisFunc->GetName()<<endl;
    }
    leg->Draw();	pt->Draw();
    line->Draw();
@@ -740,6 +737,7 @@ void GetAll_Systematic_Shape() {
      thisHisto->Draw("same");
      TString thisLegName = "Vjet Corr "+names[ifun];
      leg2->AddEntry(thisHisto,thisLegName);
+     cout<<"\t DEGUB: 3 ==> "<<names[ifun]<<"\t"<< thisFunc->GetName()<<endl;
    }
    leg2->Draw();
    c1->Draw();
@@ -778,6 +776,8 @@ void GetAll_Systematic_Shape() {
      if (ifun == 0) thisLegName = "Vjet Corr Nominal";
      else thisLegName = "Vjet Corr "+names[ifun-1];
      leg2->AddEntry(thisHisto,thisLegName);
+     if (ifun == 0) cout<<"\t DEGUB: 2 ==> Nominal"<<endl;
+     else cout<<"\t DEGUB: 2 ==> "<<names[ifun-1]<<"\t"<< thisFunc->GetName()<<endl;
    }
    hMC_Signal_4bin->Draw("same");
    leg2->AddEntry(hMC_Signal_4bin,"MC","lep");
@@ -894,6 +894,7 @@ void GetAll_Systematic_Shape() {
    std::vector<TH1F*> histos_WjetSyst_SR;
    histos_WjetSyst_SR.push_back(hCorr_Signal_Central);
    catname = "WjetFitSyst_SignalRegion_Corr_Hist_From_Data_";
+   cout<<"\n\n\n=======================\t RK\n\n\n"<<endl;
    for (int ifun=0; ifun<histos_WjetSyst.size(); ++ifun){
      TH1F* thisFunc = histos_WjetSyst[ifun];
      TH1F* thisHisto = getWjetSignalRegion_usingAlpha(thisFunc, hCentral);
@@ -907,7 +908,9 @@ void GetAll_Systematic_Shape() {
      thisHisto->Draw("same");
      TString thisLegName = "Vjet "+names[ifun];
      leg2->AddEntry(thisHisto,thisLegName);
+     cout<<"\t==> "<<names[ifun]<<"\t"<< thisFunc->GetName()<<endl;
    }
+   cout<<"\n\n\n=======================\t RK\n\n\n"<<endl;
    leg2->Draw();
 
    c1->Draw();
@@ -952,6 +955,8 @@ void GetAll_Systematic_Shape() {
      if (ifun == 0) thisLegName = "Vjet Nominal";
      else thisLegName = "Vjet "+names[ifun-1];
      leg2->AddEntry(thisHisto,thisLegName);
+     if (ifun == 0) cout << "\t DEGUB: 1 ==> Nominal"<<endl;
+     else cout<<"\t DEGUB: 1 ==> "<<names[ifun-1]<<"\t"<< thisFunc->GetName()<<endl;
    }
    //	Get Altername shape down :
    //	we have only one alternate shape so just get the difference of main and alternate shape bin by bin and make another alternate shape...
