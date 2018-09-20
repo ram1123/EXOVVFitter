@@ -7,17 +7,15 @@
 #include "CMS_lumi.C"
 
 int debug = 0;
-double Wjet_Normalization_FromBkgEstimation = 212.373;
+double Wjet_Normalization_FromBkgEstimation = 45.0144;
 
 int VarBins = 1; 
 double bins[9] = {600, 700, 800, 900, 1000, 1200, 1500, 2000, 2500};
 int NBINS = 8;
-//double bins[5] = {600, 1075, 1550, 2025, 2500};
-//int NBINS = 4;
 
 // To get above normalization using below command with proper file name and path
 //
-// grep -A 10 "_WJets0_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
+// grep -A 10 "_WJets01_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
 
 //	FUNCTION TO CONVERT TF1 TO TH1F
 TH1F* convertTF1toTH1F(TF1* f, TH1F* hIn){
@@ -47,9 +45,24 @@ TH1F* getWjetSignalRegion_usingAlpha(TH1F* wjet, TH1F* alpha){
       if ( (alpha->GetBinLowEdge(ibin) > 2500) && (alpha->GetBinContent(ibin) > 0))
       {
       	AvgAlphaInInterestedRegion += alpha->GetBinContent(ibin);
+	//cout<<"===> "<<alpha->GetBinContent(ibin)<<endl;
 	AvgAlphaInInterestedRegion_CountFreq++;
       }
    }
+   cout<<"\n\n AvgAlphaInInterestedRegion_CountFreq = "<<AvgAlphaInInterestedRegion_CountFreq <<"\n\n"<<endl;
+   if (AvgAlphaInInterestedRegion_CountFreq == 0)
+   {
+     for (unsigned int ibin=1; ibin<alpha->GetNbinsX()+1; ++ibin){
+      if ( (alpha->GetBinLowEdge(ibin) > 1500) && (alpha->GetBinContent(ibin) > 0))
+      {
+      	AvgAlphaInInterestedRegion += alpha->GetBinContent(ibin);
+	//cout<<"iii===> "<<alpha->GetBinContent(ibin)<<endl;
+	AvgAlphaInInterestedRegion_CountFreq++;
+      }
+     }
+   }
+   cout<<"\n\n AvgAlphaInInterestedRegion_CountFreq = "<<AvgAlphaInInterestedRegion_CountFreq <<"\n\n"<<endl;
+
    AvgAlphaInInterestedRegion = AvgAlphaInInterestedRegion/((double)AvgAlphaInInterestedRegion_CountFreq);
 
    for (unsigned int ibin=1; ibin<hOut->GetNbinsX()+1; ++ibin){
@@ -87,7 +100,7 @@ TH1F *ResetTo4bins(TH1F *wjet, int nbins, double xmin, double xmax) {
 }
 
 
-void GetAll_Systematic_Shape() {
+void GetAll_Systematic_Shape_ZV() {
 
 
    string functionForFit = "pol1";
@@ -95,7 +108,7 @@ void GetAll_Systematic_Shape() {
 
    int nbins = 4;
    double xmin_fit = 600.0;
-   double xmax_fit = 5000.0;
+   double xmax_fit = 3000.0;
    
   //gROOT->LoadMacro("tdrstyle.C");
   setTDRStyle();
@@ -131,22 +144,18 @@ void GetAll_Systematic_Shape() {
 
 
    
-   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets0_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
+   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets01_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
  
    // Open the file containing the tree.
-   //TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
    TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
 
-
    // Open all necessary file that we get after background estimation:
-   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
-   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
-   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
-   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
-   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
-   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
-   TFile *bkgEstFile_alternate_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto_Up_0.root","READ");
-   TFile *bkgEstFile_alternate_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto_Down_0.root","READ");
+   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
+   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
+   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
+   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
+   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
+   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
 
    // Create a TTreeReader for the tree, for instance by passing the
    // TTree's name and the TDirectory / TFile it is in. (otree is the name of tree)
@@ -341,8 +350,8 @@ void GetAll_Systematic_Shape() {
 
 
    TFile *f;
-   if (VarBins)	f = new TFile("WV_bkg_estimation_8bins_ChargedHiggs.root", "RECREATE");
-   else f = new TFile("WV_bkg_estimation_4Bins_50GeVLepCut.root", "RECREATE");
+   if (VarBins)	f = new TFile("ZV_bkg_estimation_8bins_ChargedHiggs.root", "RECREATE");
+   else f = new TFile("ZV_bkg_estimation_4Bins_LeadingLep50GeV.root", "RECREATE");
 
    // Create a histogram for the values we read.
    TH1F *hMC_Signal_4bin;
@@ -350,45 +359,43 @@ void GetAll_Systematic_Shape() {
    	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WW};Events", NBINS, bins);
    else
    	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WW};Events", 4, 600, 2500);
-   TH1F *hMC_Signal_15bin  = new TH1F("hMC_Signal_15bin",  "hMC_Signal_15bin;M_{WW};Events", 15, 600, 5000);
-   TH1F *hMC_Signal_88bin  = new TH1F("hMC_Signal_88bin",  "hMC_Signal_88bin;M_{WW};Events", 88, 600, 5000);
+   TH1F *hMC_Signal_15bin  = new TH1F("hMC_Signal_15bin",  "hMC_Signal_15bin;M_{WW};Events", 15, 600, 3000);
+   TH1F *hMC_Signal_88bin  = new TH1F("hMC_Signal_88bin",  "hMC_Signal_88bin;M_{WW};Events", 88, 600, 3000);
 
-   //TH1F *hSideBand_4bin  = new TH1F("hSideBand_4bin",  "hSideBand_4bin;M_{WW};Events", 4, 600, 5000);
-   TH1F *hSideBand_15bin = new TH1F("hSideBand_15bin", "hSideBand_15bin;M_{WW};Events", 15, 600, 5000);
-   TH1F *hSideBand_88bin = new TH1F("hSideBand_88bin", "hSideBand_88bin;M_{WW};Events", 88, 600, 5000);
+   //TH1F *hSideBand_4bin  = new TH1F("hSideBand_4bin",  "hSideBand_4bin;M_{WW};Events", 4, 600, 3000);
+   TH1F *hSideBand_15bin = new TH1F("hSideBand_15bin", "hSideBand_15bin;M_{WW};Events", 15, 600, 3000);
+   TH1F *hSideBand_88bin = new TH1F("hSideBand_88bin", "hSideBand_88bin;M_{WW};Events", 88, 600, 3000);
 
 
    // Loop over all entries of the TTree.
    while (fReader.Next()) {
       // Just access the data as if variables were iterators (note the '*' in front of them):
-      if(!(*l_pt2<0 && *l_pt1>50)) continue;
-      if(!(((*type==0)&&(abs(*l_eta1)<2.4))||((*type==1)&&((abs(*l_eta1)<2.5)&&!(abs(*l_eta1)>1.4442 && abs(*l_eta1)<1.566))))) continue;
-      if(!(((*type==0)&&(*pfMET_Corr>50)) || ((*type==1)&&(*pfMET_Corr>80)))) continue;
+      if(!(*l_pt1>50 && (((*type==0)&&(abs(*l_eta1)<2.4)) || ((*type==1)&&((abs(*l_eta1)<2.5)&&!(abs(*l_eta1)>1.4442 && abs(*l_eta1)<1.566)))))) continue;
+      if(!(*l_pt2>30 && (((*type==0)&&(abs(*l_eta2)<2.4)) || ((*type==1)&&((abs(*l_eta2)<2.5)&&!(abs(*l_eta2)>1.4442 && abs(*l_eta2)<1.566)))))) continue;
       if(!((*ungroomed_PuppiAK8_jet_pt>200)&&(abs(*ungroomed_PuppiAK8_jet_eta)<2.4)&&(*PuppiAK8_jet_tau2tau1<0.55))) continue;
+      //if(!((*PuppiAK8_jet_mass_so_corr>65) && (*PuppiAK8_jet_mass_so_corr<105))) continue;
       if(!(*nBTagJet_loose==0)) continue;
+      if(!(*dilep_m>76 && *dilep_m<107)) continue;
       if(!(*vbf_maxpt_jj_m>800)) continue;
-      if(!(abs(*vbf_maxpt_j2_eta-*vbf_maxpt_j1_eta)>4.0)) continue;
+      if(!(abs(*vbf_maxpt_j2_eta - *vbf_maxpt_j1_eta)>4.0)) continue;
       if(!((*vbf_maxpt_j1_pt>30) && (*vbf_maxpt_j2_pt>30))) continue;
-      if(!(*mass_lvj_type0_PuppiAK8>600)) continue;
-      if(!(*BosonCentrality_type0>1.0)) continue;
-      if(!((abs(*ZeppenfeldWL_type0)/abs(*vbf_maxpt_j2_eta-*vbf_maxpt_j1_eta))<0.3)) continue;
-      if(!((abs(*ZeppenfeldWH)/abs(*vbf_maxpt_j2_eta-*vbf_maxpt_j1_eta))<0.3)) continue;
+      if(!(*mass_llj_PuppiAK8>600)) continue;
       
 
       // Fill histogram for signal region
       if ((*PuppiAK8_jet_mass_so_corr>65) && (*PuppiAK8_jet_mass_so_corr<105))
       {
-      	hMC_Signal_4bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hMC_Signal_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hMC_Signal_88bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+      	hMC_Signal_4bin->Fill(*mass_llj_PuppiAK8, ((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*pu_Weight)*(*totalEventWeight_2Lep)));
+      	hMC_Signal_15bin->Fill(*mass_llj_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*pu_Weight)*(*totalEventWeight_2Lep)));
+      	hMC_Signal_88bin->Fill(*mass_llj_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*pu_Weight)*(*totalEventWeight_2Lep)));
       }
       else if ((*PuppiAK8_jet_mass_so_corr>40) && (*PuppiAK8_jet_mass_so_corr<150))
       {
-      	//hSideBand_4bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hSideBand_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hSideBand_88bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+       //hSideBand_4bin->Fill(*mass_llj_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*pu_Weight)*(*totalEventWeight_2Lep)));
+      	hSideBand_15bin->Fill(*mass_llj_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*pu_Weight)*(*totalEventWeight_2Lep)));
+      	hSideBand_88bin->Fill(*mass_llj_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*pu_Weight)*(*totalEventWeight_2Lep)));
       }
-      //cout<<*mass_lvj_type0_PuppiAK8<<"\t"<<*BosonCentrality_type0<<endl;
+      //cout<<*mass_llj_PuppiAK8<<"\t"<<*BosonCentrality_type0<<endl;
    }
 
    // include overflow bin
@@ -426,7 +433,7 @@ void GetAll_Systematic_Shape() {
 
    // Fit alpha using polynomial of order 1
    gStyle->SetOptFit(1);
-   TF1* f1 = new TF1("f1","pol1",600,5000);
+   TF1* f1 = new TF1("f1","pol1",600,3000);
    f1->SetLineColor(2);
    TFitResultPtr fitRes = alpha->Fit("f1","S");
 
@@ -763,6 +770,7 @@ void GetAll_Systematic_Shape() {
    
    c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_4Bins");
    catname = "AlphaSyst_Vjet_SR_4bins_";
+   cout << "\n====================== \n\n\t histos for alpha \n\n ======================"<< endl;
    for (int ifun=0; ifun<histos_Vjet_SR.size(); ++ifun){
      TH1F* thisFunc = histos_Vjet_SR[ifun];
      TH1F* thisHisto = ResetTo4bins(thisFunc, 4, 600, 2500);
@@ -782,7 +790,7 @@ void GetAll_Systematic_Shape() {
      else thisLegName = "Vjet Corr "+names[ifun-1];
      leg2->AddEntry(thisHisto,thisLegName);
      if (ifun == 0) cout<<"\t DEGUB: 2 ==> Nominal"<<endl;
-     else cout<<"\t DEGUB: 2 ==> "<<names[ifun-1]<<"\t"<< thisFunc->GetName()<<endl;
+     else cout<<"\t DEGUB: 2 ==> "<<names[ifun-1]<<"\t"<< thisFunc->GetName() << ", Integral = "<<thisHisto->Integral()<<endl;
    }
    hMC_Signal_4bin->Draw("same");
    leg2->AddEntry(hMC_Signal_4bin,"MC","lep");
@@ -832,15 +840,6 @@ void GetAll_Systematic_Shape() {
    histos_WjetSyst.push_back(Wjet_Corr_Hist_Up1);
    Wjet_Corr_Hist_Up1->Write();
 
-   TH1F* Wjet_Corr_Hist_Down0 = (TH1F*)bkgEstFile_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
-   Wjet_Corr_Hist_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Down");
-   Wjet_Corr_Hist_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
-   Wjet_Corr_Hist_Down0->SetStats(0);
-   Wjet_Corr_Hist_Down0->SetLineColor(5);
-   Wjet_Corr_Hist_Down0->SetMarkerColor(5);
-   histos_WjetSyst.push_back(Wjet_Corr_Hist_Down0);
-   Wjet_Corr_Hist_Down0->Write();
-
    TH1F* Wjet_Corr_Hist_Down1 = (TH1F*)bkgEstFile_Down1->Get("rrv_mass_lvj__rrv_mass_lvj");
    Wjet_Corr_Hist_Down1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Down");
    Wjet_Corr_Hist_Down1->Scale(Wjet_Normalization_FromBkgEstimation);
@@ -860,36 +859,6 @@ void GetAll_Systematic_Shape() {
    Wjet_Corr_Hist_alter->Write();
    names.push_back("AlternateShape_Down");
 
-   TH1F* Wjet_Corr_Hist_alter_Up0 = (TH1F*)bkgEstFile_alternate_Up0->Get("rrv_mass_lvj__rrv_mass_lvj");
-   Wjet_Corr_Hist_alter_Up0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_AlterNameShape");
-   Wjet_Corr_Hist_alter_Up0->Scale(Wjet_Normalization_FromBkgEstimation);
-   Wjet_Corr_Hist_alter_Up0->SetStats(0);
-   Wjet_Corr_Hist_alter_Up0->SetLineColor(7);
-   Wjet_Corr_Hist_alter_Up0->SetMarkerColor(7);
-   histos_WjetSyst.push_back(Wjet_Corr_Hist_alter_Up0);
-   Wjet_Corr_Hist_alter_Up0->Write();
-   names.push_back("AlternateShape_ParVar_Up");
-
-   TH1F* Wjet_Corr_Hist_alter_Down0 = (TH1F*)bkgEstFile_alternate_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
-   Wjet_Corr_Hist_alter_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_AlterNameShape");
-   Wjet_Corr_Hist_alter_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
-   Wjet_Corr_Hist_alter_Down0->SetStats(0);
-   Wjet_Corr_Hist_alter_Down0->SetLineColor(7);
-   Wjet_Corr_Hist_alter_Down0->SetMarkerColor(7);
-   histos_WjetSyst.push_back(Wjet_Corr_Hist_alter_Down0);
-   Wjet_Corr_Hist_alter_Down0->Write();
-   names.push_back("AlternateShape_ParVar_Down");
-
-   cout << "================== check name content =============" << endl;
-   for (int r=0; r<names.size(); r++)
-   	cout << "names[" << r << "] = " << names[r] << endl;
-   cout << "================== check histos_WjetSyst content =============" << endl;
-   for (int r=0; r<histos_WjetSyst.size(); r++)
-   {
-   	TH1F* thisFunc = histos_WjetSyst[r];
-   	cout << "thisFunc[" << r << "] = " << thisFunc->GetName()	<< endl;
-   }
-
    hSideBand_88bin->SetTitle("Vjet SideBand Region Corrected From Data");
    hSideBand_88bin->Draw("E1");
    Wjet_Corr_Hist->Draw("hist same");
@@ -898,8 +867,6 @@ void GetAll_Systematic_Shape() {
    Wjet_Corr_Hist_Down0->Draw("hist same");
    Wjet_Corr_Hist_Down1->Draw("hist same");
    Wjet_Corr_Hist_alter->Draw("hist same");
-   Wjet_Corr_Hist_alter_Up0->Draw("hist same");
-   Wjet_Corr_Hist_alter_Down0->Draw("hist same");
 
 
    leg2->AddEntry(hSideBand_88bin,"MC","lep");
@@ -909,8 +876,6 @@ void GetAll_Systematic_Shape() {
    leg2->AddEntry(Wjet_Corr_Hist_Down0,"Vjet Corr Par0 Down");
    leg2->AddEntry(Wjet_Corr_Hist_Down1,"Vjet Corr Par1 Down");
    leg2->AddEntry(Wjet_Corr_Hist_alter,"Vjet Corr Alternate");
-   leg2->AddEntry(Wjet_Corr_Hist_alter_Up0,"Vjet Corr Alternate Up");
-   leg2->AddEntry(Wjet_Corr_Hist_alter_Down0,"Vjet Corr Alternate Down");
    leg2->Draw();
 
    c1->Draw();
@@ -942,7 +907,7 @@ void GetAll_Systematic_Shape() {
    std::vector<TH1F*> histos_WjetSyst_SR;
    histos_WjetSyst_SR.push_back(hCorr_Signal_Central);
    catname = "WjetFitSyst_SignalRegion_Corr_Hist_From_Data_";
-   cout<<"\n\n\n=======================\t Debug: step 1\n\n\n"<<endl;
+   cout<<"\n\n\n=======================\t RK\n\n\n"<<endl;
    for (int ifun=0; ifun<histos_WjetSyst.size(); ++ifun){
      TH1F* thisFunc = histos_WjetSyst[ifun];
      TH1F* thisHisto = getWjetSignalRegion_usingAlpha(thisFunc, hCentral);

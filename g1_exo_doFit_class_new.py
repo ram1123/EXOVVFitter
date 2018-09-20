@@ -100,7 +100,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WW} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"TeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -145,7 +145,8 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",1500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/";
+	#self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="Ntuples2/";
                  
         #prepare background data and signal samples            
@@ -345,7 +346,7 @@ class doFit_wj_and_wlvj:
 	 self.signal_jet_mass_res_uncertainty_down = float(l.split(' ')[2])/100.
        infile.close()
 
-       self.signal_xsec_NNLO_uncertainty = 0.00 # scale = 11%, PDF 13% at 1000 GeV
+       self.signal_xsec_NNLO_uncertainty = 0.00 # scale = 11%, PDF 13% at 1000 TeV
        infile = open('sys/signal_xsec_uncertainty.txt','r')
        for l in infile:
         if l.find('mass') != -1: continue
@@ -560,10 +561,10 @@ objName ==objName_before ):
 
        #tdrstyle.setTDRStyle()
        CMS_lumi.lumi_13TeV = "35.9 fb^{-1}"
-       CMS_lumi.writeExtraText = 1
+       CMS_lumi.writeExtraText = 0
        CMS_lumi.extraText = "Preliminary"
 
-       iPos = 11
+       iPos = 10
        if( iPos==0 ): CMS_lumi.relPosX = 0.15
 
        H_ref = 600; 
@@ -628,7 +629,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	cMassFit.cd()
-	CMS_lumi.CMS_lumi(cMassFit, 4, 11)	
+	CMS_lumi.CMS_lumi(cMassFit, 4, 10)	
 	cMassFit.cd()
 	cMassFit.Update()
 	cMassFit.RedrawAxis()
@@ -702,7 +703,7 @@ objName ==objName_before ):
 
         print "############### draw the canvas with pull ########################" 
 	#hist_ = datahist.createHistogram(rrv_x.GetName(),int(rrv_x.getBins()/self.narrow_factor))
-        #chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
+        chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
 	mplot.GetXaxis().SetTitle("")
 	#mplot.GetXaxis().SetTitleOffset(1.1);
         #mplot.GetYaxis().SetTitleOffset(1.3);
@@ -809,7 +810,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 11)	
+	CMS_lumi.CMS_lumi(pad2, 4, 10)	
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
@@ -844,6 +845,17 @@ objName ==objName_before ):
         rlt_file.ReplaceAll(".root",".C");
         cMassFit.SaveAs(rlt_file.Data());
 
+        rlt_file.ReplaceAll(".C","_log.png");
+	pad2.SetLogy()
+        mplot.GetYaxis().SetRangeUser(0.001,mplot.GetMaximum()*200);
+        cMassFit.SaveAs(rlt_file.Data());
+
+        rlt_file.ReplaceAll(".png",".pdf");
+        cMassFit.SaveAs(rlt_file.Data());
+
+        rlt_file.ReplaceAll(".pdf",".root");
+        cMassFit.SaveAs(rlt_file.Data());
+
         string_file_name = TString(in_file_name);
         if string_file_name.EndsWith(".root"):
             string_file_name.ReplaceAll(".root","_"+in_model_name);
@@ -851,17 +863,22 @@ objName ==objName_before ):
             string_file_name.ReplaceAll(".root","");
             string_file_name.Append("_"+in_model_name);
 
-        if logy:
-            mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
-            pad2.SetLogy() ;
-            pad2.Update();
-            cMassFit.Update();
-            rlt_file.ReplaceAll(".root","_log.root");
-            cMassFit.SaveAs(rlt_file.Data());
-            rlt_file.ReplaceAll(".root",".pdf");
-            cMassFit.SaveAs(rlt_file.Data());
-            rlt_file.ReplaceAll(".pdf",".png");
-            cMassFit.SaveAs(rlt_file.Data());
+        #if logy:
+        #    mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
+	#    mplot.GetXaxis().SetTitle("M_{WW} (GeV)")
+        #    pad2.SetLogy() ;
+        #    pad2.Update();
+        #    pad1.cd();
+        #    mplot_pull.Draw("AP");
+	#    medianLine.Draw()
+	#    mplot_pull.Draw("Psame");
+        #    cMassFit.Update();
+        #    rlt_file.ReplaceAll(".root","_log.root");
+        #    cMassFit.SaveAs(rlt_file.Data());
+        #    rlt_file.ReplaceAll(".root",".pdf");
+        #    cMassFit.SaveAs(rlt_file.Data());
+        #    rlt_file.ReplaceAll(".pdf",".png");
+        #    cMassFit.SaveAs(rlt_file.Data());
 
         self.draw_canvas(mplot,in_directory,string_file_name.Data(),0,logy,1);
 
@@ -968,7 +985,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 11)	
+	CMS_lumi.CMS_lumi(pad2, 4, 10)	
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
@@ -1009,8 +1026,13 @@ objName ==objName_before ):
 
         if logy:
             mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
+	    mplot.GetXaxis().SetTitle("M_{WW} (TeV)")
             pad2.SetLogy() ;
             pad2.Update();
+            pad1.cd();
+            mplot_pull.Draw("AP");
+	    medianLine.Draw()
+	    mplot_pull.Draw("Psame");
             cMassFit.Update();
             rlt_file.ReplaceAll(".root","_log.root");
             cMassFit.SaveAs(rlt_file.Data());
@@ -1792,10 +1814,23 @@ objName ==objName_before ):
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.NumCPU(4));
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2"), RooFit.NumCPU(4));
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2"), RooFit.NumCPU(4));
+	#hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
+	print "=====> rrv_mass_lvj = ",rrv_mass_lvj
+	print "=====> rrv_mass_lvj.GetName() = ",rrv_mass_lvj.GetName()
+	print "=====> rdataset_data_mlvj = ",rdataset_data_mlvj
+	print "=====> model_data = ",model_data
+	print "=====> model_WJets = ",model_WJets
+	print "*"*20
+	hMCmodel = model_data.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj) 
+	print "*"*20
+	#hdata = rdataset_data_mlvj.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj) 
 	print "\n\n=== \t Print results after fit \t ==="
         rfresult.Print();
 	print "\n\n=== \t Print covariance matrix \t ==="
         rfresult.covarianceMatrix().Print();
+	print "\n\n====\n\n"
+	print "\n\n=== \t Print correlation matrix \t ==="
+	rfresult.correlationMatrix().Print();
 	print "\n\n====\n\n"
 	print "\n\n====\t Print mWW model after fit (data and all mc added together)"
 	model_data.Print()
@@ -1858,6 +1893,14 @@ objName ==objName_before ):
         if TString(label).Contains("_WJets0"):
 
             mplot = rrv_mass_lvj.frame(RooFit.Title("M_lvj fitted in M_j sideband "), RooFit.Bins(int(rrv_mass_lvj.getBins()/self.narrow_factor)));
+            mplot2 = rrv_mass_lvj.frame(RooFit.Title("M_lvj fitted in M_j sideband "), RooFit.Bins(int(rrv_mass_lvj.getBins()/self.narrow_factor)));
+	    rdataset_data_mlvj.plotOn(mplot2)
+	    model_data.plotOn(mplot2)
+
+            mplot3 = rrv_mass_lvj.frame(RooFit.Title("M_lvj fitted in M_j sideband "), RooFit.Bins(int(rrv_mass_lvj.getBins()/self.narrow_factor)));
+	    rdataset_data_mlvj.plotOn(mplot3)
+	    #model_data.plotOn(mplot3,RooFit.Components(model_WJets))
+            model_data.plotOn(mplot3, RooFit.Components("model%s_sb_lo_from_fitting_%s_mlvj,model_TTbar_xww_sb_lo_%s_mlvj,model_STop_xww_sb_lo_%s_mlvj,model_VV_xww_sb_lo_%s_mlvj"%(label,self.channel,self.channel,self.channel,self.channel)), RooFit.Name("WJets"),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["WJets"]), RooFit.LineColor(kBlack), RooFit.VLines()) ;
 
             rdataset_data_mlvj.plotOn( mplot , RooFit.Invisible(), RooFit.MarkerSize(1), RooFit.DataError(RooAbsData.Poisson), RooFit.XErrorSize(0), RooFit.MarkerColor(0), RooFit.LineColor(0) );
 
@@ -1894,7 +1937,28 @@ objName ==objName_before ):
             self.nPar_float_in_fitTo = rfresult.floatParsFinal().getSize();
             nBinX = mplot.GetNbinsX();
             ndof  = nBinX-self.nPar_float_in_fitTo;
-            print mplot.chiSquare();
+	    print "*"*20
+	    print "\t Print frame \t\n"
+	    mplot.Print()
+	    print "\n\t Print frame2 (debug one) \t \n"
+	    mplot2.Print()
+	    print "\n\t Print frame3 (debug one) \t \n"
+	    mplot3.Print()
+	    print "*"*20
+	    print "model:  ","model%s_sb_lo_from_fitting_%s_mlvj"%(label,self.channel)
+	    print "*"*20
+	    print "Debug: 1 : ndof = ",ndof,"\tnBinX = ",nBinX
+            print "Debug: 1 : chi2/ndf = ",mplot.chiSquare();
+	    #print "Debug: 4 : chi2/ndf = ",mplot.chiSquare(model_data,"WJets");
+	    #print "Debug: 4 : chi2/ndf = ",mplot.chiSquare(rdataset_data_mlvj,hMCmodel);
+            print "Debug: 1 : chi2/ndf+npar = ",mplot.chiSquare(self.nPar_float_in_fitTo);
+            print "Debug: 2 : chi2/ndf = ",mplot2.chiSquare();
+            print "Debug: 2 : chi2/ndf+npar = ",mplot2.chiSquare(self.nPar_float_in_fitTo);
+            print "Debug: 3 : chi2/ndf = ",mplot3.chiSquare();
+            print "Debug: 3 : chi2/ndf+npar = ",mplot3.chiSquare(self.nPar_float_in_fitTo);
+	    #print "Debug: 4 : from hist chi2/ndf = ",hdata.Chi2Test(hMCmodel,"CHI2/NDFUW");
+	    #print "rk: man chi2/ndf = ",mplot.chiSquare("model%s_sb_lo_from_fitting_%s_mlvj"%(label,self.channel), rdataset_data_mlvj); 
+	    #print "rk: man chi2/ndf+npar = ",mplot.chiSquare("model%s_sb_lo_from_fitting_%s_mlvj"%(label,self.channel), rdataset_data_mlvj, self.nPar_float_in_fitTo); 
             print "#################### nPar=%s, chiSquare=%s/%s"%(self.nPar_float_in_fitTo ,mplot.chiSquare(self.nPar_float_in_fitTo)*ndof, ndof );
             ### write the result in the output
             self.file_out.write("\n fit_mlvj_in_Mj_sideband: nPar=%s, chiSquare=%s/%s"%(self.nPar_float_in_fitTo, mplot.chiSquare( self.nPar_float_in_fitTo )*ndof, ndof ) );
@@ -1940,22 +2004,17 @@ objName ==objName_before ):
         self.get_mlvj_normalization_insignalregion("_VV_xww");
         #self.get_mlvj_normalization_insignalregion(label,"model_pdf%s_signal_region_%s_after_correct_mlvj"%(label,self.channel));    
 
+	print "RAM: =====> rrv_mass_lvj = ",rrv_mass_lvj
+	print "RAM: =====> rrv_mass_lvj.GetName() = ",rrv_mass_lvj.GetName()
+	print "RAM: =====> model_pdf_WJets = ",model_pdf_WJets
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),132)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_132bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),80)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_80bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),60)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_60bin.root")
 
 	##
 	#
@@ -2983,6 +3042,9 @@ objName ==objName_before ):
         rfresult.Print("v");
 	fitresultsmlvj.append(rfresult)
 	print "\n\n\t\t SAVE HISTOGRAM \n",in_file_name,label,in_range,mlvj_model,"\n\n"
+	print "RAM: =====> rrv_mass_lvj = ",rrv_mass_lvj
+	print "RAM: =====> rrv_mass_lvj.GetName() = ",rrv_mass_lvj.GetName()
+	print "RAM: =====> model = ",model
 	hist = model.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
 	hist.SaveAs(in_file_name+"_"+label+"_"+in_range+"_"+mlvj_model+"_auto.root")
 	print "\n\n","_"*20,"\n\n"
@@ -3292,7 +3354,7 @@ objName ==objName_before ):
         tmp_scale_to_lumi=1.;
             
 	nnevents = treeIn.GetEntries()
-	#nnevents = 4
+	#nnevents = 30000
 	if nnevents > treeIn.GetEntries():
 		nnevents = treeIn.GetEntries()
 	print "Number of events to run = ",nnevents
@@ -4109,13 +4171,13 @@ if __name__ == '__main__':
     channel=options.channel;
     mass=options.mass;
     sample = options.sample+str(int(mass))
-    
+
     lomass = 170;
     himass = 5000; 
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,5000,40,150, 600,5000,"Exp","ExpTail",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,5000,40,150, 600,5000,"ExpTail","Exp",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"ExpTail","Exp",options.interpolate) 
 
     print "\n\n","_"*30,"\n\n\t Fit results of mj","\n\n"
     for i in fitresultsmj:

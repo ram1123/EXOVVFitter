@@ -32,7 +32,7 @@ parser.add_option('-b', action='store_true', dest='noX', default=False, help='no
 parser.add_option('--inPath', action="store",type="string",dest="inPath",default="./")
 parser.add_option('--category', action="store",type="string",dest="category",default="HP")
 parser.add_option('--type', action="store",type="string",dest="type",default="vbf")
-parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="PuppiAK8_jet_mass_so")
+parser.add_option('--jetalgo', action="store",type="string",dest="jetalgo",default="PuppiAK8_jet_mass_so_corr")
 parser.add_option('--interpolate', action="store_true",dest="interpolate",default=False)
 
 (options, args) = parser.parse_args()
@@ -94,11 +94,13 @@ class doFit_wj_and_wlvj:
 	varname = "Softdrop jet mass (GeV)"
 	if self.jetalgo == "jet_mass_pr": varname = "Pruned jet mass (GeV)"
 	if self.jetalgo == "PuppiAK8_jet_mass_pr": varname = "Pruned jet mass (GeV)"
+	if self.jetalgo == "PuppiAK8_jet_mass_so_corr": varname = "Softdrop jet mass (GeV)"
+
         rrv_mass_j = RooRealVar("rrv_mass_j",varname,(in_mj_min+in_mj_max)/2.,in_mj_min,in_mj_max,"GeV");
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"TeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -143,7 +145,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",2500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="Ntuples2/";
                  
         #prepare background data and signal samples            
@@ -155,8 +157,10 @@ class doFit_wj_and_wlvj:
         self.file_signal     = ("WWTree_%s.root"%(self.signal_sample));
         self.file_WJets0_mc  = ("WWTree_VJets.root");
         #self.file_WJets0_mc  = ("WWTree_WJets.root");
-        self.file_VV_mc      = ("WWTree_VV.root");# WW+WZ
+        #self.file_VV_mc      = ("WWTree_VV.root");# WW+WZ
+        self.file_VV_mc      = ("WWTree_VV_EWK_QCD.root");# WW+WZ
         self.file_TTbar_mc   = ("WWTree_TTbar.root");
+        #self.file_TTbar_mc   = ("WWTree_VV.root");
         self.file_STop_mc    = ("WWTree_STop.root");
 
         ## event categorization as a function of the purity and the applied selection
@@ -350,7 +354,7 @@ class doFit_wj_and_wlvj:
        infile.close()
        
     ### in order to make the legend
-    def legend4Plot(self, plot, left=1, isFill=1, x_offset_low=0., y_offset_low=0., x_offset_high =0., y_offset_high =0., TwoCoulum =1., isalpha=False, ismj=False):
+    def legend4Plot(self, plot, left=1, isFill=1, x_offset_low=0.4, y_offset_low=0.1, x_offset_high =0.27, y_offset_high =0.1, TwoCoulum =1., isalpha=False, ismj=False):
         print "############### draw the legend ########################"
         if left==-1:
             theLeg = TLegend(0.65+x_offset_low, 0.58+y_offset_low, 0.93+x_offset_low, 0.87+y_offset_low, "", "NDC");
@@ -446,7 +450,7 @@ objName ==objName_before ):
                     if not (objName_before=="Graph" or objName_before=="Uncertainty"): theLeg.AddEntry(theObj, "Stat. Uncertainty","F");
                 else:
                     if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "SingleTop","F");
-                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "t#bar{t}","F");
+                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "TTbar","F");
                     elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "Diboson","F");
                     elif TString(objName).Data()=="data" :  objName_before=objName; entryCnt = entryCnt+1; continue ;
                     elif TString(objName).Data()=="WJets" : objName_before=objName; entryCnt = entryCnt+1; continue;
@@ -840,6 +844,17 @@ objName ==objName_before ):
         rlt_file.ReplaceAll(".root",".C");
         cMassFit.SaveAs(rlt_file.Data());
 
+        rlt_file.ReplaceAll(".C","_log.png");
+	pad2.SetLogy()
+        mplot.GetYaxis().SetRangeUser(0.001,mplot.GetMaximum()*200);
+        cMassFit.SaveAs(rlt_file.Data());
+
+        rlt_file.ReplaceAll(".png",".pdf");
+        cMassFit.SaveAs(rlt_file.Data());
+
+        rlt_file.ReplaceAll(".pdf",".root");
+        cMassFit.SaveAs(rlt_file.Data());
+
         string_file_name = TString(in_file_name);
         if string_file_name.EndsWith(".root"):
             string_file_name.ReplaceAll(".root","_"+in_model_name);
@@ -847,17 +862,18 @@ objName ==objName_before ):
             string_file_name.ReplaceAll(".root","");
             string_file_name.Append("_"+in_model_name);
 
-        if logy:
-            mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
-            pad2.SetLogy() ;
-            pad2.Update();
-            cMassFit.Update();
-            rlt_file.ReplaceAll(".root","_log.root");
-            cMassFit.SaveAs(rlt_file.Data());
-            rlt_file.ReplaceAll(".root",".pdf");
-            cMassFit.SaveAs(rlt_file.Data());
-            rlt_file.ReplaceAll(".pdf",".png");
-            cMassFit.SaveAs(rlt_file.Data());
+        #if logy:
+        #    mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
+	#    mplot.GetXaxis().SetTitle("M_{ZV} (GeV)")
+        #    pad2.SetLogy() ;
+        #    pad2.Update();
+        #    cMassFit.Update();
+        #    rlt_file.ReplaceAll(".root","_log.root");
+        #    cMassFit.SaveAs(rlt_file.Data());
+        #    rlt_file.ReplaceAll(".root",".pdf");
+        #    cMassFit.SaveAs(rlt_file.Data());
+        #    rlt_file.ReplaceAll(".pdf",".png");
+        #    cMassFit.SaveAs(rlt_file.Data());
 
         self.draw_canvas(mplot,in_directory,string_file_name.Data(),0,logy,1);
 
@@ -1005,6 +1021,7 @@ objName ==objName_before ):
 
         if logy:
             mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
+	    mplot.GetXaxis().SetTitle("M_{ZV} (TeV)")
             pad2.SetLogy() ;
             pad2.Update();
             cMassFit.Update();
@@ -1180,7 +1197,7 @@ objName ==objName_before ):
         while (param):
             if (TString(label).Contains("VV") or TString(label).Contains("STop") or TString(label).Contains("TTbar")):
                 param.Print();
-            param.setConstant(kTRUE);
+	    param.setConstant(kTRUE);
             param=par.Next()
         ## return the pdf after having fixed the paramters
         return self.workspace4fit_.pdf("model%s_%s_mj"%(label,self.channel))
@@ -1562,8 +1579,8 @@ objName ==objName_before ):
         if in_model_name == "ErfExp" :
             print "########### Erf*Exp for mj fit  ############"
             rrv_c_ErfExp      = RooRealVar("rrv_c_ErfExp"+label+"_"+self.channel,"rrv_c_ErfExp"+label+"_"+self.channel,-0.0323819,-0.1,-1e-4);
-            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,72.7714,30.,120);
-            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,39.5245,10, 60.);
+            rrv_offset_ErfExp = RooRealVar("rrv_offset_ErfExp"+label+"_"+self.channel,"rrv_offset_ErfExp"+label+"_"+self.channel,65.0,0.,200);
+            rrv_width_ErfExp  = RooRealVar("rrv_width_ErfExp"+label+"_"+self.channel,"rrv_width_ErfExp"+label+"_"+self.channel,34.71,0., 200.);
             model_pdf         = ROOT.RooErfExpPdf("model_pdf"+label+"_"+self.channel+mass_spectrum,"model_pdf"+label+"_"+self.channel+mass_spectrum,rrv_x,rrv_c_ErfExp,rrv_offset_ErfExp,rrv_width_ErfExp);
 
         ## different initial values -> for mlvj
@@ -1722,7 +1739,7 @@ objName ==objName_before ):
       return self.workspace4fit_.pdf("model"+label+"_"+self.channel+mass_spectrum);
 
     ##### Method to fit data mlvj shape in the sideband -> first step for the background extraction of the shape
-    def fit_mlvj_in_Mj_sideband(self, label, mlvj_region, mlvj_model,logy=0):
+    def fit_mlvj_in_Mj_sideband(self, label, mlvj_region, mlvj_model,logy=0, massscale=""):
 
         print "\n\n############### Fit mlvj in mj sideband: ",label," ",mlvj_region,"  ",mlvj_model," ##################"
         rrv_mass_j   = self.workspace4fit_.var("rrv_mass_j")
@@ -1733,7 +1750,26 @@ objName ==objName_before ):
         model_VV_backgrounds    = self.get_VV_mlvj_Model("_sb_lo");
         number_VV_sb_lo_mlvj    = self.workspace4fit_.var("rrv_number_VV_xww_sb_lo_%s_mlvj"%(self.channel))
 	print "------> number_VV_sb_lo_mlvj = ",number_VV_sb_lo_mlvj.Print()
+        model_TTbar_backgrounds = self.get_TTbar_mlvj_Model("_sb_lo");
+        number_TTbar_sb_lo_mlvj = self.workspace4fit_.var("rrv_number_TTbar_xww_sb_lo_%s_mlvj"%(self.channel))
+	print "------> number_TTbar_sb_lo_mlvj = ",number_TTbar_sb_lo_mlvj.Print()
+        model_STop_backgrounds  = self.get_STop_mlvj_Model("_sb_lo");
+        number_STop_sb_lo_mlvj  = self.workspace4fit_.var("rrv_number_STop_xww_sb_lo_%s_mlvj"%(self.channel))
+	print "------> number_STop_sb_lo_mlvj = ",number_STop_sb_lo_mlvj.Print()
+	print "\n\n","*"*20,"\n\n"
+	print "\t\tCheck normalization of MJ and MLVJ"
+	print "\n\n","*"*20,"\n\n"
+	number_VV_sb_lo_mj = self.workspace4fit_.var("rrv_number_VV_xww%s_%s_mj"%(massscale,self.channel))
+	number_TTbar_sb_lo_mj = self.workspace4fit_.var("rrv_number_TTbar_xww%s_%s_mj"%(massscale,self.channel))
+	number_STop_sb_lo_mj = self.workspace4fit_.var("rrv_number_STop_xww%s_%s_mj"%(massscale,self.channel))
+	print "------> number_VV_sb_lo_mj = ",number_VV_sb_lo_mj.Print()
+	print "------> number_TTbar_sb_lo_mj = ",number_TTbar_sb_lo_mj.Print()
+	print "------> number_STop_sb_lo_mj = ",number_STop_sb_lo_mj.Print()
+	print "\n\n","*"*20,"\n\n"
 
+
+        self.workspace4fit_.var("rrv_number_TTbar_xww_sb_lo_%s_mlvj"%(self.channel)).Print();
+        self.workspace4fit_.var("rrv_number_STop_xww_sb_lo_%s_mlvj"%(self.channel)).Print();
         self.workspace4fit_.var("rrv_number_VV_xww_sb_lo_%s_mlvj"%(self.channel)).Print();
 
         ### Make the Pdf for the WJets
@@ -1768,6 +1804,7 @@ objName ==objName_before ):
         
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.NumCPU(4));
         rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2"), RooFit.NumCPU(4));
+        rfresult = model_data.fitTo( rdataset_data_mlvj, RooFit.Save(1) ,RooFit.Extended(kTRUE), RooFit.Minimizer("Minuit2"), RooFit.NumCPU(4));
 	print "\n\n=== \t Print results after fit \t ==="
         rfresult.Print();
 	print "\n\n=== \t Print covariance matrix \t ==="
@@ -1783,8 +1820,19 @@ objName ==objName_before ):
 	print "\n\n===\t Print W+jet model : \n\n"
         model_WJets.Print();
 	print "\n\n=== \n\n"
-	print "=== \t Print parameters\t==="
+	print "=== \t Print parameters (WJets) \t==="
         model_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	print "== GetVariables ="
+	params = model_WJets.getVariables();
+	params.Print("v");
+	print "=== print model model_pdf_WJets ==="
+	model_pdf_WJets.Print();
+	print "pars..."
+	model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
+	#rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em = params.find("rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em")
+	#rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em.setVal(rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em.getVal()+rrv_c_Exp_WJets0_xww_sb_lo_from_fitting_em.getError())
+	print "\n\n=== \n\n"
+        model_pdf_WJets.getParameters(rdataset_data_mlvj).Print("v");
 	print "\n\n=== \n\n"
 	print "\n\n== Print all MC model after Fit == \n\n"
 	print "#### VV model "
@@ -1867,7 +1915,7 @@ objName ==objName_before ):
 
         #### Call the alpha evaluation in automatic
         #self.get_WJets_mlvj_correction_sb_lo_to_signal_region(label,mlvj_model);
-	"""
+        #self.get_WJets_mlvj_correction_sb_lo_to_signal_region_MCOnly(label,mlvj_model);
 
         ### Fix the pdf of signal, TTbar, STop and VV in the signal region 
         #if (options.interpolate == False):
@@ -1884,20 +1932,13 @@ objName ==objName_before ):
 
 	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),rrv_mass_lvj)
 	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_auto.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),108)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_108bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),47)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_82bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),40)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_52bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),30)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_36bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),20)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_24bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),10)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_12bin.root")
-	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),4)
-	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_4bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),132)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_132bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),80)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_80bin.root")
+	hist = model_pdf_WJets.createHistogram(rrv_mass_lvj.GetName(),60)
+	hist.SaveAs("wjetmodel_Ex_"+label+"_"+mlvj_region+"_"+mlvj_model+"_60bin.root")
+
 
 	##
 	#
@@ -2136,6 +2177,30 @@ objName ==objName_before ):
         self.workspace4fit_.var("rrv_number_fitting_signal_region"+label+"_"+self.channel+"_mlvj").Print();
 
     ### method to get the alpha function to extrapolate the wjets in the signal region
+    def get_WJets_mlvj_correction_sb_lo_to_signal_region_MCOnly(self,label, mlvj_model):
+
+        print" ############# get the extrapolation function alpha from MC : ",label,"   ",mlvj_model," ###############";          
+        ### take input var and datasets from 4fit collection --> mc not scaled to lumi --> just a shape here 
+        rrv_x = self.workspace4fit_.var("rrv_mass_lvj");
+        rdataset_WJets_sb_lo_mlvj = self.workspace4fit_.data("rdataset4fit%s_sb_lo_%s_mlvj"%(label,self.channel))
+        rdataset_WJets_signal_region_mlvj = self.workspace4fit_.data("rdataset4fit%s_signal_region_%s_mlvj"%(label,self.channel))
+
+	print "="*20
+	print type(rdataset_WJets_sb_lo_mlvj)
+	print type(rdataset_WJets_signal_region_mlvj)
+	print "="*20
+	alpha = RooFormulaVar("alpha","log(@0)-log(@1)",RooArgList(rdataset_WJets_signal_region_mlvj,rdataset_WJets_sb_lo_mlvj))
+
+        ### create a frame for the next plots 
+        mplot = rrv_x.frame(RooFit.Title("alpha_pdf"), RooFit.Bins(int(rrv_x.getBins()/self.narrow_factor))) ;
+        mplot.GetYaxis().SetTitle("F_{W+jets}^{SR,MC},F_{W+jets}^{SB,MC} (arbitrary units)");
+
+        alpha.plotOn(mplot, RooFit.LineColor(kBlack),RooFit.Name("#alpha") );
+
+        self.draw_canvas(mplot,"%s/other/"%(self.plotsDir),"alpha_pdf_%s_%s_M_lvj_signal_region_to_sideband"%(label,mlvj_model),0,1,0,1);
+
+
+
     def get_WJets_mlvj_correction_sb_lo_to_signal_region(self,label, mlvj_model):
 
         print" ############# get the extrapolation function alpha from MC : ",label,"   ",mlvj_model," ###############";          
@@ -2518,7 +2583,7 @@ objName ==objName_before ):
                 self.workspace4fit_.pdf("correct_factor_pdf_Deco_WJets0_sim_%s_%s_mlvj_13TeV"%(self.channel,self.wtagger_label)).plotOn(mplot, RooFit.LineColor(kOrange), RooFit.LineStyle(7),RooFit.Name("#alpha_invisible: Alternate Function") );
 
         ### Add the legend
-        self.leg=self.legend4Plot(mplot,1,0, -0.01, -0.14, 0.01, -0.06, 0., True);
+        self.leg=self.legend4Plot(mplot,0,0, -0.01, -0.14, 0.01, -0.06, 0., True);
         mplot.addObject(self.leg);
         
         ## set the Y axis in arbitrary unit 
@@ -2532,10 +2597,7 @@ objName ==objName_before ):
         correct_factor_pdf_deco.getVal(RooArgSet(rrv_x))
         tmp_alpha_ratio = ( model_pdf_signal_region_WJets.getVal(RooArgSet(rrv_x))/model_pdf_sb_lo_WJets.getVal(RooArgSet(rrv_x)) );
         tmp_alpha_pdf   = correct_factor_pdf_deco.getVal(RooArgSet(rrv_x)) * mplot.getFitRangeBinW(); ## value of the pdf in each point
-	if tmp_alpha_pdf == 0:
-		tmp_alpha_scale = 125.0
-	else:
-        	tmp_alpha_scale = tmp_alpha_ratio/tmp_alpha_pdf;
+        tmp_alpha_scale = tmp_alpha_ratio/tmp_alpha_pdf;
 	print "CHECK 1: tmp_alpha_scale = ",tmp_alpha_scale,"\ttmp_alpha_pdf = ",tmp_alpha_pdf
 
 
@@ -2633,7 +2695,9 @@ objName ==objName_before ):
         ### total uncertainty combining the result with two different shapes
         total_uncertainty = TMath.Sqrt( TMath.Power(rrv_WJets0.getError(),2) + TMath.Power(rrv_WJets01.getVal()-rrv_WJets0.getVal(),2) );
         rrv_WJets0.setError(total_uncertainty);
+	print "Total uncertainty combining the result of two different shapes : "
         rrv_WJets0.Print();
+	print "*"*20
 
     #### make the mj sideband fit on data ti get the Wjets normaliztion 
     def fit_WJetsNormalization_in_Mj_signal_region(self,label,massscale=""): 
@@ -2645,6 +2709,7 @@ objName ==objName_before ):
 
         ### Fix TTbar, VV and STop
         model_VV    = self.get_VV_mj_Model("_VV_xww"+massscale);
+	#sys.exit()
         ## only two parameters are fix, offset and width while the exp is floating , otherwise if shape different User1 or ErfExp everything is flaoting
         model_WJets = self.get_WJets_mj_Model(label);
 
@@ -2720,9 +2785,11 @@ objName ==objName_before ):
             #lowerLine = TLine(65,0.,65,mplot.GetMaximum()*0.9); lowerLine.SetLineWidth(2); lowerLine.SetLineColor(kBlack); lowerLine.SetLineStyle(9);
             middleLine1 = TLine(65,0.,65,mplot.GetMaximum()*0.9); middleLine1.SetLineWidth(2); middleLine1.SetLineColor(kBlack); middleLine1.SetLineStyle(9);
             middleLine2 = TLine(105,0.,105,mplot.GetMaximum()*0.9); middleLine2.SetLineWidth(2); middleLine2.SetLineColor(kBlack); middleLine2.SetLineStyle(9);
+            middleLine3 = TLine(125,0.,125,mplot.GetMaximum()*0.9); middleLine3.SetLineWidth(2); middleLine3.SetLineColor(kBlack); middleLine3.SetLineStyle(9);
             #upperLine = TLine(95,0.,95,mplot.GetMaximum()*0.9); upperLine.SetLineWidth(2); upperLine.SetLineColor(kBlack); upperLine.SetLineStyle(9);
 	    mplot.addObject(middleLine1);
 	    mplot.addObject(middleLine2);
+	   #mplot.addObject(middleLine3);
             mplot.addObject(lowerLine);
             mplot.addObject(upperLine);
 
@@ -2765,7 +2832,7 @@ objName ==objName_before ):
 #	    mplot.addObject(pt2);
 	    	    
             ### legend of the plot
-            self.leg = self.legend4Plot(mplot,0,1,0.,0.,0.13,0.02,1,0,1);
+            self.leg = self.legend4Plot(mplot,0,1,0.,0.,0.13,0.02,0,0,1);
             #self.leg = self.legend4Plot(mplot,0,1,-0.10,-0.01,0.10,0.01);
             mplot.addObject(self.leg);
             mplot.GetYaxis().SetRangeUser(1e-2,mplot.GetMaximum()*1.8);
@@ -3094,6 +3161,7 @@ objName ==objName_before ):
         print "################### get_mj_and_mlvj_dataset : ",in_file_name,"  ",label,"  ##################";
 
 	fileIn_name = TString("root://cmseos.fnal.gov/")+TString(self.file_Directory+in_file_name);
+	#fileIn_name = TString(self.file_Directory+in_file_name);
         fileIn = TFile.Open(fileIn_name.Data());
         treeIn = fileIn.Get("otree");
         
@@ -3145,7 +3213,7 @@ objName ==objName_before ):
         tmp_scale_to_lumi=1.;
             
 	nnevents = treeIn.GetEntries()
-	#nnevents = 50000
+	#nnevents = 200000
 	if nnevents > treeIn.GetEntries():
 		nnevents = treeIn.GetEntries()
 	print "Number of events to run = ",nnevents
@@ -3166,10 +3234,9 @@ objName ==objName_before ):
                 if treeIn.mass_llj_PuppiAK8> rrv_mass_lvj.getMin() and treeIn.mass_llj_PuppiAK8<rrv_mass_lvj.getMax() and tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	#if tmp_jet_mass>rrv_mass_j.getMin() and tmp_jet_mass<rrv_mass_j.getMax():
                 	self.isGoodEvent = 1;   
-		#if (treeIn.type != 0 or treeIn.type != 1): self.isGoodEvent = 0;
 		if (treeIn.l_pt2<=30) : self.isGoodEvent = 0;
-		if (treeIn.l_pt1<=30): self.isGoodEvent = 0;
-		if (treeIn.dilep_m<75 or treeIn.dilep_m>105): self.isGoodEvent = 0;
+		if (treeIn.l_pt1<=50): self.isGoodEvent = 0;
+		if (treeIn.dilep_m<76 or treeIn.dilep_m>107): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and abs(treeIn.l_eta1)>=2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta1)>=2.5) or (abs(treeIn.l_eta1)>=1.4442  and abs(treeIn.l_eta1)<=1.566))) ): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and abs(treeIn.l_eta2)>=2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta2)>=2.5) or (abs(treeIn.l_eta2)>=1.4442  and abs(treeIn.l_eta2)<=1.566))) ): self.isGoodEvent = 0;
 
@@ -3178,9 +3245,15 @@ objName ==objName_before ):
                 if (treeIn.PuppiAK8_jet_tau2tau1>=0.55) : self.isGoodEvent = 0;
 
                 if (treeIn.nBTagJet_loose!=0) : self.isGoodEvent = 0;
+		
+                if (label=="_data_xww") and ((treeIn.PuppiAK8_jet_mass_so_corr > 65.) and (treeIn.PuppiAK8_jet_mass_so_corr < 105.)) : self.isGoodEvent = 0; #BLINDING
 
-		#print "\n\n\n================== \n\n\t label = ",label,"\n\n\n"
-                if (label =="_data" or label=="_data_xww") and ((treeIn.PuppiAK8_jet_mass_so_corr >= 65.) and (treeIn.PuppiAK8_jet_mass_so_corr <= 105.)) : self.isGoodEvent = 0; #BLINDING
+            #VBF SELECTION
+            if ((options.type).find('vbf') != -1 and treeIn.vbf_maxpt_jj_m<800): self.isGoodEvent=0;
+            if ((options.type).find('vbf') != -1 and abs(treeIn.vbf_maxpt_j1_eta-treeIn.vbf_maxpt_j2_eta)<4.0): self.isGoodEvent=0;
+            if ((options.type).find('vbf') != -1 and (treeIn.vbf_maxpt_j1_pt<30 or treeIn.vbf_maxpt_j2_pt<30)): self.isGoodEvent=0;
+	    
+	    #if ((label =="_data" or label =="_data_xww") and treeIn.jet_mass_pr >105 and treeIn.jet_mass_pr < 135 ) : self.isGoodEvent = 0; 
 
             #VBF SELECTION
             if ((options.type).find('vbf') != -1 and treeIn.vbf_maxpt_jj_m<=800): self.isGoodEvent=0;
@@ -3188,11 +3261,13 @@ objName ==objName_before ):
             if ((options.type).find('vbf') != -1 and (treeIn.vbf_maxpt_j1_pt<=30 or treeIn.vbf_maxpt_j2_pt<=30)): self.isGoodEvent=0;
 	    
             if self.isGoodEvent == 1:
+	    	print "== Good event"
                 ### weigh MC events              
-                #tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.btag0Wgt;		
-		#print "mass = ",treeIn.PuppiAK8_jet_mass_so_corr
-                tmp_event_weight     = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt;		
-                tmp_event_weight4fit = treeIn.totalEventWeight_2Lep*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt;
+		#tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.btag0Wgt; 
+                #tmp_event_weight4fit = treeIn.genWeight;
+		#tmp_event_weight4fit = tmp_event_weight4fit*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt;
+		tmp_event_weight     = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt*treeIn.pu_Weight;
+		tmp_event_weight4fit = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt*treeIn.pu_Weight*tmp_scale_to_lumi;
 	
                 if label =="_data" or label =="_data_xww" :
                     tmp_event_weight=1.;
@@ -3205,6 +3280,7 @@ objName ==objName_before ):
                 
                 rrv_mass_lvj.setVal(treeIn.mass_llj_PuppiAK8);
 
+                #if ((tmp_jet_mass >= self.mj_sideband_lo_min and tmp_jet_mass < self.mj_sideband_lo_max)):
                 if ((tmp_jet_mass >= self.mj_sideband_lo_min and tmp_jet_mass < self.mj_sideband_lo_max) or (tmp_jet_mass >= self.mj_sideband_hi_min and tmp_jet_mass < self.mj_sideband_hi_max)):
                     rdataset_sb_lo_mlvj.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight );
                     rdataset4fit_sb_lo_mlvj.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight4fit );
@@ -3243,7 +3319,11 @@ objName ==objName_before ):
                 hnum_4region.Fill(2,tmp_event_weight);
 
         if not label=="_data" and not label =="_data_xww": ## correct also because events in 4fit dataset were not rescaled in the cycle
-        	tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forV.getVal();
+	    tmp_scale_to_lumi=tmp_scale_to_lumi;
+            #if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
+            #    tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forT.getVal();
+            #else:
+            #    tmp_scale_to_lumi=tmp_scale_to_lumi*self.rrv_wtagger_eff_reweight_forV.getVal();
 
 	tmp_scale_to_lumi = 1.0;
         ### scaler to lumi for MC in 4fit datasets
@@ -3311,8 +3391,10 @@ objName ==objName_before ):
     def fit_STop(self):
         print "############################## fit_STop  #################################"
         self.get_mj_and_mlvj_dataset(self.file_STop_mc,"_STop_xww", self.jetalgo)
-#        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ExpGaus");
-        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","2Gaus_ErfExp");
+        #self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","2Gaus_ErfExp");
+        self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ExpGaus");
+        #self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","User1");
+        #self.fit_mj_single_MC(self.file_STop_mc,"_STop_xww","ErfExp");
         self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_sb_lo","ExpN", 0, 0, 1);
         self.fit_mlvj_model_single_MC(self.file_STop_mc,"_STop_xww","_signal_region","ExpN", 1, 0, 1);
         print "________________________________________________________________________"
@@ -3323,7 +3405,9 @@ objName ==objName_before ):
         ### Build the dataset
         self.get_mj_and_mlvj_dataset(self.file_VV_mc,"_VV_xww", self.jetalgo)
         ### fitting shape as a function of the mlvj region -> signal mass
-        self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","2Gaus_ErfExp");
+        #self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","2Gaus_ErfExp");
+        self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","ExpGaus");
+        #self.fit_mj_single_MC(self.file_VV_mc,"_VV_xww","ErfExp");
         self.fit_mlvj_model_single_MC(self.file_VV_mc,"_VV_xww","_sb_lo","ExpN", 0, 0, 1);
         self.fit_mlvj_model_single_MC(self.file_VV_mc,"_VV_xww","_signal_region",self.MODEL_4_mlvj, 1, 0, 1); 
         print "________________________________________________________________________"
@@ -3333,8 +3417,7 @@ objName ==objName_before ):
         print "################################ fit_TTbar #########################################"
         ### Build the dataset
         self.get_mj_and_mlvj_dataset(self.file_TTbar_mc,"_TTbar_xww", self.jetalgo)# to get the shape of m_lvj
-        if self.wtagger_label.find("LP") != -1: self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","ExpGaus");
-        else:                          self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","2Gaus_ErfExp");
+        self.fit_mj_single_MC(self.file_TTbar_mc,"_TTbar_xww","2Gaus_ErfExp");
 	self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_sb_lo","ExpN");
         self.fit_mlvj_model_single_MC(self.file_TTbar_mc,"_TTbar_xww","_signal_region","ExpN",1, 0, 1);
         print "________________________________________________________________________"
@@ -3383,6 +3466,8 @@ objName ==objName_before ):
         print "################### fit_AllSamples_Mj_and_Mlvj #####################"
         self.fit_WJets()
         self.fit_VV()
+        self.fit_TTbar()
+        self.fit_STop()
 	#sys.exit()
         print "________________________________________________________________________"
 
@@ -3919,12 +4004,11 @@ if __name__ == '__main__':
     sample = options.sample+str(int(mass))
     
     lomass = 170;
-    himass = 2500; 
+    himass = 3000; 
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"ExpN","ExpTail",options.interpolate) 
-    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"Exp","ExpN",options.interpolate) 
-
+    #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,3000,40,150, 600,3000,"Exp","ExpTail",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,3000,40,150, 600,3000,"ExpTail","Exp",options.interpolate) 
 
     print "\n\n","_"*30,"\n\n\t Fit results of mj","\n\n"
     for i in fitresultsmj:
@@ -3947,4 +4031,3 @@ if __name__ == '__main__':
     print 'Tree loop profiling stats:'
     print 'Real Time used:', clock.RealTime()/60,"minutes"
     print 'CPU Time used:', clock.CpuTime()/60,"minutes"
-
