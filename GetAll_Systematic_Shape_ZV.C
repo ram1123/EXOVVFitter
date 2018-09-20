@@ -45,9 +45,24 @@ TH1F* getWjetSignalRegion_usingAlpha(TH1F* wjet, TH1F* alpha){
       if ( (alpha->GetBinLowEdge(ibin) > 2500) && (alpha->GetBinContent(ibin) > 0))
       {
       	AvgAlphaInInterestedRegion += alpha->GetBinContent(ibin);
+	//cout<<"===> "<<alpha->GetBinContent(ibin)<<endl;
 	AvgAlphaInInterestedRegion_CountFreq++;
       }
    }
+   cout<<"\n\n AvgAlphaInInterestedRegion_CountFreq = "<<AvgAlphaInInterestedRegion_CountFreq <<"\n\n"<<endl;
+   if (AvgAlphaInInterestedRegion_CountFreq == 0)
+   {
+     for (unsigned int ibin=1; ibin<alpha->GetNbinsX()+1; ++ibin){
+      if ( (alpha->GetBinLowEdge(ibin) > 1500) && (alpha->GetBinContent(ibin) > 0))
+      {
+      	AvgAlphaInInterestedRegion += alpha->GetBinContent(ibin);
+	//cout<<"iii===> "<<alpha->GetBinContent(ibin)<<endl;
+	AvgAlphaInInterestedRegion_CountFreq++;
+      }
+     }
+   }
+   cout<<"\n\n AvgAlphaInInterestedRegion_CountFreq = "<<AvgAlphaInInterestedRegion_CountFreq <<"\n\n"<<endl;
+
    AvgAlphaInInterestedRegion = AvgAlphaInInterestedRegion/((double)AvgAlphaInInterestedRegion_CountFreq);
 
    for (unsigned int ibin=1; ibin<hOut->GetNbinsX()+1; ++ibin){
@@ -633,6 +648,7 @@ void GetAll_Systematic_Shape_ZV() {
    hCentral->Draw("same");
    leg->AddEntry(alpha,"Alpha MC","lep");
    leg->AddEntry(hCentral,"Alpha Nominal","l");
+   cout<<"Alphaa MC = "<< alpha->Integral() <<"\t nominal = "<< hCentral->Integral() << endl;
 
    //Now convert systematic fits into histos
    std::vector<TH1F*> histos;
@@ -648,7 +664,7 @@ void GetAll_Systematic_Shape_ZV() {
      thisHisto->Draw("same");
      histos.push_back(thisHisto);
      leg->AddEntry(thisHisto,thisHistoName);
-     cout<<"\t DEGUB: 4 ==> "<<names[ifun]<<"\t"<< thisFunc->GetName()<<endl;
+     cout<<"\t DEGUB: 4 ==> "<<names[ifun]<<"\t"<< thisFunc->GetName()<< ", \t Integral = "<< thisHisto->Integral() << endl;
    }
    leg->Draw();	pt->Draw();
    line->Draw();
@@ -733,7 +749,7 @@ void GetAll_Systematic_Shape_ZV() {
      thisHisto->Draw("same");
      TString thisLegName = "Vjet Corr "+names[ifun];
      leg2->AddEntry(thisHisto,thisLegName);
-     cout<<"\t DEGUB: 3 ==> "<<names[ifun]<<"\t"<< thisFunc->GetName()<<endl;
+     cout<<"\t DEGUB: 3 ==> "<<names[ifun]<<"\t"<< thisFunc->GetName()<< ", Integral = "<<thisHisto->Integral()<<endl;
    }
    leg2->Draw();
    c1->Draw();
@@ -754,6 +770,7 @@ void GetAll_Systematic_Shape_ZV() {
    
    c1->SetName("AlphaSyst_Vjet_CorrShape_SignalRegion_4Bins");
    catname = "AlphaSyst_Vjet_SR_4bins_";
+   cout << "\n====================== \n\n\t histos for alpha \n\n ======================"<< endl;
    for (int ifun=0; ifun<histos_Vjet_SR.size(); ++ifun){
      TH1F* thisFunc = histos_Vjet_SR[ifun];
      TH1F* thisHisto = ResetTo4bins(thisFunc, 4, 600, 2500);
@@ -773,7 +790,7 @@ void GetAll_Systematic_Shape_ZV() {
      else thisLegName = "Vjet Corr "+names[ifun-1];
      leg2->AddEntry(thisHisto,thisLegName);
      if (ifun == 0) cout<<"\t DEGUB: 2 ==> Nominal"<<endl;
-     else cout<<"\t DEGUB: 2 ==> "<<names[ifun-1]<<"\t"<< thisFunc->GetName()<<endl;
+     else cout<<"\t DEGUB: 2 ==> "<<names[ifun-1]<<"\t"<< thisFunc->GetName() << ", Integral = "<<thisHisto->Integral()<<endl;
    }
    hMC_Signal_4bin->Draw("same");
    leg2->AddEntry(hMC_Signal_4bin,"MC","lep");
@@ -805,15 +822,6 @@ void GetAll_Systematic_Shape_ZV() {
    histos_WjetSyst.push_back(Wjet_Corr_Hist_Up0);
    Wjet_Corr_Hist_Up0->Write();
 
-   TH1F* Wjet_Corr_Hist_Up1 = (TH1F*)bkgEstFile_Up1->Get("rrv_mass_lvj__rrv_mass_lvj");
-   Wjet_Corr_Hist_Up1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Up");
-   Wjet_Corr_Hist_Up1->Scale(Wjet_Normalization_FromBkgEstimation);
-   Wjet_Corr_Hist_Up1->SetStats(0);
-   Wjet_Corr_Hist_Up1->SetLineColor(4);
-   Wjet_Corr_Hist_Up1->SetMarkerColor(4);
-   histos_WjetSyst.push_back(Wjet_Corr_Hist_Up1);
-   Wjet_Corr_Hist_Up1->Write();
-
    TH1F* Wjet_Corr_Hist_Down0 = (TH1F*)bkgEstFile_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
    Wjet_Corr_Hist_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Down");
    Wjet_Corr_Hist_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
@@ -822,6 +830,15 @@ void GetAll_Systematic_Shape_ZV() {
    Wjet_Corr_Hist_Down0->SetMarkerColor(5);
    histos_WjetSyst.push_back(Wjet_Corr_Hist_Down0);
    Wjet_Corr_Hist_Down0->Write();
+
+   TH1F* Wjet_Corr_Hist_Up1 = (TH1F*)bkgEstFile_Up1->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist_Up1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Up");
+   Wjet_Corr_Hist_Up1->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist_Up1->SetStats(0);
+   Wjet_Corr_Hist_Up1->SetLineColor(4);
+   Wjet_Corr_Hist_Up1->SetMarkerColor(4);
+   histos_WjetSyst.push_back(Wjet_Corr_Hist_Up1);
+   Wjet_Corr_Hist_Up1->Write();
 
    TH1F* Wjet_Corr_Hist_Down1 = (TH1F*)bkgEstFile_Down1->Get("rrv_mass_lvj__rrv_mass_lvj");
    Wjet_Corr_Hist_Down1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Down");
