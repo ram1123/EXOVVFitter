@@ -80,9 +80,9 @@ TH1F *ResetTo4bins(TH1F *wjet, int nbins, double xmin, double xmax) {
 
   TH1F *h;
   if (VarBins)
-  	h = new TH1F("hOut", ";M_{WW} (Vjet Signal Region);Events", NBINS, bins);
+  	h = new TH1F("hOut", ";M_{ZV} (Vjet Signal Region);Events", NBINS, bins);
   else
-  	h = new TH1F("hOut", ";M_{WW} (Vjet Signal Region);Events", nbins, xmin, xmax);
+  	h = new TH1F("hOut", ";M_{ZV} (Vjet Signal Region);Events", nbins, xmin, xmax);
   if (wjet) for (Int_t i = 1; i <= wjet->GetNbinsX(); i++){
               h->Fill(wjet->GetBinCenter(i), wjet->GetBinContent(i));
 	      if (debug) cout << i << "\t" << wjet->GetBinContent(i) << "\t" << wjet->GetBinLowEdge(i) << " , " << wjet->GetBinLowEdge(i+1) << endl;
@@ -356,15 +356,15 @@ void GetAll_Systematic_Shape_ZV() {
    // Create a histogram for the values we read.
    TH1F *hMC_Signal_4bin;
    if (VarBins)
-   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WW};Events", NBINS, bins);
+   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{ZV};Events", NBINS, bins);
    else
-   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WW};Events", 4, 600, 2500);
-   TH1F *hMC_Signal_15bin  = new TH1F("hMC_Signal_15bin",  "hMC_Signal_15bin;M_{WW};Events", 15, 600, 3000);
-   TH1F *hMC_Signal_88bin  = new TH1F("hMC_Signal_88bin",  "hMC_Signal_88bin;M_{WW};Events", 88, 600, 3000);
+   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{ZV};Events", 4, 600, 2500);
+   TH1F *hMC_Signal_15bin  = new TH1F("hMC_Signal_15bin",  "hMC_Signal_15bin;M_{ZV};Events", 15, 600, 3000);
+   TH1F *hMC_Signal_88bin  = new TH1F("hMC_Signal_88bin",  "hMC_Signal_88bin;M_{ZV};Events", 88, 600, 3000);
 
-   //TH1F *hSideBand_4bin  = new TH1F("hSideBand_4bin",  "hSideBand_4bin;M_{WW};Events", 4, 600, 3000);
-   TH1F *hSideBand_15bin = new TH1F("hSideBand_15bin", "hSideBand_15bin;M_{WW};Events", 15, 600, 3000);
-   TH1F *hSideBand_88bin = new TH1F("hSideBand_88bin", "hSideBand_88bin;M_{WW};Events", 88, 600, 3000);
+   //TH1F *hSideBand_4bin  = new TH1F("hSideBand_4bin",  "hSideBand_4bin;M_{ZV};Events", 4, 600, 3000);
+   TH1F *hSideBand_15bin = new TH1F("hSideBand_15bin", "hSideBand_15bin;M_{ZV};Events", 15, 600, 3000);
+   TH1F *hSideBand_88bin = new TH1F("hSideBand_88bin", "hSideBand_88bin;M_{ZV};Events", 88, 600, 3000);
 
 
    // Loop over all entries of the TTree.
@@ -428,7 +428,7 @@ void GetAll_Systematic_Shape_ZV() {
    alpha->SetMinimum(-1.0);
    alpha->SetMaximum(4.0);
    alpha->SetName("alpha");
-   alpha->GetXaxis()->SetTitle("M_{WW} (GeV)");
+   alpha->GetXaxis()->SetTitle("M_{ZV} (GeV)");
    alpha->GetYaxis()->SetTitle("alpha = #frac{N^{MC,V+jets}_{signal}}{N^{MC,V+jets}_{side-band}}");
 
    // Fit alpha using polynomial of order 1
@@ -978,9 +978,9 @@ void GetAll_Systematic_Shape_ZV() {
    cout<<" ==> "<< mainWjetHist->GetName() << "\t" << alterWjetHist->GetName() << endl;
    TH1F* hAlter_WjetHist_Up;
    if (VarBins)
-   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{WW};Events", NBINS, bins);
+   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{ZV};Events", NBINS, bins);
    else
-   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{WW};Events",4, 600, 2500);
+   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{ZV};Events",4, 600, 2500);
    for (int ibin=1; ibin<mainWjetHist->GetNbinsX()+2; ibin++)
    {
       hAlter_WjetHist_Up->SetBinContent(ibin,mainWjetHist->GetBinContent(ibin) + (mainWjetHist->GetBinContent(ibin) - alterWjetHist->GetBinContent(ibin)));

@@ -13,7 +13,10 @@ import commands
 #os.system("sed -i 's/0.8,0.,1.0/0.5,0.0,0.8/' g1_exo_doFit_class_new.py")
 #OUTDIR = 'WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13_BothLSBUSB_UpDownVarWjet'
 #OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_2018_04_06_09h22_BothLSBUSB_UpDownVarWjet_WV_600_4TeV'
-OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_2018_05_15_04h15_WV_600_3000TeV'
+#OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38_50GeVLepCut'
+#OUTDIR = 'WV_2018_07_24_10h36_30GeVLepCut_TeVxaxis_MadeToCrossCheckSystematicIssue'
+#OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38_50GeVLepCut_SR'
+OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_PAPER'
 changes = raw_input("\n\nWrite change summary: ")
 
 print "==> ",changes
@@ -94,6 +97,7 @@ outJDL.write("x509userproxy = $ENV(X509_USER_PROXY)\n");
 
 outJDL.write("Output = "+OutputLogPath+"/"+JobName+".stdout\n");
 outJDL.write("Error  = "+OutputLogPath+"/"+JobName+".stdout\n");
+outJDL.write("Log = "+OutputLogPath+"/"+JobName+".log\n");
 outJDL.write("Queue\n");
 	    
 outJDL.close();

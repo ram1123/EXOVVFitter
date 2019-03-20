@@ -67,9 +67,9 @@ TH1F *ResetTo4bins(TH1F *wjet, int nbins, double xmin, double xmax) {
 
   TH1F *h;
   if (VarBins)
-  	h = new TH1F("hOut", ";M_{WW} (Vjet Signal Region);Events", NBINS, bins);
+  	h = new TH1F("hOut", ";M_{WV} (Vjet Signal Region);Events", NBINS, bins);
   else
-  	h = new TH1F("hOut", ";M_{WW} (Vjet Signal Region);Events", nbins, xmin, xmax);
+  	h = new TH1F("hOut", ";M_{WV} (Vjet Signal Region);Events", nbins, xmin, xmax);
   if (wjet) for (Int_t i = 1; i <= wjet->GetNbinsX(); i++){
               h->Fill(wjet->GetBinCenter(i), wjet->GetBinContent(i));
 	      if (debug) cout << i << "\t" << wjet->GetBinContent(i) << "\t" << wjet->GetBinLowEdge(i) << " , " << wjet->GetBinLowEdge(i+1) << endl;
@@ -347,15 +347,15 @@ void GetAll_Systematic_Shape() {
    // Create a histogram for the values we read.
    TH1F *hMC_Signal_4bin;
    if (VarBins)
-   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WW};Events", NBINS, bins);
+   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WV};Events", NBINS, bins);
    else
-   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WW};Events", 4, 600, 2500);
-   TH1F *hMC_Signal_15bin  = new TH1F("hMC_Signal_15bin",  "hMC_Signal_15bin;M_{WW};Events", 15, 600, 5000);
-   TH1F *hMC_Signal_88bin  = new TH1F("hMC_Signal_88bin",  "hMC_Signal_88bin;M_{WW};Events", 88, 600, 5000);
+   	hMC_Signal_4bin   = new TH1F("hMC_Signal_4bin",   "hMC_Signal_4bin;M_{WV};Events", 4, 600, 2500);
+   TH1F *hMC_Signal_15bin  = new TH1F("hMC_Signal_15bin",  "hMC_Signal_15bin;M_{WV};Events", 15, 600, 5000);
+   TH1F *hMC_Signal_88bin  = new TH1F("hMC_Signal_88bin",  "hMC_Signal_88bin;M_{WV};Events", 88, 600, 5000);
 
-   //TH1F *hSideBand_4bin  = new TH1F("hSideBand_4bin",  "hSideBand_4bin;M_{WW};Events", 4, 600, 5000);
-   TH1F *hSideBand_15bin = new TH1F("hSideBand_15bin", "hSideBand_15bin;M_{WW};Events", 15, 600, 5000);
-   TH1F *hSideBand_88bin = new TH1F("hSideBand_88bin", "hSideBand_88bin;M_{WW};Events", 88, 600, 5000);
+   //TH1F *hSideBand_4bin  = new TH1F("hSideBand_4bin",  "hSideBand_4bin;M_{WV};Events", 4, 600, 5000);
+   TH1F *hSideBand_15bin = new TH1F("hSideBand_15bin", "hSideBand_15bin;M_{WV};Events", 15, 600, 5000);
+   TH1F *hSideBand_88bin = new TH1F("hSideBand_88bin", "hSideBand_88bin;M_{WV};Events", 88, 600, 5000);
 
 
    // Loop over all entries of the TTree.
@@ -421,7 +421,7 @@ void GetAll_Systematic_Shape() {
    alpha->SetMinimum(-1.0);
    alpha->SetMaximum(4.0);
    alpha->SetName("alpha");
-   alpha->GetXaxis()->SetTitle("M_{WW} (GeV)");
+   alpha->GetXaxis()->SetTitle("M_{WV} (GeV)");
    alpha->GetYaxis()->SetTitle("alpha = #frac{N^{MC,V+jets}_{signal}}{N^{MC,V+jets}_{side-band}}");
 
    // Fit alpha using polynomial of order 1
@@ -430,7 +430,7 @@ void GetAll_Systematic_Shape() {
    f1->SetLineColor(2);
    TFitResultPtr fitRes = alpha->Fit("f1","S");
 
-   TCanvas* c1 = new TCanvas("Alpha_SigmaBand","canvas", 1000,750);
+   TCanvas* c1 = new TCanvas("Alpha_SigmaBand","canvas", 1200,750);
 
    // Get sigma band for alpha
    TH1F *hConf1s = (TH1F*)alpha->Clone("hConf1s");
@@ -455,7 +455,7 @@ void GetAll_Systematic_Shape() {
    alpha->Draw("E1 same");
    f1->Draw("same");
 
-   TLegend* leg = new TLegend(0.20,0.95,0.65,0.75);
+   TLegend* leg = new TLegend(0.18,0.95,0.60,0.75);
    leg->SetNColumns(2);
    leg->AddEntry(alpha, "MC", "lep");
    leg->AddEntry(f1, "Fit", "l");
@@ -463,13 +463,17 @@ void GetAll_Systematic_Shape() {
    leg->AddEntry(hConf2s, "2 #sigma band","f");
    leg->Draw();
 
-   TPaveText* pt = new TPaveText(0.65, 0.75, 0.95,0.95, "brNDC");
+   TPaveText* pt = new TPaveText(0.60, 0.75, 0.90,0.95, "brNDC");
    char chi2[200], a[200],b[200];
    sprintf(chi2, "Chi2/ndf = %f / %d",f1->GetChisquare(),f1->GetNDF());
    sprintf(a, "a = %f +/- %f",f1->GetParameter(0),f1->GetParError(0));
    sprintf(b, "b = %f +/- %f",f1->GetParameter(1),f1->GetParError(1));
    pt->AddText(chi2);   pt->AddText(a);   pt->AddText(b);
    pt->Draw();   c1->Draw();   c1->Write();
+   TString some(c1->GetName());
+   c1->SaveAs((some+".pdf").Data());
+   
+   //c1->SaveAs((c1->GetName().Data())+".pdf")
 
    c1->Clear();
    leg->Clear();
@@ -683,6 +687,8 @@ void GetAll_Systematic_Shape() {
    Wjet_Corr_Hist->SetMarkerColor(2);
    Wjet_Corr_Hist->SetName("Vjet_SideBand_CorrShape_From_Data");
    Wjet_Corr_Hist->SetTitle("Comparison of Vjet MC and corrected shape from data");
+   Wjet_Corr_Hist->GetXaxis()->SetTitle("M_{WV} (GeV)");
+   Wjet_Corr_Hist->GetYaxis()->SetTitle("Events/(50 GeV)");
    Wjet_Corr_Hist->Write();	// Need to write explicitly. Somehow its not written automatically to output root file.
 
    Wjet_Corr_Hist->Draw("hist");
@@ -719,6 +725,8 @@ void GetAll_Systematic_Shape() {
 
    hMC_Signal_88bin->SetStats(0);
    hMC_Signal_88bin->SetTitle("Vjets Signal Region Corrected From Data");
+   hMC_Signal_88bin->GetXaxis()->SetTitle("M_{WV} (GeV)");
+   hMC_Signal_88bin->GetYaxis()->SetTitle("Events/(50 GeV)");
    hMC_Signal_88bin->Draw();
    hCorr_Signal_Central->Draw("same");
 
@@ -1004,9 +1012,9 @@ void GetAll_Systematic_Shape() {
    cout<<" ==> "<< mainWjetHist->GetName() << "\t" << alterWjetHist->GetName() << endl;
    TH1F* hAlter_WjetHist_Up;
    if (VarBins)
-   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{WW};Events", NBINS, bins);
+   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{WV};Events", NBINS, bins);
    else
-   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{WW};Events",4, 600, 2500);
+   	hAlter_WjetHist_Up = new TH1F("WjetFitSyst_SignalRegion_Corr_Hist_From_Data_4bins_AlternateShape_Up",";M_{WV};Events",4, 600, 2500);
    for (int ibin=1; ibin<mainWjetHist->GetNbinsX()+2; ibin++)
    {
       hAlter_WjetHist_Up->SetBinContent(ibin,mainWjetHist->GetBinContent(ibin) + (mainWjetHist->GetBinContent(ibin) - alterWjetHist->GetBinContent(ibin)));

@@ -100,7 +100,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"TeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -238,9 +238,10 @@ class doFit_wj_and_wlvj:
         ## color palette 
         self.color_palet={ #color palet
             'data' : 1,
-            #'WJets' : 'TColor::GetColor(222,90,106)',
-	    'WJets' : 625,
-            'VV' : 607,
+            'WJets' : ROOT.TColor.GetColor(222,90,106),
+	    #'WJets' : 625,
+            #'VV' : 607,
+	    'VV' : ROOT.TColor.GetColor(250,202,255),
             'STop' : 854,
             'TTbar' : 592,
             'ggH' : 1,
@@ -437,7 +438,7 @@ objName ==objName_before ):
         for obj in range(int(plot.numItems()) ):
             objName = plot.nameOf(obj);
 	    if objName.find("TPave") != -1: continue
-            if objName == "errorband" : objName = "Uncertainty";
+            if objName == "errorband" : objName = "Bkg. Uncertainty";
             print objName;
             if not ( ( (plot.getInvisible(objName)) and (not TString(objName).Contains("Uncertainty")) ) or TString(objName).Contains("invisi") or TString(objName).Contains("TLine") or objName ==objName_before ):
                 theObj = plot.getObject(obj);
@@ -450,8 +451,8 @@ objName ==objName_before ):
                     if not (objName_before=="Graph" or objName_before=="Uncertainty"): theLeg.AddEntry(theObj, "Stat. Uncertainty","F");
                 else:
                     if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "SingleTop","F");
-                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "TTbar","F");
-                    elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "Diboson","F");
+                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "Top","F");
+                    elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "QCD+EW ZV","F");
                     elif TString(objName).Data()=="data" :  objName_before=objName; entryCnt = entryCnt+1; continue ;
                     elif TString(objName).Data()=="WJets" : objName_before=objName; entryCnt = entryCnt+1; continue;
                     elif TString(objName).Contains("vbfH"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("vbfH","qqH")).Data() ,"L");
@@ -704,6 +705,7 @@ objName ==objName_before ):
 	#hist_ = datahist.createHistogram(rrv_x.GetName(),int(rrv_x.getBins()/self.narrow_factor))
         #chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
 	mplot.GetXaxis().SetTitle("")
+	#mplot.GetXaxis().SetMaxDigits(3)
 	#mplot.GetXaxis().SetTitleOffset(1.1);
         #mplot.GetYaxis().SetTitleOffset(1.3);
         #mplot.GetXaxis().SetTitleSize(0.055);
@@ -846,7 +848,7 @@ objName ==objName_before ):
 
         rlt_file.ReplaceAll(".C","_log.png");
 	pad2.SetLogy()
-        mplot.GetYaxis().SetRangeUser(0.001,mplot.GetMaximum()*200);
+        mplot.GetYaxis().SetRangeUser(0.06,mplot.GetMaximum()*200);
         cMassFit.SaveAs(rlt_file.Data());
 
         rlt_file.ReplaceAll(".png",".pdf");
@@ -3297,7 +3299,7 @@ objName ==objName_before ):
         tmp_scale_to_lumi=1.;
             
 	nnevents = treeIn.GetEntries()
-	#nnevents = 200000
+	#nnevents = 30000
 	if nnevents > treeIn.GetEntries():
 		nnevents = treeIn.GetEntries()
 	print "Number of events to run = ",nnevents

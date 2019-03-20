@@ -100,7 +100,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"TeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{WV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -239,9 +239,10 @@ class doFit_wj_and_wlvj:
         ## color palette 
         self.color_palet={ #color palet
             'data' : 1,
-            #'WJets' : 'TColor::GetColor(222,90,106)',
-	    'WJets' : 625,
-            'VV' : 607,
+            'WJets' : ROOT.TColor.GetColor(222,90,106),
+	    #'WJets' : 625,
+            #'VV' : 607,
+	    'VV' : ROOT.TColor.GetColor(250,202,255),
             'STop' : 854,
             'TTbar' : 592,
             'ggH' : 1,
@@ -438,7 +439,7 @@ objName ==objName_before ):
         for obj in range(int(plot.numItems()) ):
             objName = plot.nameOf(obj);
 	    if objName.find("TPave") != -1: continue
-            if objName == "errorband" : objName = "Uncertainty";
+            if objName == "errorband" : objName = "Bkg. Uncertainty";
             print objName;
             if not ( ( (plot.getInvisible(objName)) and (not TString(objName).Contains("Uncertainty")) ) or TString(objName).Contains("invisi") or TString(objName).Contains("TLine") or objName ==objName_before ):
                 theObj = plot.getObject(obj);
@@ -451,8 +452,8 @@ objName ==objName_before ):
                     if not (objName_before=="Graph" or objName_before=="Uncertainty"): theLeg.AddEntry(theObj, "Stat. Uncertainty","F");
                 else:
                     if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "SingleTop","F");
-                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "TTbar","F");
-                    elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "Diboson","F");
+                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "Top","F");
+                    elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "QCD+EW WV","F");
                     elif TString(objName).Data()=="data" :  objName_before=objName; entryCnt = entryCnt+1; continue ;
                     elif TString(objName).Data()=="WJets" : objName_before=objName; entryCnt = entryCnt+1; continue;
                     elif TString(objName).Contains("vbfH"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("vbfH","qqH")).Data() ,"L");
@@ -561,7 +562,7 @@ objName ==objName_before ):
 
        #tdrstyle.setTDRStyle()
        CMS_lumi.lumi_13TeV = "35.9 fb^{-1}"
-       CMS_lumi.writeExtraText = 0
+       CMS_lumi.writeExtraText = 1
        CMS_lumi.extraText = "Preliminary"
 
        iPos = 10
@@ -629,7 +630,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	cMassFit.cd()
-	CMS_lumi.CMS_lumi(cMassFit, 4, 10)	
+	CMS_lumi.CMS_lumi(cMassFit, 4, 11)	
 	cMassFit.cd()
 	cMassFit.Update()
 	cMassFit.RedrawAxis()
@@ -703,7 +704,7 @@ objName ==objName_before ):
 
         print "############### draw the canvas with pull ########################" 
 	#hist_ = datahist.createHistogram(rrv_x.GetName(),int(rrv_x.getBins()/self.narrow_factor))
-        chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
+        #chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
 	mplot.GetXaxis().SetTitle("")
 	#mplot.GetXaxis().SetTitleOffset(1.1);
         #mplot.GetYaxis().SetTitleOffset(1.3);
@@ -810,7 +811,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 10)	
+	CMS_lumi.CMS_lumi(pad2, 4, 11)	
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
@@ -847,7 +848,7 @@ objName ==objName_before ):
 
         rlt_file.ReplaceAll(".C","_log.png");
 	pad2.SetLogy()
-        mplot.GetYaxis().SetRangeUser(0.001,mplot.GetMaximum()*200);
+        mplot.GetYaxis().SetRangeUser(0.06,mplot.GetMaximum()*200);
         cMassFit.SaveAs(rlt_file.Data());
 
         rlt_file.ReplaceAll(".png",".pdf");
@@ -985,7 +986,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 10)	
+	CMS_lumi.CMS_lumi(pad2, 4, 11)	
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
@@ -1026,13 +1027,13 @@ objName ==objName_before ):
 
         if logy:
             mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
-	    mplot.GetXaxis().SetTitle("M_{WW} (TeV)")
+	    mplot.GetXaxis().SetTitle("M_{WV} (TeV)")
             pad2.SetLogy() ;
             pad2.Update();
-            pad1.cd();
-            mplot_pull.Draw("AP");
-	    medianLine.Draw()
-	    mplot_pull.Draw("Psame");
+            #pad1.cd();
+            #mplot_pull.Draw("AP");
+	    #medianLine.Draw()
+	    #mplot_pull.Draw("Psame");
             cMassFit.Update();
             rlt_file.ReplaceAll(".root","_log.root");
             cMassFit.SaveAs(rlt_file.Data());
@@ -2948,7 +2949,7 @@ objName ==objName_before ):
 	    pt1.SetFillColor(0)
 	    pt1.SetFillStyle(0)
 	    pt1.SetBorderSize(0)
-	    text = pt1.AddText("WW")
+	    text = pt1.AddText("WV")
 	    text.SetTextFont(62)
 	    text = pt1.AddText("category")
 	    text.SetTextFont(62)
@@ -3377,7 +3378,7 @@ objName ==objName_before ):
                 	self.isGoodEvent = 1;   
 		#if (treeIn.type != 0 or treeIn.type != 1): self.isGoodEvent = 0;
 		if (treeIn.l_pt2>0) : self.isGoodEvent = 0;
-		if (treeIn.l_pt1<30): self.isGoodEvent = 0;
+		if (treeIn.l_pt1<50): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and abs(treeIn.l_eta1)>2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta1)>2.5) or (abs(treeIn.l_eta1)>1.4442  and abs(treeIn.l_eta1)<1.566))) ): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and treeIn.pfMET_Corr<50)  or  (treeIn.type==1 and treeIn.pfMET_Corr<80) ): self.isGoodEvent = 0;
 
@@ -4177,7 +4178,7 @@ if __name__ == '__main__':
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,5000,40,150, 600,5000,"Exp","ExpTail",options.interpolate) 
-    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,2500,40,150, 600,2500,"ExpTail","Exp",options.interpolate) 
+    pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,3000,40,150, 600,3000,"ExpTail","Exp",options.interpolate) 
 
     print "\n\n","_"*30,"\n\n\t Fit results of mj","\n\n"
     for i in fitresultsmj:
