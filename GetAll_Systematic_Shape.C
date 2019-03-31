@@ -840,6 +840,15 @@ void GetAll_Systematic_Shape() {
    histos_WjetSyst.push_back(Wjet_Corr_Hist_Up1);
    Wjet_Corr_Hist_Up1->Write();
 
+   TH1F* Wjet_Corr_Hist_Down0 = (TH1F*)bkgEstFile_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
+   Wjet_Corr_Hist_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Down");
+   Wjet_Corr_Hist_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
+   Wjet_Corr_Hist_Down0->SetStats(0);
+   Wjet_Corr_Hist_Down0->SetLineColor(5);
+   Wjet_Corr_Hist_Down0->SetMarkerColor(5);
+   histos_WjetSyst.push_back(Wjet_Corr_Hist_Down0);
+   Wjet_Corr_Hist_Down0->Write();
+
    TH1F* Wjet_Corr_Hist_Down1 = (TH1F*)bkgEstFile_Down1->Get("rrv_mass_lvj__rrv_mass_lvj");
    Wjet_Corr_Hist_Down1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Down");
    Wjet_Corr_Hist_Down1->Scale(Wjet_Normalization_FromBkgEstimation);

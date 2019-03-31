@@ -4177,7 +4177,7 @@ if __name__ == '__main__':
     sample = options.sample+str(int(mass))
 
     lomass = 170;
-    himass = 2500; 
+    himass = 5000; 
     
     os.system('echo "Deleting plot directories...";rm -r plots_em_HP cards_em_HP')
     #pre_limit_sb_correction("method1",channel,sample,options.jetalgo, 600,5000,40,150, 600,5000,"Exp","ExpTail",options.interpolate) 
