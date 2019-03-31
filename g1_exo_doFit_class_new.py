@@ -564,7 +564,7 @@ objName ==objName_before ):
 
        #tdrstyle.setTDRStyle()
        CMS_lumi.lumi_13TeV = "35.9 fb^{-1}"
-       CMS_lumi.writeExtraText = 1
+       CMS_lumi.writeExtraText = 0
        CMS_lumi.extraText = "Preliminary"
 
        iPos = 10
@@ -632,7 +632,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	cMassFit.cd()
-	CMS_lumi.CMS_lumi(cMassFit, 4, 11)	
+	CMS_lumi.CMS_lumi(cMassFit, 4, 10)	
 	cMassFit.cd()
 	cMassFit.Update()
 	cMassFit.RedrawAxis()
@@ -707,7 +707,7 @@ objName ==objName_before ):
 
         print "############### draw the canvas with pull ########################" 
 	#hist_ = datahist.createHistogram(rrv_x.GetName(),int(rrv_x.getBins()/self.narrow_factor))
-        #chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
+        chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
 	mplot.GetXaxis().SetTitle("")
 	#mplot.GetXaxis().SetTitleOffset(1.1);
         #mplot.GetYaxis().SetTitleOffset(1.3);
@@ -814,7 +814,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 11)	
+	CMS_lumi.CMS_lumi(pad2, 4, 10)	
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
@@ -989,7 +989,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 11)	
+	CMS_lumi.CMS_lumi(pad2, 4, 10)	
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
