@@ -263,6 +263,7 @@ void GetAll_Systematic_Shape() {
    TTreeReaderValue<Int_t> nBTagJetPuppi_loose_unmerged = {fReader, "nBTagJetPuppi_loose_unmerged"};
    TTreeReaderValue<Int_t> nBTagJetPuppi_medium_unmerged = {fReader, "nBTagJetPuppi_medium_unmerged"};
    TTreeReaderValue<Int_t> nBTagJetPuppi_tight_unmerged = {fReader, "nBTagJetPuppi_tight_unmerged"};
+   TTreeReaderValue<Float_t> L1_Prefweight = {fReader, "L1_Prefweight"};
    TTreeReaderValue<Float_t> btag0Wgt = {fReader, "btag0Wgt"};
    TTreeReaderValue<Float_t> btag1Wgt = {fReader, "btag1Wgt"};
    TTreeReaderValue<Float_t> btag2Wgt = {fReader, "btag2Wgt"};
@@ -378,15 +379,15 @@ void GetAll_Systematic_Shape() {
       // Fill histogram for signal region
       if ((*PuppiAK8_jet_mass_so_corr>65) && (*PuppiAK8_jet_mass_so_corr<105))
       {
-      	hMC_Signal_4bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hMC_Signal_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hMC_Signal_88bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+      	hMC_Signal_4bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*L1_Prefweight)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+      	hMC_Signal_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*L1_Prefweight)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+      	hMC_Signal_88bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*L1_Prefweight)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
       }
       else if ((*PuppiAK8_jet_mass_so_corr>40) && (*PuppiAK8_jet_mass_so_corr<150))
       {
-      	//hSideBand_4bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hSideBand_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
-      	hSideBand_88bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+      	//hSideBand_4bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*L1_Prefweight)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+      	hSideBand_15bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*L1_Prefweight)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
+      	hSideBand_88bin->Fill(*mass_lvj_type0_PuppiAK8,((*wSampleWeight)*(35867.06)*(*L1_Prefweight)*(*btag0Wgt)*(*genWeight)*(*trig_eff_Weight)*(*id_eff_Weight)*(*pu_Weight)));
       }
       //cout<<*mass_lvj_type0_PuppiAK8<<"\t"<<*BosonCentrality_type0<<endl;
    }
