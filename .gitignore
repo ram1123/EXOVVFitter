@@ -1,3 +1,8 @@
+runstep2condor*.sh
+runstep2condor*.jdl
+docker_stderror
+*.patch
+PlotAllCanvas/
 *.root
 *.d
 *.so

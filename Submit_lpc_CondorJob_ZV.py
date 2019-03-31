@@ -13,7 +13,8 @@ import commands
 #os.system("sed -i 's/0.8,0.,1.0/0.5,0.0,0.8/' g1_exo_doFit_class_new.py")
 #OUTDIR = 'WWTree_CleanedCode_Isolated_NaNFixed_Btag30GeV_2018_03_16_00h13_BothLSBUSB_UpDownVarWjet'
 #OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38_LedLep50GeV'
-OUTDIR = 'WWTree_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLep50GeV_TeVaxis_New'
+#OUTDIR = 'WWTree_CWC_FirstComment_ZV'
+OUTDIR = 'WWTree_After_CWR_ZV'
 changes = raw_input("\n\nWrite change summary: ")
 
 print "==> ",changes

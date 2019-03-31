@@ -54,7 +54,7 @@ class doFit_wj_and_wlvj:
     def __init__(self, in_channel,in_signal_sample, jetalgo, in_mlvj_signal_region_min=500, in_mlvj_signal_region_max=700, in_mj_min=30, in_mj_max=140, in_mlvj_min=400., in_mlvj_max=1400., fit_model="ErfExp_v1", fit_model_alter="ErfPow_v1", interpolate=False, input_workspace=None):
 
         tdrstyle.setTDRStyle()
-        TGaxis.SetMaxDigits(3)
+        #TGaxis.SetMaxDigits(3)
 	
         RooAbsPdf.defaultIntegratorConfig().setEpsRel(1e-9) ;
         RooAbsPdf.defaultIntegratorConfig().setEpsAbs(1e-9) ;
@@ -100,7 +100,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_j.setBins(nbins_mj);
 
         ## define invariant mass WW variable
-        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","M_{ZV} (TeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
+        rrv_mass_lvj= RooRealVar("rrv_mass_lvj","m_{ZV} (GeV)",(in_mlvj_min+in_mlvj_max)/2.,in_mlvj_min,in_mlvj_max,"GeV");
         rrv_mass_lvj.setBins(nbins_mlvj);
 
         ## set the model used for the background parametrization
@@ -145,7 +145,7 @@ class doFit_wj_and_wlvj:
         rrv_mass_lvj.setRange("high_mass",2500,in_mlvj_max);
 
         #prepare the data and mc files --> set the working directory and the files name
-	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/";
+	self.file_Directory="/store/user/rasharma/SecondStep/WWTree_After_CWR/2019_03_28_16h05/HaddedFiles/Hadds_for_BkgEstimation/";
 	#self.file_Directory="Ntuples2/";
                  
         #prepare background data and signal samples            
@@ -242,7 +242,8 @@ class doFit_wj_and_wlvj:
 	    #'WJets' : 625,
             #'VV' : 607,
 	    'VV' : ROOT.TColor.GetColor(250,202,255),
-            'STop' : 854,
+            #'STop' : 854,
+            'STop' : 592,	# CWR comment
             'TTbar' : 592,
             'ggH' : 1,
             'vbfH' : 12,
@@ -450,8 +451,9 @@ objName ==objName_before ):
                 elif TString(objName).Contains("Graph") :
                     if not (objName_before=="Graph" or objName_before=="Uncertainty"): theLeg.AddEntry(theObj, "Stat. Uncertainty","F");
                 else:
-                    if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "SingleTop","F");
-                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "Top","F");
+                    #if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "SingleTop","F");
+                    if TString(objName).Data()=="STop" : print "Do not add Single Top to legend"; # Commendted CWR comments
+                    elif TString(objName).Data()=="TTbar" : theLeg.AddEntry(theObj, "Top quark","F");
                     elif TString(objName).Data()=="VV" : theLeg.AddEntry(theObj, "QCD+EW ZV","F");
                     elif TString(objName).Data()=="data" :  objName_before=objName; entryCnt = entryCnt+1; continue ;
                     elif TString(objName).Data()=="WJets" : objName_before=objName; entryCnt = entryCnt+1; continue;
@@ -659,7 +661,8 @@ objName ==objName_before ):
         cMassFit.SaveAs(rlt_file.Data());
 
         if logy:
-            in_obj.GetYaxis().SetRangeUser(1e-3,in_obj.GetMaximum()*200);
+            #in_obj.GetYaxis().SetRangeUser(1e-3,in_obj.GetMaximum()*200);
+            in_obj.GetYaxis().SetRangeUser(1e-3,1e3); 	# CWR Comment
             cMassFit.SetLogy() ;
             cMassFit.Update();
             rlt_file.ReplaceAll(".root","_log.root");
@@ -866,7 +869,7 @@ objName ==objName_before ):
 
         #if logy:
         #    mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
-	#    mplot.GetXaxis().SetTitle("M_{ZV} (GeV)")
+	#    mplot.GetXaxis().SetTitle("m_{ZV} (GeV)")
         #    pad2.SetLogy() ;
         #    pad2.Update();
         #    cMassFit.Update();
@@ -1023,7 +1026,7 @@ objName ==objName_before ):
 
         if logy:
             mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
-	    mplot.GetXaxis().SetTitle("M_{ZV} (TeV)")
+	    mplot.GetXaxis().SetTitle("m_{ZV} (GeV)")
             pad2.SetLogy() ;
             pad2.Update();
             cMassFit.Update();
@@ -1882,7 +1885,7 @@ objName ==objName_before ):
 
             model_data.plotOn(mplot, RooFit.Components("model_TTbar_xww_sb_lo_%s_mlvj,model_STop_xww_sb_lo_%s_mlvj"%(self.channel,self.channel)), RooFit.Name("TTbar"),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["TTbar"]), RooFit.LineColor(kBlack), RooFit.VLines());
 
-            model_data.plotOn(mplot, RooFit.Components("model_STop_xww_sb_lo_%s_mlvj"%(self.channel)), RooFit.Name("STop"), RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(kBlack), RooFit.VLines());
+            model_data.plotOn(mplot, RooFit.Components("model_STop_xww_sb_lo_%s_mlvj"%(self.channel)), RooFit.Name("STop"), RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(self.color_palet["STop"]),RooFit.VLines());
 
             #solid line
             model_data.plotOn(mplot, RooFit.Components("model%s_sb_lo_from_fitting_%s_mlvj,model_TTbar_xww_sb_lo_%s_mlvj,model_STop_xww_sb_lo_%s_mlvj,model_VV_xww_sb_lo_%s_mlvj"%(label,self.channel,self.channel,self.channel,self.channel)), RooFit.Name("WJets_line_invisible"), RooFit.LineColor(kBlack), RooFit.LineWidth(2), RooFit.VLines()) ;
@@ -1891,7 +1894,7 @@ objName ==objName_before ):
 
             model_data.plotOn(mplot, RooFit.Components("model_TTbar_xww_sb_lo_%s_mlvj,model_STop_xww_sb_lo_%s_mlvj"%(self.channel,self.channel)), RooFit.Name("TTbar_line_invisible"), RooFit.LineColor(kBlack), RooFit.LineWidth(2), RooFit.VLines());
 
-            model_data.plotOn(mplot, RooFit.Components("model_STop_xww_sb_lo_%s_mlvj"%(self.channel)), RooFit.Name("STop_line_invisible"), RooFit.LineColor(kBlack), RooFit.LineWidth(2), RooFit.VLines());
+            model_data.plotOn(mplot, RooFit.Components("model_STop_xww_sb_lo_%s_mlvj"%(self.channel)), RooFit.Name("STop_line_invisible"), RooFit.LineColor(self.color_palet["STop"]), RooFit.LineWidth(2), RooFit.VLines());
  
             ### draw the error band 
             draw_error_band(rdataset_data_mlvj, model_data,self.workspace4fit_.var("rrv_number_data_xww_sb_lo_%s_mlvj"%(self.channel)) ,rfresult,mplot,self.color_palet["Uncertainty"],"F");
@@ -2821,7 +2824,7 @@ objName ==objName_before ):
             
 	    model_data.plotOn(mplot,RooFit.Name("TTbar"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj,model_TTbar_xww_%s_mj"%(label,self.channel,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["TTbar"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
 
-            model_data.plotOn(mplot,RooFit.Name("STop"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj"%(label,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
+            model_data.plotOn(mplot,RooFit.Name("STop"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj"%(label,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(self.color_palet["STop"]),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
 
             model_data.plotOn(mplot,RooFit.Name("WJets"), RooFit.Components("model%s_%s_mj"%(label,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["WJets"]), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
     
@@ -2830,7 +2833,7 @@ objName ==objName_before ):
 
             model_data.plotOn(mplot,RooFit.Name("TTbar_invisible"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj,model_TTbar_xww_%s_mj"%(label,self.channel,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["TTbar"]), RooFit.LineColor(kBlack),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
 
-            model_data.plotOn(mplot,RooFit.Name("STop_invisible"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj"%(label,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(kBlack),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
+            model_data.plotOn(mplot,RooFit.Name("STop_invisible"), RooFit.Components("model%s_%s_mj,model_STop_xww_%s_mj"%(label,self.channel,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["STop"]), RooFit.LineColor(self.color_palet["STop"]),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
 
             model_data.plotOn(mplot,RooFit.Name("WJets_invisible"), RooFit.Components("model%s_%s_mj"%(label,self.channel)),RooFit.DrawOption("F"), RooFit.FillColor(self.color_palet["WJets"]),RooFit.FillStyle(3002),RooFit.Range(rrv_mass_j.getMin(),rrv_mass_j.getMax()), RooFit.LineColor(kBlack),RooFit.NormRange("sb_lo,sb_hi"), RooFit.VLines());
     
@@ -3325,7 +3328,8 @@ objName ==objName_before ):
 		if (treeIn.dilep_m<76 or treeIn.dilep_m>107): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and abs(treeIn.l_eta1)>=2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta1)>=2.5) or (abs(treeIn.l_eta1)>=1.4442  and abs(treeIn.l_eta1)<=1.566))) ): self.isGoodEvent = 0;
 		if ((treeIn.type == 0 and abs(treeIn.l_eta2)>=2.4) or (treeIn.type==1 and ((abs(treeIn.l_eta2)>=2.5) or (abs(treeIn.l_eta2)>=1.4442  and abs(treeIn.l_eta2)<=1.566))) ): self.isGoodEvent = 0;
-
+		if (treeIn.l_charge1 > 0 and treeIn.l_charge2 > 0): self.isGoodEvent = 0;
+		if (treeIn.l_charge1 < 0 and treeIn.l_charge2 < 0): self.isGoodEvent = 0;
                 if (treeIn.ungroomed_PuppiAK8_jet_pt<=200.) : self.isGoodEvent = 0;
                 if (abs(treeIn.ungroomed_PuppiAK8_jet_eta)>=2.4): self.isGoodEvent = 0;
                 if (treeIn.PuppiAK8_jet_tau2tau1>=0.55) : self.isGoodEvent = 0;
@@ -3343,13 +3347,13 @@ objName ==objName_before ):
 
 	    
             if self.isGoodEvent == 1:
-	    	print "== Good event"
+	    	#print "== Good event"
                 ### weigh MC events              
 		#tmp_event_weight     = treeIn.genWeight*treeIn.wSampleWeight*tmp_lumi*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.btag0Wgt; 
                 #tmp_event_weight4fit = treeIn.genWeight;
 		#tmp_event_weight4fit = tmp_event_weight4fit*treeIn.pu_Weight*treeIn.trig_eff_Weight*treeIn.id_eff_Weight*treeIn.wSampleWeight*tmp_lumi*treeIn.btag0Wgt;
-		tmp_event_weight     = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt*treeIn.pu_Weight;
-		tmp_event_weight4fit = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt*treeIn.pu_Weight*tmp_scale_to_lumi;
+		tmp_event_weight     = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt*treeIn.pu_Weight*treeIn.L1_Prefweight;
+		tmp_event_weight4fit = treeIn.totalEventWeight_2Lep*treeIn.btag0Wgt*treeIn.pu_Weight*treeIn.L1_Prefweight*tmp_scale_to_lumi;
 	
                 if label =="_data" or label =="_data_xww" :
                     tmp_event_weight=1.;

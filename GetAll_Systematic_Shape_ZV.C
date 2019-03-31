@@ -7,15 +7,15 @@
 #include "CMS_lumi.C"
 
 int debug = 0;
-double Wjet_Normalization_FromBkgEstimation = 45.0144;
+double Wjet_Normalization_FromBkgEstimation = 44.2466;
 
-int VarBins = 1; 
+int VarBins = 0; 
 double bins[9] = {600, 700, 800, 900, 1000, 1200, 1500, 2000, 2500};
 int NBINS = 8;
 
 // To get above normalization using below command with proper file name and path
 //
-// grep -A 10 "_WJets01_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
+// grep -A 10 "_WJets01_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
 
 //	FUNCTION TO CONVERT TF1 TO TH1F
 TH1F* convertTF1toTH1F(TF1* f, TH1F* hIn){
@@ -144,18 +144,18 @@ void GetAll_Systematic_Shape_ZV() {
 
 
    
-   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets01_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
+   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets01_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
  
    // Open the file containing the tree.
-   TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
+   TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_After_CWR/2019_03_28_16h05/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
 
    // Open all necessary file that we get after background estimation:
-   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
-   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
-   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
-   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
-   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
-   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_LedingLeptonCut50GeV/2018_07_25_07h44/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
+   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
+   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
+   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
+   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
+   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
+   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_After_CWR_ZV/2019_03_29_16h40/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
 
    // Create a TTreeReader for the tree, for instance by passing the
    // TTree's name and the TDirectory / TFile it is in. (otree is the name of tree)
