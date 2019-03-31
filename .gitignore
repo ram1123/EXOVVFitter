@@ -3,6 +3,7 @@ runstep2condor*.jdl
 docker_stderror
 *.patch
 PlotAllCanvas/
+CMSSW_9_0_1.tgz
 *.root
 *.d
 *.so
