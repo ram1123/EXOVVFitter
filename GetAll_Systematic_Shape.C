@@ -9,7 +9,7 @@
 int debug = 0;
 double Wjet_Normalization_FromBkgEstimation = 212.373;
 
-int VarBins = 1; 
+int VarBins = 0; // put it to zero if want to plot with 4 default bins
 double bins[9] = {600, 700, 800, 900, 1000, 1200, 1500, 2000, 2500};
 int NBINS = 8;
 //double bins[5] = {600, 1075, 1550, 2025, 2500};
@@ -17,7 +17,7 @@ int NBINS = 8;
 
 // To get above normalization using below command with proper file name and path
 //
-// grep -A 10 "_WJets0_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
+// grep -A 10 "_WJets0_xww+++" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep "Events Number in sideband_low from fitting\|Events Number in sideband_high from fitting" | awk -F ":" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print "sum="total}'
 
 //	FUNCTION TO CONVERT TF1 TO TH1F
 TH1F* convertTF1toTH1F(TF1* f, TH1F* hIn){
@@ -131,22 +131,22 @@ void GetAll_Systematic_Shape() {
 
 
    
-   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets0_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
+   cout<< "\n\n===============\n\n \t TO GET CORRECT NORMALIZATION USE (with proper path of file): \n\ngrep -A 10 \"_WJets0_xww+++\" /eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/cards_em_HP/other_wwlvj_Signal_aQGC600_em_HP.txt | grep \"Events Number in sideband_low from fitting\\|Events Number in sideband_high from fitting\" | awk -F \":\" '{print $2}' | awk '{print $1}'| awk '{total += $0} END{print \"sum=\"total}' \n\n===============\n\n" << endl;
  
    // Open the file containing the tree.
-   //TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
-   TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
+   //TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_After_CWR/2019_03_28_16h05/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
+   TFile *myFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/SecondStep/WWTree_After_CWR/2019_03_28_16h05/HaddedFiles/Hadds_for_BkgEstimation/WWTree_VJets.root","READ");
 
 
    // Open all necessary file that we get after background estimation:
-   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
-   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
-   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
-   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
-   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
-   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
-   TFile *bkgEstFile_alternate_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto_Up_0.root","READ");
-   TFile *bkgEstFile_alternate_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_24_10h36_50GeVLepCut_TeVxaxis/2018_08_12_14h47/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto_Down_0.root","READ");
+   TFile *bkgEstFile = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto.root","READ");
+   TFile *bkgEstFile_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_0.root","READ");
+   TFile *bkgEstFile_Up1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Up_2.root","READ");
+   TFile *bkgEstFile_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_0.root","READ");
+   TFile *bkgEstFile_Down1 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets0_xww__sb_lo_ExpTail_auto_Down_2.root","READ");
+   TFile *bkgEstFile_alternate = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto.root","READ");
+   TFile *bkgEstFile_alternate_Up0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto_Up_0.root","READ");
+   TFile *bkgEstFile_alternate_Down0 = TFile::Open("root:://cmseos.fnal.gov//eos/uscms/store/user/rasharma/BackgroundEstimation/WWTree_CWC_FirstComment/2019_04_01_04h55/wjetmodel_Ex__WJets01_xww__sb_lo_Exp_auto_Down_0.root","READ");
 
    // Create a TTreeReader for the tree, for instance by passing the
    // TTree's name and the TDirectory / TFile it is in. (otree is the name of tree)
@@ -841,14 +841,14 @@ void GetAll_Systematic_Shape() {
    histos_WjetSyst.push_back(Wjet_Corr_Hist_Up1);
    Wjet_Corr_Hist_Up1->Write();
 
-   TH1F* Wjet_Corr_Hist_Down0 = (TH1F*)bkgEstFile_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
-   Wjet_Corr_Hist_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Down");
-   Wjet_Corr_Hist_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
-   Wjet_Corr_Hist_Down0->SetStats(0);
-   Wjet_Corr_Hist_Down0->SetLineColor(5);
-   Wjet_Corr_Hist_Down0->SetMarkerColor(5);
-   histos_WjetSyst.push_back(Wjet_Corr_Hist_Down0);
-   Wjet_Corr_Hist_Down0->Write();
+   //TH1F* Wjet_Corr_Hist_Down0 = (TH1F*)bkgEstFile_Down0->Get("rrv_mass_lvj__rrv_mass_lvj");
+   //Wjet_Corr_Hist_Down0->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par0Down");
+   //Wjet_Corr_Hist_Down0->Scale(Wjet_Normalization_FromBkgEstimation);
+   //Wjet_Corr_Hist_Down0->SetStats(0);
+   //Wjet_Corr_Hist_Down0->SetLineColor(5);
+   //Wjet_Corr_Hist_Down0->SetMarkerColor(5);
+   //histos_WjetSyst.push_back(Wjet_Corr_Hist_Down0);
+   //Wjet_Corr_Hist_Down0->Write();
 
    TH1F* Wjet_Corr_Hist_Down1 = (TH1F*)bkgEstFile_Down1->Get("rrv_mass_lvj__rrv_mass_lvj");
    Wjet_Corr_Hist_Down1->SetName("WjetFitSyst_SideBandRegion_Corr_Hist_From_Data_Par1Down");

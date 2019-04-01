@@ -1,3 +1,5 @@
+*.pdf
+*.png
 runstep2condor*.sh
 runstep2condor*.jdl
 docker_stderror

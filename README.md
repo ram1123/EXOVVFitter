@@ -1,4 +1,4 @@
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+#### Table of Content
 
 - [How to setup](#how-to-setup)
 - [Before running the code](#before-running-the-code)
@@ -7,7 +7,8 @@
 - [Generate Plots](#generate-plots)
 - [Some information](#some-information)
 
-<!-- /TOC -->
+---
+
 # How to setup
 To setup the code run following commands:
 	
