@@ -439,17 +439,17 @@ objName ==objName_before ):
         for obj in range(int(plot.numItems()) ):
             objName = plot.nameOf(obj);
 	    if objName.find("TPave") != -1: continue
-            if objName == "errorband" : objName = "Bkg. Uncertainty";
+            if objName == "errorband" : objName = "Bkg. uncertainty";
             print objName;
-            if not ( ( (plot.getInvisible(objName)) and (not TString(objName).Contains("Uncertainty")) ) or TString(objName).Contains("invisi") or TString(objName).Contains("TLine") or objName ==objName_before ):
+            if not ( ( (plot.getInvisible(objName)) and (not TString(objName).Contains("uncertainty")) ) or TString(objName).Contains("invisi") or TString(objName).Contains("TLine") or objName ==objName_before ):
                 theObj = plot.getObject(obj);
                 objTitle = objName;
                 drawoption= plot.getDrawOptions(objName).Data()
                 if drawoption=="P":drawoption="PE"
-                if TString(objName).Contains("Uncertainty") or TString(objName).Contains("sigma"):
+                if TString(objName).Contains("uncertainty") or TString(objName).Contains("sigma"):
                     theLeg.AddEntry(theObj, objName,"F");
                 elif TString(objName).Contains("Graph") :
-                    if not (objName_before=="Graph" or objName_before=="Uncertainty"): theLeg.AddEntry(theObj, "Stat. Uncertainty","F");
+                    if not (objName_before=="Graph" or objName_before=="uncertainty"): theLeg.AddEntry(theObj, "Stat. Uncertainty","F");
                 else:
                     #if TString(objName).Data()=="STop" : theLeg.AddEntry(theObj, "SingleTop","F"); # Commendted CWR comments
                     if TString(objName).Data()=="STop" : print "Do not add Single Top to legend"; # Commendted CWR comments
@@ -459,6 +459,7 @@ objName ==objName_before ):
                     elif TString(objName).Data()=="WJets" : objName_before=objName; entryCnt = entryCnt+1; continue;
                     elif TString(objName).Contains("vbfH"): theLeg.AddEntry(theObj, (TString(objName).ReplaceAll("vbfH","qqH")).Data() ,"L");
                     elif TString(objName).Contains("Uncertainty"): theLeg.AddEntry(theObj, objTitle,drawoption);
+                    elif TString(objName).Contains("uncertainty"): theLeg.AddEntry(theObj, objTitle,drawoption);
                     elif TString(objName).Contains("Wprime") and TString(objName).Contains("M2000"):
                            objName_signal_graviton = theObj ;
                            objNameLeg_signal_graviton = "W' M_{W'}=2 TeV";
@@ -850,7 +851,8 @@ objName ==objName_before ):
 
         rlt_file.ReplaceAll(".C","_log.png");
 	pad2.SetLogy()
-        mplot.GetYaxis().SetRangeUser(0.06,mplot.GetMaximum()*200);
+        #mplot.GetYaxis().SetRangeUser(0.06,mplot.GetMaximum()*200);
+        mplot.GetYaxis().SetRangeUser(0.06,1e4);
         cMassFit.SaveAs(rlt_file.Data());
 
         rlt_file.ReplaceAll(".png",".pdf");

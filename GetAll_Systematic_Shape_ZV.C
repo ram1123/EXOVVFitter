@@ -9,7 +9,7 @@
 int debug = 0;
 double Wjet_Normalization_FromBkgEstimation = 44.4878;
 
-int VarBins = 0; 
+int VarBins = 1; 
 double bins[9] = {600, 700, 800, 900, 1000, 1200, 1500, 2000, 2500};
 int NBINS = 8;
 

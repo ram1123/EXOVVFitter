@@ -9,7 +9,7 @@
 int debug = 0;
 double Wjet_Normalization_FromBkgEstimation = 212.373;
 
-int VarBins = 0; // put it to zero if want to plot with 4 default bins
+int VarBins = 1; // put it to zero if want to plot with 4 default bins
 double bins[9] = {600, 700, 800, 900, 1000, 1200, 1500, 2000, 2500};
 int NBINS = 8;
 //double bins[5] = {600, 1075, 1550, 2025, 2500};
