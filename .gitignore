@@ -1,0 +1,23 @@
+#Don't ignore follownig files
+
+!.gitignore
+
+# ignore following
+*.pdf
+*.so
+*.d
+*.pyc
+*.swp
+*.pcm
+*.root
+
+# ignore temp condor file
+*.jdl
+run*.sh
+
+# ignore python notebook checkpoints
+.ipynb_checkpoints
+
+# Ignore plot directory
+cards_em_HP
+plots_em_HP
