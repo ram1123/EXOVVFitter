@@ -63,7 +63,7 @@ using namespace std;
 void Util(){}
 
 /// function used to draw an error band around a RooAbsPdf -> used to draw the band after each fit
-void draw_error_band(RooAbsData &rdata, RooAbsPdf &rpdf, RooRealVar &rrv_number_events , RooFitResult *rfres, RooPlot *mplot, Int_t kcolor=6, std::string opt ="F", Int_t number_point=100, const Int_t number_errorband=2000){
+void draw_error_band(RooAbsData &rdata, RooAbsPdf &rpdf, RooRealVar &rrv_number_events , RooFitResult *rfres, RooPlot *mplot, Int_t kcolor=6, std::string opt ="F", Int_t number_point=100, const Int_t number_errorband=2000) {
 
 	TRandom3 rand(1234);
 

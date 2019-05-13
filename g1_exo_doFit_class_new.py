@@ -359,13 +359,13 @@ class doFit_wj_and_wlvj:
     def legend4Plot(self, plot, left=1, isFill=1, x_offset_low=0.4, y_offset_low=0.1, x_offset_high =0.27, y_offset_high =0.1, TwoCoulum =1., isalpha=False, ismj=False):
         print "############### draw the legend ########################"
         if left==-1:
-            theLeg = TLegend(0.65+x_offset_low, 0.58+y_offset_low, 0.93+x_offset_low, 0.87+y_offset_low, "", "NDC");
+            theLeg = TLegend(0.40+x_offset_low, 0.50+y_offset_low, 0.93+x_offset_low, 0.80+y_offset_low, "", "NDC");
             theLeg.SetName("theLegend");
             theLeg.SetLineColor(0);
-            theLeg.SetTextFont(42);
-            theLeg.SetTextSize(.04);
+            theLeg.SetTextFont(48);
+            theLeg.SetTextSize(.18);
         else:
-            theLeg = TLegend(0.37+x_offset_low, 0.50+y_offset_low, 0.72+x_offset_high, 0.82+y_offset_high, "", "NDC");            
+            theLeg = TLegend(0.27+x_offset_low, 0.50+y_offset_low, 0.72+x_offset_high, 0.82+y_offset_high, "", "NDC");            
             theLeg.SetName("theLegend");
             if ismj: theLeg = TLegend(0.3715365,0.505,0.8526448,0.845, "", "NDC"); 
             if TwoCoulum :
@@ -378,8 +378,9 @@ class doFit_wj_and_wlvj:
         theLeg.SetLineColor(0);
         theLeg.SetLineWidth(0);
         theLeg.SetLineStyle(0);
-        theLeg.SetTextSize(0.05);
+        theLeg.SetTextSize(0.06);
         theLeg.SetTextFont(42);
+        #theLeg.SetTextFont(62);
 
         entryCnt = 0;
         objName_before = "";
@@ -567,10 +568,10 @@ objName ==objName_before ):
        CMS_lumi.writeExtraText = 0
        CMS_lumi.extraText = "Preliminary"
 
-       iPos = 10
-       if( iPos==0 ): CMS_lumi.relPosX = 0.15
+       iPos = 9
+       #if( iPos==0 ): CMS_lumi.relPosX = 0.15
 
-       H_ref = 600; 
+       H_ref = 800; 
        W_ref = 800; 
        W = W_ref
        H  = H_ref
@@ -632,7 +633,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	cMassFit.cd()
-	CMS_lumi.CMS_lumi(cMassFit, 4, 10)	
+	CMS_lumi.CMS_lumi(cMassFit, 4, 9)
 	cMassFit.cd()
 	cMassFit.Update()
 	cMassFit.RedrawAxis()
@@ -708,20 +709,27 @@ objName ==objName_before ):
         print "############### draw the canvas with pull ########################" 
 	#hist_ = datahist.createHistogram(rrv_x.GetName(),int(rrv_x.getBins()/self.narrow_factor))
         chi2_ = self.calculate_chi2(datahist,rrv_x,mplot,ndof,ismj)
+	print "Ram Krishna Sharma Aram: ", type(mplot_pull)
 	mplot.GetXaxis().SetTitle("")
 	#mplot.GetXaxis().SetTitleOffset(1.1);
         #mplot.GetYaxis().SetTitleOffset(1.3);
-        #mplot.GetXaxis().SetTitleSize(0.055);
-        #mplot.GetYaxis().SetTitleSize(0.055);
+        #mplot.GetXaxis().SetTitleSize(0.085);
+        #mplot.GetYaxis().SetTitleSize(0.085);
         #mplot.GetXaxis().SetLabelSize(0.045);
         #mplot.GetYaxis().SetLabelSize(0.045);
         mplot.GetYaxis().SetTitleSize(0.07)
         mplot.GetYaxis().SetTitleOffset(0.9)
         mplot.GetYaxis().SetLabelSize(0.06)
 	mplot.GetXaxis().SetLabelSize(0);
+        mplot.GetYaxis().SetTitleFont(62);
         #mplot_pull.GetXaxis().SetLabelSize(0.14);
         #mplot_pull.GetYaxis().SetLabelSize(0.14);
-        #mplot_pull.GetYaxis().SetTitleSize(0.15);
+        mplot_pull.GetYaxis().SetTitleSize(0.15);
+        mplot_pull.GetYaxis().SetTitleFont(62);
+	mplot_pull.GetXaxis().SetTitleOffset(0.95);
+	mplot_pull.GetYaxis().SetTitleOffset(0.37);
+        mplot_pull.GetXaxis().SetTitleSize(0.18);
+        mplot_pull.GetXaxis().SetTitleFont(62);
         #mplot_pull.GetYaxis().SetNdivisions(205);
 	
         cMassFit = self.get_canvas("cMassFit")#TCanvas("cMassFit","cMassFit", 600,600);
@@ -778,7 +786,10 @@ objName ==objName_before ):
         #banner.Draw();
 
         pad1.cd();
-        mplot_pull.Draw("AP");
+	#temp = mplot_pull.GetHistogram();
+	mplot_pull.SetFillColor(2);
+        mplot_pull.Draw("AB X");
+	#temp.Draw("hist");
 
         mplot.Print("v");
         if mplot.FindObject("errorband") != 0: 
@@ -791,7 +802,9 @@ objName ==objName_before ):
 
         medianLine = TLine(mplot.GetXaxis().GetXmin(),0.,mplot.GetXaxis().GetXmax(),0); medianLine.SetLineWidth(2); medianLine.SetLineColor(kRed);
 	medianLine.Draw()
-	mplot_pull.Draw("Psame");
+	#mplot_pull.SetFillColor(2);
+	mplot_pull.Draw("X same");
+	#temp.Draw("hist same");
 	
         if param_first and doParameterPlot != 0:
 
@@ -814,7 +827,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 10)	
+	CMS_lumi.CMS_lumi(pad2, 4, 9)
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
@@ -853,6 +866,8 @@ objName ==objName_before ):
 	pad2.SetLogy()
         #mplot.GetYaxis().SetRangeUser(0.06,mplot.GetMaximum()*200);
         mplot.GetYaxis().SetRangeUser(0.06,1e4);
+	#mplot.GetXaxis().SetTitleSize(0.08,"X");
+	#mplot.GetYaxis().SetTitleSize(0.08,"X");   // Ramkrishan
         cMassFit.SaveAs(rlt_file.Data());
 
         rlt_file.ReplaceAll(".png",".pdf");
@@ -990,7 +1005,7 @@ objName ==objName_before ):
 
 	cMassFit.Update()
 	pad2.cd()
-	CMS_lumi.CMS_lumi(pad2, 4, 10)	
+	CMS_lumi.CMS_lumi(pad2, 4, 9)	
 	pad2.cd()
 	pad2.Update()
 	pad2.RedrawAxis()
@@ -1032,6 +1047,8 @@ objName ==objName_before ):
         if logy:
             mplot.GetYaxis().SetRangeUser(0.002,mplot.GetMaximum()*200);
 	    mplot.GetXaxis().SetTitle("m_{WV} (GeV)")
+	    mplot.GetXaxis().SetTitleSize(0.04,"x")
+	    mplot.GetXaxis().SetTitleSize(0.04,"y")
             pad2.SetLogy() ;
             pad2.Update();
             #pad1.cd();
@@ -1088,9 +1105,9 @@ objName ==objName_before ):
         x = ROOT.Double(0.); y = ROOT.Double(0) ;
         for ipoint in range(0,hpull.GetN()):
           hpull.GetPoint(ipoint,x,y);
-	  #print x,y
+	  print "DEBUG Hist PULL: ",x,y
           if(y == 0):
-           hpull.SetPoint(ipoint,x,10)
+           hpull.SetPoint(ipoint,x,0)
        
    	gt = ROOT.TH1F("gt","gt",int(rrv_x.getBins()/self.narrow_factor),rrv_x.getMin(),rrv_x.getMax());
    	gt.SetMinimum(-3.999);
@@ -1098,7 +1115,8 @@ objName ==objName_before ):
    	gt.SetDirectory(0);
    	gt.SetStats(0);
    	gt.SetLineStyle(0);
-   	gt.SetMarkerStyle(20);
+	gt.SetFillColor(2);
+   	#gt.SetMarkerStyle(20);
    	gt.GetXaxis().SetTitle(rrv_x.GetTitle());
    	gt.GetXaxis().SetLabelFont(42);
    	gt.GetXaxis().SetLabelOffset(0.02);
@@ -3359,7 +3377,7 @@ objName ==objName_before ):
         tmp_scale_to_lumi=1.;
             
 	nnevents = treeIn.GetEntries()
-	#nnevents = 30000
+	#nnevents = 20000
 	if nnevents > treeIn.GetEntries():
 		nnevents = treeIn.GetEntries()
 	print "Number of events to run = ",nnevents

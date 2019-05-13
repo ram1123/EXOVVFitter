@@ -16,7 +16,7 @@ import commands
 #OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38_50GeVLepCut'
 #OUTDIR = 'WV_2018_07_24_10h36_30GeVLepCut_TeVxaxis_MadeToCrossCheckSystematicIssue'
 #OUTDIR = 'WWTree_CommonNtuple_For1and2Lepton_MuonPtScale_2018_07_09_18h38_50GeVLepCut_SR'
-OUTDIR = 'WWTree_CWC_FirstComment'
+OUTDIR = 'WWTree_After_CWR_WV'
 changes = raw_input("\n\nWrite change summary: ")
 
 print "==> ",changes
